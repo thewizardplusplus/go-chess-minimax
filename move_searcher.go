@@ -80,7 +80,7 @@ func (
 
 	moves := searcher.MoveGenerator.
 		GenerateMoves(board, color)
-	nextColor := negative(color)
+	nextColor := color.Negative()
 	for _, move := range moves {
 		nextBoard := board.ApplyMove(move)
 		if !hasKing(nextBoard, nextColor) {
@@ -127,14 +127,4 @@ func hasKing(
 	}
 
 	return false
-}
-
-func negative(
-	color models.Color,
-) models.Color {
-	if color == models.Black {
-		return models.White
-	}
-
-	return models.Black
 }
