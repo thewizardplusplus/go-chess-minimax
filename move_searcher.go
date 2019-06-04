@@ -37,11 +37,6 @@ type ScoredMove struct {
 	Score float64
 }
 
-type appliedMove struct {
-	move  models.Move
-	board models.Board
-}
-
 // MoveSearcher ...
 type MoveSearcher interface {
 	SearchMove(
@@ -83,7 +78,6 @@ func (
 		return ScoredMove{Score: score}, nil
 	}
 
-	var appliedMoves []appliedMove
 	moves := searcher.MoveGenerator.
 		GenerateMoves(board, color)
 	nextColor := negative(color)
@@ -92,20 +86,16 @@ func (
 		if !hasKing(nextBoard, nextColor) {
 			return ScoredMove{}, ErrNoKing
 		}
-
-		appliedMoves = append(
-			appliedMoves,
-			appliedMove{move, nextBoard},
-		)
 	}
 
 	bestMove := ScoredMove{
 		Score: initialScore,
 	}
-	for _, move := range appliedMoves {
+	for _, move := range moves {
+		nextBoard := board.ApplyMove(move)
 		scoredMove, err :=
 			searcher.MoveSearcher.SearchMove(
-				move.board,
+				nextBoard,
 				nextColor,
 				deep+1,
 			)
@@ -115,10 +105,7 @@ func (
 
 		score := -scoredMove.Score
 		if bestMove.Score < score {
-			bestMove = ScoredMove{
-				Move:  move.move,
-				Score: score,
-			}
+			bestMove = ScoredMove{move, score}
 		}
 	}
 	if bestMove.Score == initialScore {
