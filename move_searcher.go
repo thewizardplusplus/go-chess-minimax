@@ -86,9 +86,10 @@ func (
 	var appliedMoves []appliedMove
 	moves := searcher.MoveGenerator.
 		GenerateMoves(board, color)
+	nextColor := negative(color)
 	for _, move := range moves {
 		nextBoard := board.ApplyMove(move)
-		if !hasKing(nextBoard) {
+		if !hasKing(nextBoard, nextColor) {
 			return ScoredMove{}, ErrNoKing
 		}
 
@@ -101,7 +102,6 @@ func (
 	bestMove := ScoredMove{
 		Score: initialScore,
 	}
-	nextColor := negative(color)
 	for _, move := range appliedMoves {
 		scoredMove, err :=
 			searcher.MoveSearcher.SearchMove(
@@ -128,9 +128,13 @@ func (
 	return bestMove, nil
 }
 
-func hasKing(board models.Board) bool {
+func hasKing(
+	board models.Board,
+	color models.Color,
+) bool {
 	for _, piece := range board.Pieces() {
-		if piece.Kind() == models.King {
+		if piece.Kind() == models.King &&
+			piece.Color() == color {
 			return true
 		}
 	}
