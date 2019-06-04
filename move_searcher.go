@@ -56,7 +56,7 @@ type DefaultMoveSearcher struct {
 
 // ...
 var (
-	ErrNoKing    = errors.New("no king")
+	ErrCheck     = errors.New("check")
 	ErrCheckmate = errors.New("checkmate")
 
 	initialScore = math.Inf(-1)
@@ -84,7 +84,7 @@ func (
 	for _, move := range moves {
 		nextBoard := board.ApplyMove(move)
 		if !hasKing(nextBoard, nextColor) {
-			return ScoredMove{}, ErrNoKing
+			return ScoredMove{}, ErrCheck
 		}
 	}
 
@@ -99,8 +99,12 @@ func (
 				nextColor,
 				deep+1,
 			)
-		if err != nil {
+		switch err {
+		case nil:
+		case ErrCheck:
 			continue
+		default:
+			return ScoredMove{}, err
 		}
 
 		score := -scoredMove.Score
