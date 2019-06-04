@@ -70,7 +70,7 @@ func (
 	}
 
 	bestMove := ScoredMove{
-		Score: math.Inf(+1),
+		Score: math.Inf(-1),
 	}
 	moves := searcher.MoveGenerator.
 		GenerateMoves(board, color)
@@ -83,10 +83,9 @@ func (
 				nextColor,
 				deep+1,
 			)
-		scoredMove.Score *= -1
-
-		if bestMove.Score < scoredMove.Score {
-			bestMove = scoredMove
+		score := -scoredMove.Score
+		if bestMove.Score < score {
+			bestMove = ScoredMove{move, score}
 		}
 	}
 
