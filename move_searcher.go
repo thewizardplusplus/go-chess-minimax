@@ -25,8 +25,8 @@ type BoardEvaluator interface {
 
 // MoveGenerator ...
 type MoveGenerator interface {
-	GenerateMoves(
-		board models.Board,
+	MovesForColor(
+		storage models.PieceStorage,
 		color models.Color,
 	) []models.Move
 }
@@ -79,7 +79,7 @@ func (
 	}
 
 	moves := searcher.MoveGenerator.
-		GenerateMoves(board, color)
+		MovesForColor(board, color)
 	nextColor := color.Negative()
 	for _, move := range moves {
 		nextBoard := board.ApplyMove(move)
