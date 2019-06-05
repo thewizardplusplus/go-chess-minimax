@@ -10,7 +10,7 @@ import (
 // SearchTerminator ...
 type SearchTerminator interface {
 	IsSearchTerminate(
-		board models.Board,
+		storage models.PieceStorage,
 		deep int,
 	) bool
 }
@@ -18,7 +18,7 @@ type SearchTerminator interface {
 // BoardEvaluator ...
 type BoardEvaluator interface {
 	EvaluateBoard(
-		board models.Board,
+		storage models.PieceStorage,
 		color models.Color,
 	) float64
 }
@@ -40,7 +40,7 @@ type ScoredMove struct {
 // MoveSearcher ...
 type MoveSearcher interface {
 	SearchMove(
-		board models.Board,
+		storage models.PieceStorage,
 		color models.Color,
 		deep int,
 	) (ScoredMove, error)
@@ -69,25 +69,23 @@ var (
 func (
 	searcher DefaultMoveSearcher,
 ) SearchMove(
-	board models.Board,
+	storage models.PieceStorage,
 	color models.Color,
 	deep int,
 ) (ScoredMove, error) {
 	ok := searcher.SearchTerminator.
-		IsSearchTerminate(board, deep)
+		IsSearchTerminate(storage, deep)
 	if ok {
 		score := searcher.BoardEvaluator.
-			EvaluateBoard(board, color)
+			EvaluateBoard(storage, color)
 		return ScoredMove{Score: score}, nil
 	}
 
 	moves := searcher.MoveGenerator.
-		MovesForColor(board, color)
-	for _, move := range moves {
-		piece, ok := board.Piece(move.Finish)
-		if ok && piece.Kind() == models.King {
-			return ScoredMove{}, ErrCheck
-		}
+		MovesForColor(storage, color)
+	err := storage.CheckMoves(moves)
+	if err != nil {
+		return ScoredMove{}, ErrCheck
 	}
 
 	bestMove := ScoredMove{
@@ -96,10 +94,10 @@ func (
 	var hasCheck bool
 	nextColor := color.Negative()
 	for _, move := range moves {
-		nextBoard := board.ApplyMove(move)
+		nextStorage := storage.ApplyMove(move)
 		scoredMove, err :=
 			searcher.MoveSearcher.SearchMove(
-				nextBoard,
+				nextStorage,
 				nextColor,
 				deep+1,
 			)

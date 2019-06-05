@@ -20,3 +20,17 @@ func TestMoveGeneratorInterface(
 		test.Fail()
 	}
 }
+
+func TestMoveSearcherInterface(
+	test *testing.T,
+) {
+	gotType := reflect.TypeOf(
+		DefaultMoveSearcher{},
+	)
+	wantType := reflect.
+		TypeOf((*MoveSearcher)(nil)).
+		Elem()
+	if !gotType.Implements(wantType) {
+		test.Fail()
+	}
+}
