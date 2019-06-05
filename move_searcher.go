@@ -48,10 +48,10 @@ type MoveSearcher interface {
 
 // DefaultMoveSearcher ...
 type DefaultMoveSearcher struct {
-	SearchTerminator SearchTerminator
-	BoardEvaluator   BoardEvaluator
-	MoveGenerator    MoveGenerator
-	MoveSearcher     MoveSearcher
+	terminator SearchTerminator
+	evaluator  BoardEvaluator
+	generator  MoveGenerator
+	searcher   MoveSearcher
 }
 
 // ...
@@ -65,6 +65,28 @@ var (
 	initialScore = math.Inf(-1)
 )
 
+// NewDefaultMoveSearcher ...
+func NewDefaultMoveSearcher(
+	terminator SearchTerminator,
+	evaluator BoardEvaluator,
+	generator MoveGenerator,
+) *DefaultMoveSearcher {
+	// instance must be created in a heap
+	// so that it's possible to add
+	// a reference to itself inside
+	searcher := &DefaultMoveSearcher{
+		terminator: terminator,
+		evaluator:  evaluator,
+		generator:  generator,
+	}
+
+	// use a reference to itself
+	// for a recursion
+	searcher.searcher = searcher
+
+	return searcher
+}
+
 // SearchMove ...
 func (
 	searcher DefaultMoveSearcher,
@@ -73,15 +95,15 @@ func (
 	color models.Color,
 	deep int,
 ) (ScoredMove, error) {
-	ok := searcher.SearchTerminator.
+	ok := searcher.terminator.
 		IsSearchTerminate(storage, deep)
 	if ok {
-		score := searcher.BoardEvaluator.
+		score := searcher.evaluator.
 			EvaluateBoard(storage, color)
 		return ScoredMove{Score: score}, nil
 	}
 
-	moves := searcher.MoveGenerator.
+	moves := searcher.generator.
 		MovesForColor(storage, color)
 	err := storage.CheckMoves(moves)
 	if err != nil {
@@ -96,7 +118,7 @@ func (
 	for _, move := range moves {
 		nextStorage := storage.ApplyMove(move)
 		scoredMove, err :=
-			searcher.MoveSearcher.SearchMove(
+			searcher.searcher.SearchMove(
 				nextStorage,
 				nextColor,
 				deep+1,
