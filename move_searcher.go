@@ -58,7 +58,9 @@ type DefaultMoveSearcher struct {
 var (
 	ErrCheck     = errors.New("check")
 	ErrCheckmate = errors.New("checkmate")
+)
 
+var (
 	initialScore = math.Inf(-1)
 )
 
@@ -80,10 +82,9 @@ func (
 
 	moves := searcher.MoveGenerator.
 		MovesForColor(board, color)
-	nextColor := color.Negative()
 	for _, move := range moves {
-		nextBoard := board.ApplyMove(move)
-		if !hasKing(nextBoard, nextColor) {
+		piece, ok := board.Piece(move.Finish)
+		if ok && piece.Kind() == models.King {
 			return ScoredMove{}, ErrCheck
 		}
 	}
@@ -91,6 +92,7 @@ func (
 	bestMove := ScoredMove{
 		Score: initialScore,
 	}
+	nextColor := color.Negative()
 	for _, move := range moves {
 		nextBoard := board.ApplyMove(move)
 		scoredMove, err :=
@@ -117,18 +119,4 @@ func (
 	}
 
 	return bestMove, nil
-}
-
-func hasKing(
-	board models.Board,
-	color models.Color,
-) bool {
-	for _, piece := range board.Pieces() {
-		if piece.Kind() == models.King &&
-			piece.Color() == color {
-			return true
-		}
-	}
-
-	return false
 }
