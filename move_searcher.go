@@ -58,6 +58,7 @@ type DefaultMoveSearcher struct {
 var (
 	ErrCheck     = errors.New("check")
 	ErrCheckmate = errors.New("checkmate")
+	ErrDraw      = errors.New("draw")
 )
 
 var (
@@ -92,6 +93,7 @@ func (
 	bestMove := ScoredMove{
 		Score: initialScore,
 	}
+	var hasCheck bool
 	nextColor := color.Negative()
 	for _, move := range moves {
 		nextBoard := board.ApplyMove(move)
@@ -104,6 +106,7 @@ func (
 		switch err {
 		case nil:
 		case ErrCheck:
+			hasCheck = true
 			continue
 		default:
 			return ScoredMove{}, err
@@ -114,8 +117,13 @@ func (
 			bestMove = ScoredMove{move, score}
 		}
 	}
+	// no moves
 	if bestMove.Score == initialScore {
-		return ScoredMove{}, ErrCheckmate
+		if hasCheck {
+			return ScoredMove{}, ErrCheckmate
+		}
+
+		return ScoredMove{}, ErrDraw
 	}
 
 	return bestMove, nil
