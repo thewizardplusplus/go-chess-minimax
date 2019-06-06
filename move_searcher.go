@@ -9,10 +9,7 @@ import (
 
 // SearchTerminator ...
 type SearchTerminator interface {
-	IsSearchTerminate(
-		storage models.PieceStorage,
-		deep int,
-	) bool
+	IsSearchTerminate(deep int) bool
 }
 
 // BoardEvaluator ...
@@ -96,7 +93,7 @@ func (
 	deep int,
 ) (ScoredMove, error) {
 	ok := searcher.terminator.
-		IsSearchTerminate(storage, deep)
+		IsSearchTerminate(deep)
 	if ok {
 		score := searcher.evaluator.
 			EvaluateBoard(storage, color)

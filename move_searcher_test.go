@@ -11,10 +11,7 @@ type MockSearchTerminator struct{}
 
 func (
 	terminator MockSearchTerminator,
-) IsSearchTerminate(
-	storage models.PieceStorage,
-	deep int,
-) bool {
+) IsSearchTerminate(deep int) bool {
 	panic("not implemented")
 }
 
