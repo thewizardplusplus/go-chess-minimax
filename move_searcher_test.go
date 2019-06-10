@@ -268,6 +268,84 @@ func TestDefaultMoveSearcherSearchMove(
 			wantMove: ScoredMove{Score: 2.3},
 			wantErr:  nil,
 		},
+		data{
+			fields: fields{
+				terminator: MockSearchTerminator{
+					isSearchTerminate: func(
+						deep int,
+					) bool {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return false
+					},
+				},
+				generator: MockMoveGenerator{
+					movesForColor: func(
+						storage models.PieceStorage,
+						color models.Color,
+					) []models.Move {
+						mock, ok :=
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+						if mock.checkMoves == nil {
+							test.Fail()
+						}
+						if color != models.White {
+							test.Fail()
+						}
+
+						return []models.Move{
+							models.Move{
+								Start: models.Position{
+									File: 1,
+									Rank: 2,
+								},
+								Finish: models.Position{
+									File: 3,
+									Rank: 4,
+								},
+							},
+						}
+					},
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{
+					checkMoves: func(
+						moves []models.Move,
+					) error {
+						expectedMoves := []models.Move{
+							models.Move{
+								Start: models.Position{
+									File: 1,
+									Rank: 2,
+								},
+								Finish: models.Position{
+									File: 3,
+									Rank: 4,
+								},
+							},
+						}
+						if !reflect.DeepEqual(
+							moves,
+							expectedMoves,
+						) {
+							test.Fail()
+						}
+
+						return models.ErrKingCapture
+					},
+				},
+				color: models.White,
+				deep:  2,
+			},
+			wantMove: ScoredMove{},
+			wantErr:  ErrCheck,
+		},
 	} {
 		searcher := DefaultMoveSearcher{
 			terminator: data.fields.terminator,
