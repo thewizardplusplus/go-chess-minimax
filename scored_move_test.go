@@ -50,6 +50,7 @@ func TestScoredMoveIsUpdated(
 
 func TestScoredMoveUpdate(test *testing.T) {
 	type fields struct {
+		move  models.Move
 		score float64
 	}
 	type args struct {
@@ -64,21 +65,21 @@ func TestScoredMoveUpdate(test *testing.T) {
 
 	for _, data := range []data{
 		data{
-			fields: fields{4.2},
-			args: args{
-				scoredMove: ScoredMove{
-					Move: models.Move{
-						Start: models.Position{
-							File: 1,
-							Rank: 2,
-						},
-						Finish: models.Position{
-							File: 3,
-							Rank: 4,
-						},
+			fields: fields{
+				move: models.Move{
+					Start: models.Position{
+						File: 1,
+						Rank: 2,
 					},
-					Score: 2.3,
+					Finish: models.Position{
+						File: 3,
+						Rank: 4,
+					},
 				},
+				score: 4.2,
+			},
+			args: args{
+				scoredMove: ScoredMove{Score: 2.3},
 				rawMove: models.Move{
 					Start: models.Position{
 						File: 5,
@@ -101,25 +102,25 @@ func TestScoredMoveUpdate(test *testing.T) {
 						Rank: 4,
 					},
 				},
-				Score: 2.3,
+				Score: 4.2,
 			},
 		},
 		data{
-			fields: fields{-4.2},
-			args: args{
-				scoredMove: ScoredMove{
-					Move: models.Move{
-						Start: models.Position{
-							File: 1,
-							Rank: 2,
-						},
-						Finish: models.Position{
-							File: 3,
-							Rank: 4,
-						},
+			fields: fields{
+				move: models.Move{
+					Start: models.Position{
+						File: 1,
+						Rank: 2,
 					},
-					Score: 2.3,
+					Finish: models.Position{
+						File: 3,
+						Rank: 4,
+					},
 				},
+				score: -4.2,
+			},
+			args: args{
+				scoredMove: ScoredMove{Score: 2.3},
 				rawMove: models.Move{
 					Start: models.Position{
 						File: 5,
@@ -147,6 +148,7 @@ func TestScoredMoveUpdate(test *testing.T) {
 		},
 	} {
 		move := ScoredMove{
+			Move:  data.fields.move,
 			Score: data.fields.score,
 		}
 		move.update(
