@@ -2,7 +2,6 @@ package chessminimax
 
 import (
 	"errors"
-	"math"
 
 	models "github.com/thewizardplusplus/go-chess-models"
 )
@@ -28,12 +27,6 @@ type MoveGenerator interface {
 	) []models.Move
 }
 
-// ScoredMove ...
-type ScoredMove struct {
-	Move  models.Move
-	Score float64
-}
-
 // MoveSearcher ...
 type MoveSearcher interface {
 	SearchMove(
@@ -56,10 +49,6 @@ var (
 	ErrCheck     = errors.New("check")
 	ErrCheckmate = errors.New("checkmate")
 	ErrDraw      = errors.New("draw")
-)
-
-var (
-	initialScore = math.Inf(-1)
 )
 
 // NewDefaultMoveSearcher ...
@@ -107,35 +96,30 @@ func (
 		return ScoredMove{}, ErrCheck
 	}
 
-	bestMove := ScoredMove{
-		Score: initialScore,
-	}
+	bestMove := newScoredMove()
 	var hasCheck bool
-	nextColor := color.Negative()
 	for _, move := range moves {
 		nextStorage := storage.ApplyMove(move)
+		nextColor := color.Negative()
 		scoredMove, err :=
 			searcher.searcher.SearchMove(
 				nextStorage,
 				nextColor,
 				deep+1,
 			)
-		switch err {
-		case nil:
-		case ErrCheck:
-			hasCheck = true
-			continue
-		default:
+		if err != nil {
+			if err == ErrCheck {
+				hasCheck = true
+				continue
+			}
+
 			return ScoredMove{}, err
 		}
 
-		score := -scoredMove.Score
-		if bestMove.Score < score {
-			bestMove = ScoredMove{move, score}
-		}
+		bestMove.update(scoredMove, move)
 	}
 	// no moves
-	if bestMove.Score == initialScore {
+	if !bestMove.isUpdated() {
 		if hasCheck {
 			return ScoredMove{}, ErrCheckmate
 		}
