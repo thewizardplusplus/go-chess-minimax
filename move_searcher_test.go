@@ -7,15 +7,26 @@ import (
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
-type MockSearchTerminator struct{}
+type MockSearchTerminator struct {
+	isSearchTerminate func(deep int) bool
+}
 
 func (
 	terminator MockSearchTerminator,
 ) IsSearchTerminate(deep int) bool {
-	panic("not implemented")
+	if terminator.isSearchTerminate == nil {
+		panic("not implemented")
+	}
+
+	return terminator.isSearchTerminate(deep)
 }
 
-type MockBoardEvaluator struct{}
+type MockBoardEvaluator struct {
+	evaluateBoard func(
+		storage models.PieceStorage,
+		color models.Color,
+	) float64
+}
 
 func (
 	evaluator MockBoardEvaluator,
@@ -23,10 +34,22 @@ func (
 	storage models.PieceStorage,
 	color models.Color,
 ) float64 {
-	panic("not implemented")
+	if evaluator.evaluateBoard == nil {
+		panic("not implemented")
+	}
+
+	return evaluator.evaluateBoard(
+		storage,
+		color,
+	)
 }
 
-type MockMoveGenerator struct{}
+type MockMoveGenerator struct {
+	movesForColor func(
+		storage models.PieceStorage,
+		color models.Color,
+	) []models.Move
+}
 
 func (
 	generator MockMoveGenerator,
@@ -34,7 +57,38 @@ func (
 	storage models.PieceStorage,
 	color models.Color,
 ) []models.Move {
-	panic("not implemented")
+	if generator.movesForColor == nil {
+		panic("not implemented")
+	}
+
+	return generator.movesForColor(
+		storage,
+		color,
+	)
+}
+
+type MockMoveSearcher struct {
+	searchMove func(
+		storage models.PieceStorage,
+		color models.Color,
+		deep int,
+	) (ScoredMove, error)
+}
+
+func (searcher MockMoveSearcher) SearchMove(
+	storage models.PieceStorage,
+	color models.Color,
+	deep int,
+) (ScoredMove, error) {
+	if searcher.searchMove == nil {
+		panic("not implemented")
+	}
+
+	return searcher.searchMove(
+		storage,
+		color,
+		deep,
+	)
 }
 
 func TestMoveGeneratorInterface(
