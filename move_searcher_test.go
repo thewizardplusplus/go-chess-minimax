@@ -158,3 +158,52 @@ func TestNewDefaultMoveSearcher(
 		test.Fail()
 	}
 }
+
+func TestDefaultMoveSearcherSearchMove(
+	test *testing.T,
+) {
+	type fields struct {
+		terminator SearchTerminator
+		evaluator  BoardEvaluator
+		generator  MoveGenerator
+		searcher   MoveSearcher
+	}
+	type args struct {
+		storage models.PieceStorage
+		color   models.Color
+		deep    int
+	}
+	type data struct {
+		fields   fields
+		args     args
+		wantMove ScoredMove
+		wantErr  error
+	}
+
+	for _, data := range []data{} {
+		searcher := DefaultMoveSearcher{
+			terminator: data.fields.terminator,
+			evaluator:  data.fields.evaluator,
+			generator:  data.fields.generator,
+			searcher:   data.fields.searcher,
+		}
+		gotMove, gotErr := searcher.SearchMove(
+			data.args.storage,
+			data.args.color,
+			data.args.deep,
+		)
+
+		if !reflect.DeepEqual(
+			gotMove,
+			data.wantMove,
+		) {
+			test.Fail()
+		}
+		if !reflect.DeepEqual(
+			gotErr,
+			data.wantErr,
+		) {
+			test.Fail()
+		}
+	}
+}
