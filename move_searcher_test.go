@@ -8,7 +8,8 @@ import (
 )
 
 type MockPieceStorage struct {
-	applyMove func(
+	appliedMove models.Move
+	applyMove   func(
 		move models.Move,
 	) models.PieceStorage
 	checkMoves func(
@@ -35,7 +36,11 @@ func (storage MockPieceStorage) ApplyMove(
 		panic("not implemented")
 	}
 
-	return storage.applyMove(move)
+	nextStorage := storage.
+		applyMove(move).(MockPieceStorage)
+	nextStorage.appliedMove = move
+
+	return nextStorage
 }
 
 func (storage MockPieceStorage) CheckMove(
@@ -345,6 +350,188 @@ func TestDefaultMoveSearcherSearchMove(
 			},
 			wantMove: ScoredMove{},
 			wantErr:  ErrCheck,
+		},
+		data{
+			fields: fields{
+				terminator: MockSearchTerminator{
+					isSearchTerminate: func(
+						deep int,
+					) bool {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return false
+					},
+				},
+				generator: MockMoveGenerator{
+					movesForColor: func(
+						storage models.PieceStorage,
+						color models.Color,
+					) []models.Move {
+						mock, ok :=
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+						if mock.checkMoves == nil {
+							test.Fail()
+						}
+						if color != models.White {
+							test.Fail()
+						}
+
+						return []models.Move{
+							models.Move{
+								Start: models.Position{
+									File: 1,
+									Rank: 2,
+								},
+								Finish: models.Position{
+									File: 3,
+									Rank: 4,
+								},
+							},
+							models.Move{
+								Start: models.Position{
+									File: 5,
+									Rank: 6,
+								},
+								Finish: models.Position{
+									File: 7,
+									Rank: 8,
+								},
+							},
+						}
+					},
+				},
+				searcher: MockMoveSearcher{
+					searchMove: func(
+						storage models.PieceStorage,
+						color models.Color,
+						deep int,
+					) (ScoredMove, error) {
+						checkOne := reflect.DeepEqual(
+							storage,
+							MockPieceStorage{
+								appliedMove: models.Move{
+									Start: models.Position{
+										File: 1,
+										Rank: 2,
+									},
+									Finish: models.Position{
+										File: 3,
+										Rank: 4,
+									},
+								},
+							},
+						)
+						checkTwo := reflect.DeepEqual(
+							storage,
+							MockPieceStorage{
+								appliedMove: models.Move{
+									Start: models.Position{
+										File: 5,
+										Rank: 6,
+									},
+									Finish: models.Position{
+										File: 7,
+										Rank: 8,
+									},
+								},
+							},
+						)
+						if !checkOne && !checkTwo {
+							test.Fail()
+						}
+						if color != models.Black {
+							test.Fail()
+						}
+						if deep != 3 {
+							test.Fail()
+						}
+
+						return ScoredMove{}, ErrCheck
+					},
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{
+					applyMove: func(
+						move models.Move,
+					) models.PieceStorage {
+						checkOne := reflect.DeepEqual(
+							move,
+							models.Move{
+								Start: models.Position{
+									File: 1,
+									Rank: 2,
+								},
+								Finish: models.Position{
+									File: 3,
+									Rank: 4,
+								},
+							},
+						)
+						checkTwo := reflect.DeepEqual(
+							move,
+							models.Move{
+								Start: models.Position{
+									File: 5,
+									Rank: 6,
+								},
+								Finish: models.Position{
+									File: 7,
+									Rank: 8,
+								},
+							},
+						)
+						if !checkOne && !checkTwo {
+							test.Fail()
+						}
+
+						return MockPieceStorage{}
+					},
+					checkMoves: func(
+						moves []models.Move,
+					) error {
+						expectedMoves := []models.Move{
+							models.Move{
+								Start: models.Position{
+									File: 1,
+									Rank: 2,
+								},
+								Finish: models.Position{
+									File: 3,
+									Rank: 4,
+								},
+							},
+							models.Move{
+								Start: models.Position{
+									File: 5,
+									Rank: 6,
+								},
+								Finish: models.Position{
+									File: 7,
+									Rank: 8,
+								},
+							},
+						}
+						if !reflect.DeepEqual(
+							moves,
+							expectedMoves,
+						) {
+							test.Fail()
+						}
+
+						return nil
+					},
+				},
+				color: models.White,
+				deep:  2,
+			},
+			wantMove: ScoredMove{},
+			wantErr:  ErrCheckmate,
 		},
 	} {
 		searcher := DefaultMoveSearcher{
