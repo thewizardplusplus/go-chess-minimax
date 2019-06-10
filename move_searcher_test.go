@@ -7,6 +7,53 @@ import (
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
+type MockPieceStorage struct {
+	applyMove func(
+		move models.Move,
+	) models.PieceStorage
+	checkMoves func(
+		moves []models.Move,
+	) error
+}
+
+func (
+	storage MockPieceStorage,
+) Size() models.Size {
+	panic("not implemented")
+}
+
+func (
+	storage MockPieceStorage,
+) Pieces() []models.Piece {
+	panic("not implemented")
+}
+
+func (storage MockPieceStorage) ApplyMove(
+	move models.Move,
+) models.PieceStorage {
+	if storage.applyMove == nil {
+		panic("not implemented")
+	}
+
+	return storage.applyMove(move)
+}
+
+func (storage MockPieceStorage) CheckMove(
+	move models.Move,
+) error {
+	panic("not implemented")
+}
+
+func (storage MockPieceStorage) CheckMoves(
+	moves []models.Move,
+) error {
+	if storage.checkMoves == nil {
+		panic("not implemented")
+	}
+
+	return storage.checkMoves(moves)
+}
+
 type MockSearchTerminator struct {
 	isSearchTerminate func(deep int) bool
 }
@@ -180,7 +227,48 @@ func TestDefaultMoveSearcherSearchMove(
 		wantErr  error
 	}
 
-	for _, data := range []data{} {
+	for _, data := range []data{
+		data{
+			fields: fields{
+				terminator: MockSearchTerminator{
+					isSearchTerminate: func(
+						deep int,
+					) bool {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return true
+					},
+				},
+				evaluator: MockBoardEvaluator{
+					evaluateBoard: func(
+						storage models.PieceStorage,
+						color models.Color,
+					) float64 {
+						if !reflect.DeepEqual(
+							storage,
+							MockPieceStorage{},
+						) {
+							test.Fail()
+						}
+						if color != models.White {
+							test.Fail()
+						}
+
+						return 2.3
+					},
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{},
+				color:   models.White,
+				deep:    2,
+			},
+			wantMove: ScoredMove{Score: 2.3},
+			wantErr:  nil,
+		},
+	} {
 		searcher := DefaultMoveSearcher{
 			terminator: data.fields.terminator,
 			evaluator:  data.fields.evaluator,
