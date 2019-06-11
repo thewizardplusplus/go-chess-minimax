@@ -497,7 +497,7 @@ func TestDefaultMoveSearcherSearchMove(
 							test.Fail()
 						}
 
-						// all moves -> error
+						// all moves -> check
 						return ScoredMove{}, ErrCheck
 					},
 				},
@@ -685,7 +685,7 @@ func TestDefaultMoveSearcherSearchMove(
 							test.Fail()
 						}
 
-						// move two -> error
+						// move two -> check
 						if checkTwo {
 							return ScoredMove{}, ErrCheck
 						}
@@ -996,6 +996,168 @@ func TestDefaultMoveSearcherSearchMove(
 				Score: -2.3,
 			},
 			wantErr: nil,
+		},
+		data{
+			fields: fields{
+				generator: MockMoveGenerator{
+					movesForColor: func(
+						storage models.PieceStorage,
+						color models.Color,
+					) []models.Move {
+						mock, ok :=
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+						if mock.applyMove == nil {
+							test.Fail()
+						}
+						if mock.checkMoves == nil {
+							test.Fail()
+						}
+						if color != models.White {
+							test.Fail()
+						}
+
+						return []models.Move{
+							models.Move{
+								Start: models.Position{
+									File: 1,
+									Rank: 2,
+								},
+								Finish: models.Position{
+									File: 3,
+									Rank: 4,
+								},
+							},
+							models.Move{
+								Start: models.Position{
+									File: 5,
+									Rank: 6,
+								},
+								Finish: models.Position{
+									File: 7,
+									Rank: 8,
+								},
+							},
+						}
+					},
+				},
+				terminator: MockSearchTerminator{
+					isSearchTerminate: func(
+						deep int,
+					) bool {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return false
+					},
+				},
+				searcher: MockMoveSearcher{
+					searchMove: func(
+						storage models.PieceStorage,
+						color models.Color,
+						deep int,
+					) (ScoredMove, error) {
+						expectedStorage :=
+							MockPieceStorage{
+								appliedMove: models.Move{
+									Start: models.Position{
+										File: 1,
+										Rank: 2,
+									},
+									Finish: models.Position{
+										File: 3,
+										Rank: 4,
+									},
+								},
+							}
+						if !reflect.DeepEqual(
+							storage,
+							expectedStorage,
+						) {
+							test.Fail()
+						}
+						if color != models.Black {
+							test.Fail()
+						}
+						if deep != 3 {
+							test.Fail()
+						}
+
+						// move one -> checkmate
+						var move ScoredMove
+						return move, ErrCheckmate
+					},
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{
+					applyMove: func(
+						move models.Move,
+					) models.PieceStorage {
+						expectedMove := models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						}
+						if !reflect.DeepEqual(
+							move,
+							expectedMove,
+						) {
+							test.Fail()
+						}
+
+						return MockPieceStorage{
+							appliedMove: move,
+						}
+					},
+					checkMoves: func(
+						moves []models.Move,
+					) error {
+						expectedMoves := []models.Move{
+							models.Move{
+								Start: models.Position{
+									File: 1,
+									Rank: 2,
+								},
+								Finish: models.Position{
+									File: 3,
+									Rank: 4,
+								},
+							},
+							models.Move{
+								Start: models.Position{
+									File: 5,
+									Rank: 6,
+								},
+								Finish: models.Position{
+									File: 7,
+									Rank: 8,
+								},
+							},
+						}
+						if !reflect.DeepEqual(
+							moves,
+							expectedMoves,
+						) {
+							test.Fail()
+						}
+
+						return nil
+					},
+				},
+				color: models.White,
+				deep:  2,
+			},
+			wantMove: ScoredMove{},
+			wantErr:  ErrCheckmate,
 		},
 	} {
 		searcher := DefaultMoveSearcher{
