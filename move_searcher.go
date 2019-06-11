@@ -6,6 +6,14 @@ import (
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
+// MoveGenerator ...
+type MoveGenerator interface {
+	MovesForColor(
+		storage models.PieceStorage,
+		color models.Color,
+	) []models.Move
+}
+
 // SearchTerminator ...
 type SearchTerminator interface {
 	IsSearchTerminate(deep int) bool
@@ -19,14 +27,6 @@ type BoardEvaluator interface {
 	) float64
 }
 
-// MoveGenerator ...
-type MoveGenerator interface {
-	MovesForColor(
-		storage models.PieceStorage,
-		color models.Color,
-	) []models.Move
-}
-
 // MoveSearcher ...
 type MoveSearcher interface {
 	SearchMove(
@@ -38,9 +38,9 @@ type MoveSearcher interface {
 
 // DefaultMoveSearcher ...
 type DefaultMoveSearcher struct {
+	generator  MoveGenerator
 	terminator SearchTerminator
 	evaluator  BoardEvaluator
-	generator  MoveGenerator
 	searcher   MoveSearcher
 }
 
@@ -53,17 +53,17 @@ var (
 
 // NewDefaultMoveSearcher ...
 func NewDefaultMoveSearcher(
+	generator MoveGenerator,
 	terminator SearchTerminator,
 	evaluator BoardEvaluator,
-	generator MoveGenerator,
 ) *DefaultMoveSearcher {
 	// instance must be created in a heap
 	// so that it's possible to add
 	// a reference to itself inside
 	searcher := &DefaultMoveSearcher{
+		generator:  generator,
 		terminator: terminator,
 		evaluator:  evaluator,
-		generator:  generator,
 	}
 
 	// use a reference to itself
@@ -81,19 +81,23 @@ func (
 	color models.Color,
 	deep int,
 ) (ScoredMove, error) {
+	// check for a check should be first,
+	// including before a termination check,
+	// because a terminated evaluation
+	// doesn't make sense for a check position
+	moves := searcher.generator.
+		MovesForColor(storage, color)
+	err := storage.CheckMoves(moves)
+	if err != nil {
+		return ScoredMove{}, ErrCheck
+	}
+
 	ok := searcher.terminator.
 		IsSearchTerminate(deep)
 	if ok {
 		score := searcher.evaluator.
 			EvaluateBoard(storage, color)
 		return ScoredMove{Score: score}, nil
-	}
-
-	moves := searcher.generator.
-		MovesForColor(storage, color)
-	err := storage.CheckMoves(moves)
-	if err != nil {
-		return ScoredMove{}, ErrCheck
 	}
 
 	bestMove := newScoredMove()
