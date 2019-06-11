@@ -1159,6 +1159,58 @@ func TestDefaultMoveSearcherSearchMove(
 			wantMove: ScoredMove{},
 			wantErr:  ErrCheckmate,
 		},
+		data{
+			fields: fields{
+				generator: MockMoveGenerator{
+					movesForColor: func(
+						storage models.PieceStorage,
+						color models.Color,
+					) []models.Move {
+						mock, ok :=
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+						if mock.checkMoves == nil {
+							test.Fail()
+						}
+						if color != models.White {
+							test.Fail()
+						}
+
+						return nil
+					},
+				},
+				terminator: MockSearchTerminator{
+					isSearchTerminate: func(
+						deep int,
+					) bool {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return false
+					},
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{
+					checkMoves: func(
+						moves []models.Move,
+					) error {
+						if moves != nil {
+							test.Fail()
+						}
+
+						return nil
+					},
+				},
+				color: models.White,
+				deep:  2,
+			},
+			wantMove: ScoredMove{},
+			wantErr:  ErrDraw,
+		},
 	} {
 		searcher := DefaultMoveSearcher{
 			generator:  data.fields.generator,
