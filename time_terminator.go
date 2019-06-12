@@ -6,18 +6,21 @@ import (
 
 // TimeTerminator ...
 type TimeTerminator struct {
-	startTime       time.Time
+	clock           func() time.Time
 	maximalDuration time.Duration
+	startTime       time.Time
 }
 
 // NewTimeTerminator ...
 func NewTimeTerminator(
+	clock func() time.Time,
 	maximalDuration time.Duration,
 ) TimeTerminator {
-	startTime := time.Now()
+	startTime := clock()
 	return TimeTerminator{
-		startTime:       startTime,
+		clock:           clock,
 		maximalDuration: maximalDuration,
+		startTime:       startTime,
 	}
 }
 
@@ -25,7 +28,8 @@ func NewTimeTerminator(
 func (
 	terminator TimeTerminator,
 ) IsSearchTerminate(deep int) bool {
-	duration := time.Since(
+	currentTime := terminator.clock()
+	duration := currentTime.Sub(
 		terminator.startTime,
 	)
 	return duration >=
