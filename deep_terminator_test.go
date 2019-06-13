@@ -44,9 +44,9 @@ func TestDeepTerminatorIsSearchTerminate(
 			want:   true,
 		},
 	} {
-		terminator := NewDeepTerminator(
-			data.fields.maximalDeep,
-		)
+		terminator := DeepTerminator{
+			maximalDeep: data.fields.maximalDeep,
+		}
 		got := terminator.IsSearchTerminate(
 			data.args.deep,
 		)

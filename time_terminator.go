@@ -4,16 +4,19 @@ import (
 	"time"
 )
 
+// Clock ...
+type Clock func() time.Time
+
 // TimeTerminator ...
 type TimeTerminator struct {
-	clock           func() time.Time
+	clock           Clock
 	maximalDuration time.Duration
 	startTime       time.Time
 }
 
 // NewTimeTerminator ...
 func NewTimeTerminator(
-	clock func() time.Time,
+	clock Clock,
 	maximalDuration time.Duration,
 ) TimeTerminator {
 	startTime := clock()
