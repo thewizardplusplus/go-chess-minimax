@@ -20,6 +20,9 @@ type SearchTerminator interface {
 }
 
 // BoardEvaluator ...
+//
+// It should be a symmetric evaluation
+// in relation to a side to move.
 type BoardEvaluator interface {
 	EvaluateBoard(
 		storage models.PieceStorage,
