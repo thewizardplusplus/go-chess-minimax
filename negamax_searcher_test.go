@@ -8,9 +8,10 @@ import (
 )
 
 type MockPieceStorage struct {
-	pieces      func() []models.Piece
 	appliedMove models.Move
-	applyMove   func(
+
+	pieces    func() []models.Piece
+	applyMove func(
 		move models.Move,
 	) models.PieceStorage
 	checkMoves func(
@@ -128,7 +129,9 @@ type MockMoveSearcher struct {
 	) (ScoredMove, error)
 }
 
-func (searcher MockMoveSearcher) SearchMove(
+func (
+	searcher MockMoveSearcher,
+) SearchMove(
 	storage models.PieceStorage,
 	color models.Color,
 	deep int,
@@ -162,7 +165,7 @@ func TestMoveSearcherInterface(
 	test *testing.T,
 ) {
 	gotType := reflect.TypeOf(
-		DefaultMoveSearcher{},
+		NegamaxSearcher{},
 	)
 	wantType := reflect.
 		TypeOf((*MoveSearcher)(nil)).
@@ -172,13 +175,13 @@ func TestMoveSearcherInterface(
 	}
 }
 
-func TestNewDefaultMoveSearcher(
+func TestNewNegamaxSearcher(
 	test *testing.T,
 ) {
 	var generator MockMoveGenerator
 	var terminator MockSearchTerminator
 	var evaluator MockBoardEvaluator
-	searcher := NewDefaultMoveSearcher(
+	searcher := NewNegamaxSearcher(
 		generator,
 		terminator,
 		evaluator,
@@ -212,7 +215,7 @@ func TestNewDefaultMoveSearcher(
 	}
 }
 
-func TestDefaultMoveSearcherSearchMove(
+func TestNegamaxSearcherSearchMove(
 	test *testing.T,
 ) {
 	type fields struct {
@@ -1217,7 +1220,7 @@ func TestDefaultMoveSearcherSearchMove(
 			wantErr:  ErrDraw,
 		},
 	} {
-		searcher := DefaultMoveSearcher{
+		searcher := NegamaxSearcher{
 			generator:  data.fields.generator,
 			terminator: data.fields.terminator,
 			evaluator:  data.fields.evaluator,

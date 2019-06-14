@@ -36,8 +36,8 @@ type MoveSearcher interface {
 	) (ScoredMove, error)
 }
 
-// DefaultMoveSearcher ...
-type DefaultMoveSearcher struct {
+// NegamaxSearcher ...
+type NegamaxSearcher struct {
 	generator  MoveGenerator
 	terminator SearchTerminator
 	evaluator  BoardEvaluator
@@ -51,16 +51,16 @@ var (
 	ErrDraw      = errors.New("draw")
 )
 
-// NewDefaultMoveSearcher ...
-func NewDefaultMoveSearcher(
+// NewNegamaxSearcher ...
+func NewNegamaxSearcher(
 	generator MoveGenerator,
 	terminator SearchTerminator,
 	evaluator BoardEvaluator,
-) *DefaultMoveSearcher {
+) *NegamaxSearcher {
 	// instance must be created in a heap
 	// so that it's possible to add
 	// a reference to itself inside
-	searcher := &DefaultMoveSearcher{
+	searcher := &NegamaxSearcher{
 		generator:  generator,
 		terminator: terminator,
 		evaluator:  evaluator,
@@ -74,9 +74,7 @@ func NewDefaultMoveSearcher(
 }
 
 // SearchMove ...
-func (
-	searcher DefaultMoveSearcher,
-) SearchMove(
+func (searcher NegamaxSearcher) SearchMove(
 	storage models.PieceStorage,
 	color models.Color,
 	deep int,

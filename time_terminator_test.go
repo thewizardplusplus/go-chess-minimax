@@ -6,17 +6,6 @@ import (
 	"time"
 )
 
-func clock() time.Time {
-	year, month, day := 2006, time.January, 2
-	hour, minute, second := 15, 4, 5
-	return time.Date(
-		year, month, day,
-		hour, minute, second,
-		0,        // nanosecond
-		time.UTC, // location
-	)
-}
-
 func TestClockType(test *testing.T) {
 	gotType := reflect.TypeOf(time.Now)
 	wantType := reflect.
@@ -124,4 +113,15 @@ func TestTimeTerminatorIsSearchTerminate(
 			test.Fail()
 		}
 	}
+}
+
+func clock() time.Time {
+	year, month, day := 2006, time.January, 2
+	hour, minute, second := 15, 4, 5
+	return time.Date(
+		year, month, day,
+		hour, minute, second,
+		0,        // nanosecond
+		time.UTC, // location
+	)
 }
