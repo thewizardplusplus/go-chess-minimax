@@ -8,6 +8,7 @@ import (
 )
 
 type MockPieceStorage struct {
+	pieces      func() []models.Piece
 	appliedMove models.Move
 	applyMove   func(
 		move models.Move,
@@ -26,7 +27,11 @@ func (
 func (
 	storage MockPieceStorage,
 ) Pieces() []models.Piece {
-	panic("not implemented")
+	if storage.pieces == nil {
+		panic("not implemented")
+	}
+
+	return storage.pieces()
 }
 
 func (storage MockPieceStorage) ApplyMove(

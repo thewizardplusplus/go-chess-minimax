@@ -60,7 +60,92 @@ func TestMaterialEvaluatorEvaluateBoard(
 		want float64
 	}
 
-	for _, data := range []data{} {
+	for _, data := range []data{
+		data{
+			args: args{
+				storage: MockPieceStorage{
+					pieces: func() []models.Piece {
+						return []models.Piece{
+							MockPiece{
+								kind: func() models.Kind {
+									return models.Queen
+								},
+								color: func() models.Color {
+									return models.White
+								},
+							},
+							MockPiece{
+								kind: func() models.Kind {
+									return models.Rook
+								},
+								color: func() models.Color {
+									return models.White
+								},
+							},
+						}
+					},
+				},
+				color: models.White,
+			},
+			want: 14,
+		},
+		data{
+			args: args{
+				storage: MockPieceStorage{
+					pieces: func() []models.Piece {
+						return []models.Piece{
+							MockPiece{
+								kind: func() models.Kind {
+									return models.Queen
+								},
+								color: func() models.Color {
+									return models.White
+								},
+							},
+							MockPiece{
+								kind: func() models.Kind {
+									return models.Rook
+								},
+								color: func() models.Color {
+									return models.Black
+								},
+							},
+						}
+					},
+				},
+				color: models.White,
+			},
+			want: 4,
+		},
+		data{
+			args: args{
+				storage: MockPieceStorage{
+					pieces: func() []models.Piece {
+						return []models.Piece{
+							MockPiece{
+								kind: func() models.Kind {
+									return models.Queen
+								},
+								color: func() models.Color {
+									return models.Black
+								},
+							},
+							MockPiece{
+								kind: func() models.Kind {
+									return models.Rook
+								},
+								color: func() models.Color {
+									return models.Black
+								},
+							},
+						}
+					},
+				},
+				color: models.White,
+			},
+			want: -14,
+		},
+	} {
 		var evaluator MaterialEvaluator
 		got := evaluator.EvaluateBoard(
 			data.args.storage,
