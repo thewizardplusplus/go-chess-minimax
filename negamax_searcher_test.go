@@ -347,7 +347,153 @@ func TestNegamaxSearcherSearchMove(
 						if mock.applyMove == nil {
 							test.Fail()
 						}
-						if color != models.White {
+
+						moves := []models.Move{
+							models.Move{
+								Start: models.Position{
+									File: 1,
+									Rank: 2,
+								},
+								Finish: models.Position{
+									File: 3,
+									Rank: 4,
+								},
+							},
+							models.Move{
+								Start: models.Position{
+									File: 5,
+									Rank: 6,
+								},
+								Finish: models.Position{
+									File: 7,
+									Rank: 8,
+								},
+							},
+						}
+						return moves, nil
+					},
+				},
+				terminator: MockSearchTerminator{
+					isSearchTerminate: func(
+						deep int,
+					) bool {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return false
+					},
+				},
+				searcher: MockMoveSearcher{
+					searchMove: func(
+						storage models.PieceStorage,
+						color models.Color,
+						deep int,
+					) (ScoredMove, error) {
+						checkOne := reflect.DeepEqual(
+							storage,
+							MockPieceStorage{
+								appliedMove: models.Move{
+									Start: models.Position{
+										File: 1,
+										Rank: 2,
+									},
+									Finish: models.Position{
+										File: 3,
+										Rank: 4,
+									},
+								},
+							},
+						)
+						checkTwo := reflect.DeepEqual(
+							storage,
+							MockPieceStorage{
+								appliedMove: models.Move{
+									Start: models.Position{
+										File: 5,
+										Rank: 6,
+									},
+									Finish: models.Position{
+										File: 7,
+										Rank: 8,
+									},
+								},
+							},
+						)
+						if !checkOne && !checkTwo {
+							test.Fail()
+						}
+						if color != models.Black {
+							test.Fail()
+						}
+						if deep != 3 {
+							test.Fail()
+						}
+
+						// all moves -> check
+						return ScoredMove{}, ErrCheck
+					},
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{
+					applyMove: func(
+						move models.Move,
+					) models.PieceStorage {
+						checkOne := reflect.DeepEqual(
+							move,
+							models.Move{
+								Start: models.Position{
+									File: 1,
+									Rank: 2,
+								},
+								Finish: models.Position{
+									File: 3,
+									Rank: 4,
+								},
+							},
+						)
+						checkTwo := reflect.DeepEqual(
+							move,
+							models.Move{
+								Start: models.Position{
+									File: 5,
+									Rank: 6,
+								},
+								Finish: models.Position{
+									File: 7,
+									Rank: 8,
+								},
+							},
+						)
+						if !checkOne && !checkTwo {
+							test.Fail()
+						}
+
+						return MockPieceStorage{
+							appliedMove: move,
+						}
+					},
+				},
+				color: models.White,
+				deep:  2,
+			},
+			wantMove: ScoredMove{},
+			wantErr:  ErrDraw,
+		},
+		data{
+			fields: fields{
+				generator: MockSafeMoveGenerator{
+					movesForColor: func(
+						storage models.PieceStorage,
+						color models.Color,
+					) ([]models.Move, error) {
+						mock, ok :=
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+						if mock.applyMove == nil {
 							test.Fail()
 						}
 
@@ -373,7 +519,16 @@ func TestNegamaxSearcherSearchMove(
 								},
 							},
 						}
-						return moves, nil
+
+						var err error
+						// black color means
+						// a repeat call for checking,
+						// if a king is under an attack
+						if color == models.Black {
+							err = models.ErrKingCapture
+						}
+
+						return moves, err
 					},
 				},
 				terminator: MockSearchTerminator{

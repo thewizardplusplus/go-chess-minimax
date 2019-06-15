@@ -92,10 +92,10 @@ func (searcher NegamaxSearcher) SearchMove(
 	}
 
 	bestMove := newScoredMove()
+	nextColor := color.Negative()
 	var hasCheck bool
 	for _, move := range moves {
 		nextStorage := storage.ApplyMove(move)
-		nextColor := color.Negative()
 		scoredMove, err :=
 			searcher.searcher.SearchMove(
 				nextStorage,
@@ -116,7 +116,12 @@ func (searcher NegamaxSearcher) SearchMove(
 	// no moves
 	if !bestMove.isUpdated() {
 		if hasCheck {
-			return ScoredMove{}, ErrCheckmate
+			// check, if a king is under an attack
+			_, err := searcher.generator.
+				MovesForColor(storage, nextColor)
+			if err != nil {
+				return ScoredMove{}, ErrCheckmate
+			}
 		}
 
 		return ScoredMove{}, ErrDraw
