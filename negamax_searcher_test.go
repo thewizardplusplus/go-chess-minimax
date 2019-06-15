@@ -61,6 +61,29 @@ func (storage MockPieceStorage) CheckMoves(
 	return storage.checkMoves(moves)
 }
 
+type MockSafeMoveGenerator struct {
+	movesForColor func(
+		storage models.PieceStorage,
+		color models.Color,
+	) ([]models.Move, error)
+}
+
+func (
+	generator MockSafeMoveGenerator,
+) MovesForColor(
+	storage models.PieceStorage,
+	color models.Color,
+) ([]models.Move, error) {
+	if generator.movesForColor == nil {
+		panic("not implemented")
+	}
+
+	return generator.movesForColor(
+		storage,
+		color,
+	)
+}
+
 type MockSearchTerminator struct {
 	isSearchTerminate func(deep int) bool
 }
@@ -141,7 +164,7 @@ func TestMoveSearcherInterface(
 func TestNewNegamaxSearcher(
 	test *testing.T,
 ) {
-	var generator MockMoveGenerator
+	var generator MockSafeMoveGenerator
 	var terminator MockSearchTerminator
 	var evaluator MockBoardEvaluator
 	searcher := NewNegamaxSearcher(
@@ -182,7 +205,7 @@ func TestNegamaxSearcherSearchMove(
 	test *testing.T,
 ) {
 	type fields struct {
-		generator  MoveGenerator
+		generator  SafeMoveGenerator
 		terminator SearchTerminator
 		evaluator  BoardEvaluator
 		searcher   MoveSearcher
@@ -202,24 +225,21 @@ func TestNegamaxSearcherSearchMove(
 	for _, data := range []data{
 		data{
 			fields: fields{
-				generator: MockMoveGenerator{
+				generator: MockSafeMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) []models.Move {
-						mock, ok :=
+					) ([]models.Move, error) {
+						_, ok :=
 							storage.(MockPieceStorage)
 						if !ok {
-							test.Fail()
-						}
-						if mock.checkMoves == nil {
 							test.Fail()
 						}
 						if color != models.White {
 							test.Fail()
 						}
 
-						return []models.Move{
+						moves := []models.Move{
 							models.Move{
 								Start: models.Position{
 									File: 1,
@@ -231,62 +251,36 @@ func TestNegamaxSearcherSearchMove(
 								},
 							},
 						}
+						return moves,
+							models.ErrKingCapture
 					},
 				},
 			},
 			args: args{
-				storage: MockPieceStorage{
-					checkMoves: func(
-						moves []models.Move,
-					) error {
-						expectedMoves := []models.Move{
-							models.Move{
-								Start: models.Position{
-									File: 1,
-									Rank: 2,
-								},
-								Finish: models.Position{
-									File: 3,
-									Rank: 4,
-								},
-							},
-						}
-						if !reflect.DeepEqual(
-							moves,
-							expectedMoves,
-						) {
-							test.Fail()
-						}
-
-						return models.ErrKingCapture
-					},
-				},
-				color: models.White,
-				deep:  2,
+				storage: MockPieceStorage{},
+				color:   models.White,
+				deep:    2,
 			},
 			wantMove: ScoredMove{},
 			wantErr:  ErrCheck,
 		},
 		data{
 			fields: fields{
-				generator: MockMoveGenerator{
+				generator: MockSafeMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) []models.Move {
-						mock, ok :=
+					) ([]models.Move, error) {
+						_, ok :=
 							storage.(MockPieceStorage)
 						if !ok {
-							test.Fail()
-						}
-						if mock.checkMoves == nil {
 							test.Fail()
 						}
 						if color != models.White {
 							test.Fail()
 						}
 
-						return []models.Move{
+						moves := []models.Move{
 							models.Move{
 								Start: models.Position{
 									File: 1,
@@ -298,6 +292,7 @@ func TestNegamaxSearcherSearchMove(
 								},
 							},
 						}
+						return moves, nil
 					},
 				},
 				terminator: MockSearchTerminator{
@@ -316,12 +311,9 @@ func TestNegamaxSearcherSearchMove(
 						storage models.PieceStorage,
 						color models.Color,
 					) float64 {
-						mock, ok :=
+						_, ok :=
 							storage.(MockPieceStorage)
 						if !ok {
-							test.Fail()
-						}
-						if mock.checkMoves == nil {
 							test.Fail()
 						}
 						if color != models.White {
@@ -333,45 +325,20 @@ func TestNegamaxSearcherSearchMove(
 				},
 			},
 			args: args{
-				storage: MockPieceStorage{
-					checkMoves: func(
-						moves []models.Move,
-					) error {
-						expectedMoves := []models.Move{
-							models.Move{
-								Start: models.Position{
-									File: 1,
-									Rank: 2,
-								},
-								Finish: models.Position{
-									File: 3,
-									Rank: 4,
-								},
-							},
-						}
-						if !reflect.DeepEqual(
-							moves,
-							expectedMoves,
-						) {
-							test.Fail()
-						}
-
-						return nil
-					},
-				},
-				color: models.White,
-				deep:  2,
+				storage: MockPieceStorage{},
+				color:   models.White,
+				deep:    2,
 			},
 			wantMove: ScoredMove{Score: 2.3},
 			wantErr:  nil,
 		},
 		data{
 			fields: fields{
-				generator: MockMoveGenerator{
+				generator: MockSafeMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) []models.Move {
+					) ([]models.Move, error) {
 						mock, ok :=
 							storage.(MockPieceStorage)
 						if !ok {
@@ -380,14 +347,11 @@ func TestNegamaxSearcherSearchMove(
 						if mock.applyMove == nil {
 							test.Fail()
 						}
-						if mock.checkMoves == nil {
-							test.Fail()
-						}
 						if color != models.White {
 							test.Fail()
 						}
 
-						return []models.Move{
+						moves := []models.Move{
 							models.Move{
 								Start: models.Position{
 									File: 1,
@@ -409,6 +373,7 @@ func TestNegamaxSearcherSearchMove(
 								},
 							},
 						}
+						return moves, nil
 					},
 				},
 				terminator: MockSearchTerminator{
@@ -512,40 +477,6 @@ func TestNegamaxSearcherSearchMove(
 							appliedMove: move,
 						}
 					},
-					checkMoves: func(
-						moves []models.Move,
-					) error {
-						expectedMoves := []models.Move{
-							models.Move{
-								Start: models.Position{
-									File: 1,
-									Rank: 2,
-								},
-								Finish: models.Position{
-									File: 3,
-									Rank: 4,
-								},
-							},
-							models.Move{
-								Start: models.Position{
-									File: 5,
-									Rank: 6,
-								},
-								Finish: models.Position{
-									File: 7,
-									Rank: 8,
-								},
-							},
-						}
-						if !reflect.DeepEqual(
-							moves,
-							expectedMoves,
-						) {
-							test.Fail()
-						}
-
-						return nil
-					},
 				},
 				color: models.White,
 				deep:  2,
@@ -555,11 +486,11 @@ func TestNegamaxSearcherSearchMove(
 		},
 		data{
 			fields: fields{
-				generator: MockMoveGenerator{
+				generator: MockSafeMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) []models.Move {
+					) ([]models.Move, error) {
 						mock, ok :=
 							storage.(MockPieceStorage)
 						if !ok {
@@ -568,14 +499,11 @@ func TestNegamaxSearcherSearchMove(
 						if mock.applyMove == nil {
 							test.Fail()
 						}
-						if mock.checkMoves == nil {
-							test.Fail()
-						}
 						if color != models.White {
 							test.Fail()
 						}
 
-						return []models.Move{
+						moves := []models.Move{
 							models.Move{
 								Start: models.Position{
 									File: 1,
@@ -597,6 +525,7 @@ func TestNegamaxSearcherSearchMove(
 								},
 							},
 						}
+						return moves, nil
 					},
 				},
 				terminator: MockSearchTerminator{
@@ -706,40 +635,6 @@ func TestNegamaxSearcherSearchMove(
 							appliedMove: move,
 						}
 					},
-					checkMoves: func(
-						moves []models.Move,
-					) error {
-						expectedMoves := []models.Move{
-							models.Move{
-								Start: models.Position{
-									File: 1,
-									Rank: 2,
-								},
-								Finish: models.Position{
-									File: 3,
-									Rank: 4,
-								},
-							},
-							models.Move{
-								Start: models.Position{
-									File: 5,
-									Rank: 6,
-								},
-								Finish: models.Position{
-									File: 7,
-									Rank: 8,
-								},
-							},
-						}
-						if !reflect.DeepEqual(
-							moves,
-							expectedMoves,
-						) {
-							test.Fail()
-						}
-
-						return nil
-					},
 				},
 				color: models.White,
 				deep:  2,
@@ -761,11 +656,11 @@ func TestNegamaxSearcherSearchMove(
 		},
 		data{
 			fields: fields{
-				generator: MockMoveGenerator{
+				generator: MockSafeMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) []models.Move {
+					) ([]models.Move, error) {
 						mock, ok :=
 							storage.(MockPieceStorage)
 						if !ok {
@@ -774,14 +669,11 @@ func TestNegamaxSearcherSearchMove(
 						if mock.applyMove == nil {
 							test.Fail()
 						}
-						if mock.checkMoves == nil {
-							test.Fail()
-						}
 						if color != models.White {
 							test.Fail()
 						}
 
-						return []models.Move{
+						moves := []models.Move{
 							models.Move{
 								Start: models.Position{
 									File: 1,
@@ -803,6 +695,7 @@ func TestNegamaxSearcherSearchMove(
 								},
 							},
 						}
+						return moves, nil
 					},
 				},
 				terminator: MockSearchTerminator{
@@ -915,40 +808,6 @@ func TestNegamaxSearcherSearchMove(
 							appliedMove: move,
 						}
 					},
-					checkMoves: func(
-						moves []models.Move,
-					) error {
-						expectedMoves := []models.Move{
-							models.Move{
-								Start: models.Position{
-									File: 1,
-									Rank: 2,
-								},
-								Finish: models.Position{
-									File: 3,
-									Rank: 4,
-								},
-							},
-							models.Move{
-								Start: models.Position{
-									File: 5,
-									Rank: 6,
-								},
-								Finish: models.Position{
-									File: 7,
-									Rank: 8,
-								},
-							},
-						}
-						if !reflect.DeepEqual(
-							moves,
-							expectedMoves,
-						) {
-							test.Fail()
-						}
-
-						return nil
-					},
 				},
 				color: models.White,
 				deep:  2,
@@ -970,11 +829,11 @@ func TestNegamaxSearcherSearchMove(
 		},
 		data{
 			fields: fields{
-				generator: MockMoveGenerator{
+				generator: MockSafeMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) []models.Move {
+					) ([]models.Move, error) {
 						mock, ok :=
 							storage.(MockPieceStorage)
 						if !ok {
@@ -983,14 +842,11 @@ func TestNegamaxSearcherSearchMove(
 						if mock.applyMove == nil {
 							test.Fail()
 						}
-						if mock.checkMoves == nil {
-							test.Fail()
-						}
 						if color != models.White {
 							test.Fail()
 						}
 
-						return []models.Move{
+						moves := []models.Move{
 							models.Move{
 								Start: models.Position{
 									File: 1,
@@ -1012,6 +868,7 @@ func TestNegamaxSearcherSearchMove(
 								},
 							},
 						}
+						return moves, nil
 					},
 				},
 				terminator: MockSearchTerminator{
@@ -1089,40 +946,6 @@ func TestNegamaxSearcherSearchMove(
 							appliedMove: move,
 						}
 					},
-					checkMoves: func(
-						moves []models.Move,
-					) error {
-						expectedMoves := []models.Move{
-							models.Move{
-								Start: models.Position{
-									File: 1,
-									Rank: 2,
-								},
-								Finish: models.Position{
-									File: 3,
-									Rank: 4,
-								},
-							},
-							models.Move{
-								Start: models.Position{
-									File: 5,
-									Rank: 6,
-								},
-								Finish: models.Position{
-									File: 7,
-									Rank: 8,
-								},
-							},
-						}
-						if !reflect.DeepEqual(
-							moves,
-							expectedMoves,
-						) {
-							test.Fail()
-						}
-
-						return nil
-					},
 				},
 				color: models.White,
 				deep:  2,
@@ -1132,24 +955,21 @@ func TestNegamaxSearcherSearchMove(
 		},
 		data{
 			fields: fields{
-				generator: MockMoveGenerator{
+				generator: MockSafeMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) []models.Move {
-						mock, ok :=
+					) ([]models.Move, error) {
+						_, ok :=
 							storage.(MockPieceStorage)
 						if !ok {
-							test.Fail()
-						}
-						if mock.checkMoves == nil {
 							test.Fail()
 						}
 						if color != models.White {
 							test.Fail()
 						}
 
-						return nil
+						return nil, nil
 					},
 				},
 				terminator: MockSearchTerminator{
@@ -1165,19 +985,9 @@ func TestNegamaxSearcherSearchMove(
 				},
 			},
 			args: args{
-				storage: MockPieceStorage{
-					checkMoves: func(
-						moves []models.Move,
-					) error {
-						if moves != nil {
-							test.Fail()
-						}
-
-						return nil
-					},
-				},
-				color: models.White,
-				deep:  2,
+				storage: MockPieceStorage{},
+				color:   models.White,
+				deep:    2,
 			},
 			wantMove: ScoredMove{},
 			wantErr:  ErrDraw,

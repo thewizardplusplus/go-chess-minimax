@@ -33,7 +33,7 @@ type MoveSearcher interface {
 
 // NegamaxSearcher ...
 type NegamaxSearcher struct {
-	generator  MoveGenerator
+	generator  SafeMoveGenerator
 	terminator SearchTerminator
 	evaluator  BoardEvaluator
 	searcher   MoveSearcher
@@ -47,7 +47,7 @@ var (
 
 // NewNegamaxSearcher ...
 func NewNegamaxSearcher(
-	generator MoveGenerator,
+	generator SafeMoveGenerator,
 	terminator SearchTerminator,
 	evaluator BoardEvaluator,
 ) *NegamaxSearcher {
@@ -77,9 +77,8 @@ func (searcher NegamaxSearcher) SearchMove(
 	// including before a termination check,
 	// because a terminated evaluation
 	// doesn't make sense for a check position
-	moves := searcher.generator.
+	moves, err := searcher.generator.
 		MovesForColor(storage, color)
-	err := storage.CheckMoves(moves)
 	if err != nil {
 		return ScoredMove{}, ErrCheck
 	}
