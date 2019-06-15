@@ -30,6 +30,29 @@ func (
 	)
 }
 
+type MockSafeMoveGenerator struct {
+	movesForColor func(
+		storage models.PieceStorage,
+		color models.Color,
+	) ([]models.Move, error)
+}
+
+func (
+	generator MockSafeMoveGenerator,
+) MovesForColor(
+	storage models.PieceStorage,
+	color models.Color,
+) ([]models.Move, error) {
+	if generator.movesForColor == nil {
+		panic("not implemented")
+	}
+
+	return generator.movesForColor(
+		storage,
+		color,
+	)
+}
+
 func TestMoveGeneratorInterface(
 	test *testing.T,
 ) {
