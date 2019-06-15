@@ -6,14 +6,6 @@ import (
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
-// MoveGenerator ...
-type MoveGenerator interface {
-	MovesForColor(
-		storage models.PieceStorage,
-		color models.Color,
-	) []models.Move
-}
-
 // SearchTerminator ...
 type SearchTerminator interface {
 	IsSearchTerminate(deep int) bool
@@ -49,7 +41,6 @@ type NegamaxSearcher struct {
 
 // ...
 var (
-	ErrCheck     = errors.New("check")
 	ErrCheckmate = errors.New("checkmate")
 	ErrDraw      = errors.New("draw")
 )

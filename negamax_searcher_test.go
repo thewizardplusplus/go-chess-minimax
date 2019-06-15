@@ -61,29 +61,6 @@ func (storage MockPieceStorage) CheckMoves(
 	return storage.checkMoves(moves)
 }
 
-type MockMoveGenerator struct {
-	movesForColor func(
-		storage models.PieceStorage,
-		color models.Color,
-	) []models.Move
-}
-
-func (
-	generator MockMoveGenerator,
-) MovesForColor(
-	storage models.PieceStorage,
-	color models.Color,
-) []models.Move {
-	if generator.movesForColor == nil {
-		panic("not implemented")
-	}
-
-	return generator.movesForColor(
-		storage,
-		color,
-	)
-}
-
 type MockSearchTerminator struct {
 	isSearchTerminate func(deep int) bool
 }
@@ -145,20 +122,6 @@ func (
 		color,
 		deep,
 	)
-}
-
-func TestMoveGeneratorInterface(
-	test *testing.T,
-) {
-	gotType := reflect.TypeOf(
-		models.MoveGenerator{},
-	)
-	wantType := reflect.
-		TypeOf((*MoveGenerator)(nil)).
-		Elem()
-	if !gotType.Implements(wantType) {
-		test.Fail()
-	}
 }
 
 func TestMoveSearcherInterface(
