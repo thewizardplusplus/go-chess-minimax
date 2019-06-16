@@ -19,7 +19,17 @@ func TestNegamaxSearcher(test *testing.T) {
 		wantErr  error
 	}
 
-	for _, data := range []data{} {
+	for _, data := range []data{
+		data{
+			args: args{
+				maximalDeep: 0,
+				pieces:      []models.Piece{},
+				color:       models.White,
+			},
+			wantMove: ScoredMove{},
+			wantErr:  nil,
+		},
+	} {
 		generator := NewDefaultMoveGenerator(
 			models.MoveGenerator{},
 		)
@@ -45,12 +55,16 @@ func TestNegamaxSearcher(test *testing.T) {
 			gotMove,
 			data.wantMove,
 		) {
+			test.Log(gotMove)
+			test.Log(data.wantMove)
 			test.Fail()
 		}
 		if !reflect.DeepEqual(
 			gotErr,
 			data.wantErr,
 		) {
+			test.Log(gotErr)
+			test.Log(data.wantErr)
 			test.Fail()
 		}
 	}
