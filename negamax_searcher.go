@@ -109,23 +109,24 @@ func (searcher NegamaxSearcher) SearchMove(
 
 		bestMove.update(scoredMove, move)
 	}
-	// no moves
-	if !bestMove.isUpdated() {
-		if hasCheck {
-			// check, if a king is under an attack
-			_, err := searcher.generator.
-				MovesForColor(storage, nextColor)
-			if err != nil {
-				score := evaluateCheckmate(deep)
-				return ScoredMove{Score: score},
-					ErrCheckmate
-			}
-		}
-
-		return ScoredMove{}, ErrDraw
+	// has a legal move
+	if bestMove.isUpdated() {
+		return bestMove, nil
 	}
 
-	return bestMove, nil
+	// hasn't a legal move
+	if hasCheck {
+		// check, if a king is under an attack
+		_, err := searcher.generator.
+			MovesForColor(storage, nextColor)
+		if err != nil {
+			score := evaluateCheckmate(deep)
+			return ScoredMove{Score: score},
+				ErrCheckmate
+		}
+	}
+
+	return ScoredMove{}, ErrDraw
 }
 
 // it evaluates a score of a checkmate
