@@ -1045,7 +1045,8 @@ func TestNegamaxSearcherSearchMove(
 						color models.Color,
 						deep int,
 					) (ScoredMove, error) {
-						expectedStorage :=
+						checkOne := reflect.DeepEqual(
+							storage,
 							MockPieceStorage{
 								appliedMove: models.Move{
 									Start: models.Position{
@@ -1057,11 +1058,24 @@ func TestNegamaxSearcherSearchMove(
 										Rank: 4,
 									},
 								},
-							}
-						if !reflect.DeepEqual(
+							},
+						)
+						checkTwo := reflect.DeepEqual(
 							storage,
-							expectedStorage,
-						) {
+							MockPieceStorage{
+								appliedMove: models.Move{
+									Start: models.Position{
+										File: 5,
+										Rank: 6,
+									},
+									Finish: models.Position{
+										File: 7,
+										Rank: 8,
+									},
+								},
+							},
+						)
+						if !checkOne && !checkTwo {
 							test.Fail()
 						}
 						if color != models.Black {
@@ -1071,9 +1085,20 @@ func TestNegamaxSearcherSearchMove(
 							test.Fail()
 						}
 
-						// move one -> checkmate
 						var move ScoredMove
-						return move, ErrCheckmate
+						var err error
+						switch true {
+						case checkOne:
+							// move one -> 4.2
+							move.Score = 4.2
+						case checkTwo:
+							// move two -> checkmate
+							move.Score =
+								evaluateCheckmate(3)
+							err = ErrCheckmate
+						}
+
+						return move, err
 					},
 				},
 			},
@@ -1082,20 +1107,33 @@ func TestNegamaxSearcherSearchMove(
 					applyMove: func(
 						move models.Move,
 					) models.PieceStorage {
-						expectedMove := models.Move{
-							Start: models.Position{
-								File: 1,
-								Rank: 2,
-							},
-							Finish: models.Position{
-								File: 3,
-								Rank: 4,
-							},
-						}
-						if !reflect.DeepEqual(
+						checkOne := reflect.DeepEqual(
 							move,
-							expectedMove,
-						) {
+							models.Move{
+								Start: models.Position{
+									File: 1,
+									Rank: 2,
+								},
+								Finish: models.Position{
+									File: 3,
+									Rank: 4,
+								},
+							},
+						)
+						checkTwo := reflect.DeepEqual(
+							move,
+							models.Move{
+								Start: models.Position{
+									File: 5,
+									Rank: 6,
+								},
+								Finish: models.Position{
+									File: 7,
+									Rank: 8,
+								},
+							},
+						)
+						if !checkOne && !checkTwo {
 							test.Fail()
 						}
 
@@ -1107,8 +1145,20 @@ func TestNegamaxSearcherSearchMove(
 				color: models.White,
 				deep:  2,
 			},
-			wantMove: ScoredMove{},
-			wantErr:  ErrCheckmate,
+			wantMove: ScoredMove{
+				Move: models.Move{
+					Start: models.Position{
+						File: 5,
+						Rank: 6,
+					},
+					Finish: models.Position{
+						File: 7,
+						Rank: 8,
+					},
+				},
+				Score: -evaluateCheckmate(3),
+			},
+			wantErr: nil,
 		},
 		data{
 			fields: fields{

@@ -102,13 +102,9 @@ func (searcher NegamaxSearcher) SearchMove(
 				nextColor,
 				deep+1,
 			)
-		if err != nil {
-			if err == ErrCheck {
-				hasCheck = true
-				continue
-			}
-
-			return ScoredMove{}, err
+		if err == ErrCheck {
+			hasCheck = true
+			continue
 		}
 
 		bestMove.update(scoredMove, move)
