@@ -16,6 +16,20 @@ func TestClockType(test *testing.T) {
 	}
 }
 
+func TestTimeTerminatorInterface(
+	test *testing.T,
+) {
+	gotType := reflect.TypeOf(
+		TimeTerminator{},
+	)
+	wantType := reflect.
+		TypeOf((*SearchTerminator)(nil)).
+		Elem()
+	if !gotType.Implements(wantType) {
+		test.Fail()
+	}
+}
+
 func TestNewTimeTerminator(
 	test *testing.T,
 ) {

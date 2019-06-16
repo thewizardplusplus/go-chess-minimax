@@ -1,8 +1,21 @@
 package chessminimax
 
 import (
+	"reflect"
 	"testing"
 )
+
+func TestDeepTerminatorInterface(
+	test *testing.T,
+) {
+	gotType := reflect.TypeOf(DeepTerminator{})
+	wantType := reflect.
+		TypeOf((*SearchTerminator)(nil)).
+		Elem()
+	if !gotType.Implements(wantType) {
+		test.Fail()
+	}
+}
 
 func TestNewDeepTerminator(test *testing.T) {
 	terminator := NewDeepTerminator(5)

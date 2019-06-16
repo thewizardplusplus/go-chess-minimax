@@ -84,20 +84,6 @@ func (
 	)
 }
 
-type MockSearchTerminator struct {
-	isSearchTerminate func(deep int) bool
-}
-
-func (
-	terminator MockSearchTerminator,
-) IsSearchTerminate(deep int) bool {
-	if terminator.isSearchTerminate == nil {
-		panic("not implemented")
-	}
-
-	return terminator.isSearchTerminate(deep)
-}
-
 type MockBoardEvaluator struct {
 	evaluateBoard func(
 		storage models.PieceStorage,
