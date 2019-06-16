@@ -8,23 +8,27 @@ import (
 )
 
 func TestNegamaxSearcher(test *testing.T) {
-	type data struct {
+	type args struct {
 		maximalDeep int
 		pieces      []models.Piece
 		color       models.Color
-		wantMove    ScoredMove
-		wantErr     error
+	}
+	type data struct {
+		args     args
+		wantMove ScoredMove
+		wantErr  error
 	}
 
 	for _, data := range []data{} {
 		generator := NewDefaultMoveGenerator(
 			models.MoveGenerator{},
 		)
-		terminator :=
-			NewDeepTerminator(data.maximalDeep)
+		terminator := NewDeepTerminator(
+			data.args.maximalDeep,
+		)
 		board := models.NewBoard(
 			models.Size{8, 8},
-			data.pieces,
+			data.args.pieces,
 		)
 		searcher := NewNegamaxSearcher(
 			generator,
@@ -33,7 +37,7 @@ func TestNegamaxSearcher(test *testing.T) {
 		)
 		gotMove, gotErr := searcher.SearchMove(
 			board,
-			data.color,
+			data.args.color,
 			0,
 		)
 
