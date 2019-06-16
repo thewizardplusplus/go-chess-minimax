@@ -1,4 +1,4 @@
-package chessminimax
+package terminators
 
 import (
 	"time"
@@ -19,11 +19,10 @@ func NewTimeTerminator(
 	clock Clock,
 	maximalDuration time.Duration,
 ) TimeTerminator {
-	startTime := clock()
 	return TimeTerminator{
 		clock:           clock,
 		maximalDuration: maximalDuration,
-		startTime:       startTime,
+		startTime:       clock(),
 	}
 }
 
@@ -32,9 +31,8 @@ func (
 	terminator TimeTerminator,
 ) IsSearchTerminate(deep int) bool {
 	currentTime := terminator.clock()
-	duration := currentTime.Sub(
-		terminator.startTime,
-	)
+	duration := currentTime.
+		Sub(terminator.startTime)
 	return duration >=
 		terminator.maximalDuration
 }

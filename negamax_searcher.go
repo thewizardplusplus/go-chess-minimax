@@ -3,13 +3,9 @@ package chessminimax
 import (
 	"errors"
 
+	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
-
-// SearchTerminator ...
-type SearchTerminator interface {
-	IsSearchTerminate(deep int) bool
-}
 
 // BoardEvaluator ...
 //
@@ -34,7 +30,7 @@ type MoveSearcher interface {
 // NegamaxSearcher ...
 type NegamaxSearcher struct {
 	generator  SafeMoveGenerator
-	terminator SearchTerminator
+	terminator terminators.SearchTerminator
 	evaluator  BoardEvaluator
 	searcher   MoveSearcher
 }
@@ -48,7 +44,7 @@ var (
 // NewNegamaxSearcher ...
 func NewNegamaxSearcher(
 	generator SafeMoveGenerator,
-	terminator SearchTerminator,
+	terminator terminators.SearchTerminator,
 	evaluator BoardEvaluator,
 ) *NegamaxSearcher {
 	// instance must be created in a heap

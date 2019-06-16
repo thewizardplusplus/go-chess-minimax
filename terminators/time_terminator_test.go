@@ -1,4 +1,4 @@
-package chessminimax
+package terminators
 
 import (
 	"reflect"

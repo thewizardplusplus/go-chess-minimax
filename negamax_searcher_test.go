@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
@@ -82,6 +83,20 @@ func (
 		storage,
 		color,
 	)
+}
+
+type MockSearchTerminator struct {
+	isSearchTerminate func(deep int) bool
+}
+
+func (
+	terminator MockSearchTerminator,
+) IsSearchTerminate(deep int) bool {
+	if terminator.isSearchTerminate == nil {
+		panic("not implemented")
+	}
+
+	return terminator.isSearchTerminate(deep)
 }
 
 type MockBoardEvaluator struct {
@@ -192,7 +207,7 @@ func TestNegamaxSearcherSearchMove(
 ) {
 	type fields struct {
 		generator  SafeMoveGenerator
-		terminator SearchTerminator
+		terminator terminators.SearchTerminator
 		evaluator  BoardEvaluator
 		searcher   MoveSearcher
 	}

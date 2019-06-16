@@ -1,4 +1,4 @@
-package chessminimax
+package terminators
 
 // DeepTerminator ...
 type DeepTerminator struct {

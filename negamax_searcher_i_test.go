@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
@@ -33,9 +34,10 @@ func TestNegamaxSearcher(test *testing.T) {
 		generator := NewDefaultMoveGenerator(
 			models.MoveGenerator{},
 		)
-		terminator := NewDeepTerminator(
-			data.args.maximalDeep,
-		)
+		terminator :=
+			terminators.NewDeepTerminator(
+				data.args.maximalDeep,
+			)
 		board := models.NewBoard(
 			models.Size{8, 8},
 			data.args.pieces,
