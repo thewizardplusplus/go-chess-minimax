@@ -120,7 +120,9 @@ func (searcher NegamaxSearcher) SearchMove(
 			_, err := searcher.generator.
 				MovesForColor(storage, nextColor)
 			if err != nil {
-				return ScoredMove{}, ErrCheckmate
+				score := evaluateCheckmate(deep)
+				return ScoredMove{Score: score},
+					ErrCheckmate
 			}
 		}
 
@@ -128,4 +130,12 @@ func (searcher NegamaxSearcher) SearchMove(
 	}
 
 	return bestMove, nil
+}
+
+// it evaluates a score of a checkmate
+// for a current side, so its result
+// should be negative
+func evaluateCheckmate(deep int) float64 {
+	score := 1e6 + float64(deep)
+	return -score
 }

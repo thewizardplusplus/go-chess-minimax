@@ -636,8 +636,10 @@ func TestNegamaxSearcherSearchMove(
 				color: models.White,
 				deep:  2,
 			},
-			wantMove: ScoredMove{},
-			wantErr:  ErrCheckmate,
+			wantMove: ScoredMove{
+				Score: evaluateCheckmate(2),
+			},
+			wantErr: ErrCheckmate,
 		},
 		data{
 			fields: fields{
@@ -1172,5 +1174,22 @@ func TestNegamaxSearcherSearchMove(
 		) {
 			test.Fail()
 		}
+	}
+}
+
+func TestEvaluateCheckmate(
+	test *testing.T,
+) {
+	scoreOne := evaluateCheckmate(2)
+	scoreTwo := evaluateCheckmate(3)
+
+	if scoreOne >= 0 {
+		test.Fail()
+	}
+	if scoreTwo >= 0 {
+		test.Fail()
+	}
+	if scoreTwo >= scoreOne {
+		test.Fail()
 	}
 }
