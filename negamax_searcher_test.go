@@ -11,7 +11,6 @@ import (
 type MockPieceStorage struct {
 	appliedMove models.Move
 
-	pieces    func() []models.Piece
 	applyMove func(
 		move models.Move,
 	) models.PieceStorage
@@ -29,11 +28,7 @@ func (
 func (
 	storage MockPieceStorage,
 ) Pieces() []models.Piece {
-	if storage.pieces == nil {
-		panic("not implemented")
-	}
-
-	return storage.pieces()
+	panic("not implemented")
 }
 
 func (storage MockPieceStorage) ApplyMove(

@@ -1,10 +1,48 @@
-package chessminimax
+package evaluators
 
 import (
 	"testing"
 
 	models "github.com/thewizardplusplus/go-chess-models"
 )
+
+type MockPieceStorage struct {
+	pieces func() []models.Piece
+}
+
+func (
+	storage MockPieceStorage,
+) Size() models.Size {
+	panic("not implemented")
+}
+
+func (
+	storage MockPieceStorage,
+) Pieces() []models.Piece {
+	if storage.pieces == nil {
+		panic("not implemented")
+	}
+
+	return storage.pieces()
+}
+
+func (storage MockPieceStorage) ApplyMove(
+	move models.Move,
+) models.PieceStorage {
+	panic("not implemented")
+}
+
+func (storage MockPieceStorage) CheckMove(
+	move models.Move,
+) error {
+	panic("not implemented")
+}
+
+func (storage MockPieceStorage) CheckMoves(
+	moves []models.Move,
+) error {
+	panic("not implemented")
+}
 
 type MockPiece struct {
 	kind  func() models.Kind

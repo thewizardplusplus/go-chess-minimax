@@ -1,4 +1,4 @@
-package chessminimax
+package evaluators
 
 import (
 	models "github.com/thewizardplusplus/go-chess-models"

@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
@@ -45,7 +46,7 @@ func TestNegamaxSearcher(test *testing.T) {
 		searcher := NewNegamaxSearcher(
 			generator,
 			terminator,
-			MaterialEvaluator{},
+			evaluators.MaterialEvaluator{},
 		)
 		gotMove, gotErr := searcher.SearchMove(
 			board,
