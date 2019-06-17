@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
 	"github.com/thewizardplusplus/go-chess-minimax/generators"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
@@ -15,14 +16,19 @@ type MockPieceStorage struct {
 	applyMove func(
 		move models.Move,
 	) models.PieceStorage
-	checkMoves func(
-		moves []models.Move,
-	) error
 }
 
 func (
 	storage MockPieceStorage,
 ) Size() models.Size {
+	panic("not implemented")
+}
+
+func (
+	storage MockPieceStorage,
+) Piece(
+	position models.Position,
+) (piece models.Piece, ok bool) {
 	panic("not implemented")
 }
 
@@ -51,11 +57,7 @@ func (storage MockPieceStorage) CheckMove(
 func (storage MockPieceStorage) CheckMoves(
 	moves []models.Move,
 ) error {
-	if storage.checkMoves == nil {
-		panic("not implemented")
-	}
-
-	return storage.checkMoves(moves)
+	panic("not implemented")
 }
 
 type MockSafeMoveGenerator struct {
@@ -204,7 +206,7 @@ func TestNegamaxSearcherSearchMove(
 	type fields struct {
 		generator  generators.SafeMoveGenerator
 		terminator terminators.SearchTerminator
-		evaluator  BoardEvaluator
+		evaluator  evaluators.BoardEvaluator
 		searcher   MoveSearcher
 	}
 	type args struct {
@@ -259,7 +261,7 @@ func TestNegamaxSearcherSearchMove(
 				deep:    2,
 			},
 			wantMove: ScoredMove{},
-			wantErr:  generators.ErrCheck,
+			wantErr:  ErrCheck,
 		},
 		data{
 			fields: fields{
@@ -428,8 +430,7 @@ func TestNegamaxSearcherSearchMove(
 						}
 
 						// all moves -> check
-						return ScoredMove{},
-							generators.ErrCheck
+						return ScoredMove{}, ErrCheck
 					},
 				},
 			},
@@ -587,8 +588,7 @@ func TestNegamaxSearcherSearchMove(
 						}
 
 						// all moves -> check
-						return ScoredMove{},
-							generators.ErrCheck
+						return ScoredMove{}, ErrCheck
 					},
 				},
 			},
@@ -743,8 +743,7 @@ func TestNegamaxSearcherSearchMove(
 
 						// move two -> check
 						if checkTwo {
-							return ScoredMove{},
-								generators.ErrCheck
+							return ScoredMove{}, ErrCheck
 						}
 
 						// move one -> 4.2
