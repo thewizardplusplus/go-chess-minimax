@@ -31,11 +31,6 @@ func (
 }
 
 type MockPieceStorage struct {
-	appliedMove models.Move
-
-	applyMove func(
-		move models.Move,
-	) models.PieceStorage
 	checkMoves func(
 		moves []models.Move,
 	) error
@@ -44,6 +39,14 @@ type MockPieceStorage struct {
 func (
 	storage MockPieceStorage,
 ) Size() models.Size {
+	panic("not implemented")
+}
+
+func (
+	storage MockPieceStorage,
+) Piece(
+	position models.Position,
+) (piece models.Piece, ok bool) {
 	panic("not implemented")
 }
 
@@ -265,9 +268,10 @@ func TestDefaultMoveGeneratorMovesForColor(
 			wantErr: nil,
 		},
 	} {
+		innerGenerator :=
+			data.fields.innerGenerator
 		generator := DefaultMoveGenerator{
-			innerGenerator: data.fields.
-				innerGenerator,
+			innerGenerator: innerGenerator,
 		}
 		gotMoves, gotErr :=
 			generator.MovesForColor(
