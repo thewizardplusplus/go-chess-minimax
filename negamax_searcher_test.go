@@ -261,7 +261,7 @@ func TestNegamaxSearcherSearchMove(
 				deep:    2,
 			},
 			wantMove: ScoredMove{},
-			wantErr:  ErrCheck,
+			wantErr:  models.ErrKingCapture,
 		},
 		data{
 			fields: fields{
@@ -429,8 +429,9 @@ func TestNegamaxSearcherSearchMove(
 							test.Fail()
 						}
 
-						// all moves -> check
-						return ScoredMove{}, ErrCheck
+						// all moves -> king capture
+						return ScoredMove{},
+							models.ErrKingCapture
 					},
 				},
 			},
@@ -587,8 +588,9 @@ func TestNegamaxSearcherSearchMove(
 							test.Fail()
 						}
 
-						// all moves -> check
-						return ScoredMove{}, ErrCheck
+						// all moves -> king capture
+						return ScoredMove{},
+							models.ErrKingCapture
 					},
 				},
 			},
@@ -741,9 +743,10 @@ func TestNegamaxSearcherSearchMove(
 							test.Fail()
 						}
 
-						// move two -> check
+						// move two -> king capture
 						if checkTwo {
-							return ScoredMove{}, ErrCheck
+							return ScoredMove{},
+								models.ErrKingCapture
 						}
 
 						// move one -> 4.2

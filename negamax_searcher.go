@@ -28,7 +28,6 @@ type NegamaxSearcher struct {
 
 // ...
 var (
-	ErrCheck     = generators.ErrCheck
 	ErrCheckmate = errors.New("checkmate")
 	ErrDraw      = errors.New("draw")
 )
@@ -68,7 +67,7 @@ func (searcher NegamaxSearcher) SearchMove(
 	moves, err := searcher.generator.
 		MovesForColor(storage, color)
 	if err != nil {
-		return ScoredMove{}, ErrCheck
+		return ScoredMove{}, err
 	}
 
 	ok := searcher.terminator.
@@ -90,7 +89,7 @@ func (searcher NegamaxSearcher) SearchMove(
 				nextColor,
 				deep+1,
 			)
-		if err == ErrCheck {
+		if err == models.ErrKingCapture {
 			hasCheck = true
 			continue
 		}

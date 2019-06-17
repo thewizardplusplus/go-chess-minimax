@@ -188,7 +188,7 @@ func TestDefaultMoveGeneratorMovesForColor(
 				color: models.White,
 			},
 			wantMoves: nil,
-			wantErr:   ErrCheck,
+			wantErr:   models.ErrKingCapture,
 		},
 		data{
 			fields: fields{

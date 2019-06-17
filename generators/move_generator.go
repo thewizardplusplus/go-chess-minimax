@@ -1,8 +1,6 @@
 package generators
 
 import (
-	"errors"
-
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
@@ -27,11 +25,6 @@ type DefaultMoveGenerator struct {
 	innerGenerator MoveGenerator
 }
 
-// ...
-var (
-	ErrCheck = errors.New("check")
-)
-
 // NewDefaultMoveGenerator ...
 func NewDefaultMoveGenerator(
 	innerGenerator MoveGenerator,
@@ -50,7 +43,7 @@ func (
 		MovesForColor(storage, color)
 	err := storage.CheckMoves(moves)
 	if err != nil {
-		return nil, ErrCheck
+		return nil, err
 	}
 
 	return moves, nil
