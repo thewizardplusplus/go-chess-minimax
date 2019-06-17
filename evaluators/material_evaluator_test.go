@@ -7,7 +7,7 @@ import (
 )
 
 type MockPieceStorage struct {
-	pieces func() []models.Piece
+	pieces []models.Piece
 }
 
 func (
@@ -18,17 +18,21 @@ func (
 
 func (
 	storage MockPieceStorage,
-) Pieces() []models.Piece {
-	if storage.pieces == nil {
-		panic("not implemented")
-	}
+) Piece(
+	position models.Position,
+) (piece models.Piece, ok bool) {
+	panic("not implemented")
+}
 
-	return storage.pieces()
+func (
+	storage MockPieceStorage,
+) Pieces() []models.Piece {
+	return storage.pieces
 }
 
 func (storage MockPieceStorage) ApplyMove(
 	move models.Move,
-) models.PieceStorage {
+) PieceStorage {
 	panic("not implemented")
 }
 
@@ -45,26 +49,18 @@ func (storage MockPieceStorage) CheckMoves(
 }
 
 type MockPiece struct {
-	kind  func() models.Kind
-	color func() models.Color
+	kind  models.Kind
+	color models.Color
 }
 
 func (piece MockPiece) Kind() models.Kind {
-	if piece.kind == nil {
-		panic("not implemented")
-	}
-
-	return piece.kind()
+	return piece.kind
 }
 
 func (
 	piece MockPiece,
 ) Color() models.Color {
-	if piece.color == nil {
-		panic("not implemented")
-	}
-
-	return piece.color()
+	return piece.color
 }
 
 func (
@@ -81,7 +77,7 @@ func (piece MockPiece) ApplyPosition(
 
 func (piece MockPiece) CheckMove(
 	move models.Move,
-	board models.Board,
+	storage models.PieceStorage,
 ) bool {
 	panic("not implemented")
 }
@@ -102,25 +98,15 @@ func TestMaterialEvaluatorEvaluateBoard(
 		data{
 			args: args{
 				storage: MockPieceStorage{
-					pieces: func() []models.Piece {
-						return []models.Piece{
-							MockPiece{
-								kind: func() models.Kind {
-									return models.Queen
-								},
-								color: func() models.Color {
-									return models.White
-								},
-							},
-							MockPiece{
-								kind: func() models.Kind {
-									return models.Rook
-								},
-								color: func() models.Color {
-									return models.White
-								},
-							},
-						}
+					pieces: []models.Piece{
+						MockPiece{
+							kind:  models.Queen,
+							color: models.White,
+						},
+						MockPiece{
+							kind:  models.Rook,
+							color: models.White,
+						},
 					},
 				},
 				color: models.White,
