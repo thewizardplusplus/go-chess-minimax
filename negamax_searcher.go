@@ -3,6 +3,7 @@ package chessminimax
 import (
 	"errors"
 
+	"github.com/thewizardplusplus/go-chess-minimax/generators"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
@@ -29,7 +30,7 @@ type MoveSearcher interface {
 
 // NegamaxSearcher ...
 type NegamaxSearcher struct {
-	generator  SafeMoveGenerator
+	generator  generators.SafeMoveGenerator
 	terminator terminators.SearchTerminator
 	evaluator  BoardEvaluator
 	searcher   MoveSearcher
@@ -43,7 +44,7 @@ var (
 
 // NewNegamaxSearcher ...
 func NewNegamaxSearcher(
-	generator SafeMoveGenerator,
+	generator generators.SafeMoveGenerator,
 	terminator terminators.SearchTerminator,
 	evaluator BoardEvaluator,
 ) *NegamaxSearcher {
@@ -76,7 +77,7 @@ func (searcher NegamaxSearcher) SearchMove(
 	moves, err := searcher.generator.
 		MovesForColor(storage, color)
 	if err != nil {
-		return ScoredMove{}, ErrCheck
+		return ScoredMove{}, generators.ErrCheck
 	}
 
 	ok := searcher.terminator.
@@ -98,7 +99,7 @@ func (searcher NegamaxSearcher) SearchMove(
 				nextColor,
 				deep+1,
 			)
-		if err == ErrCheck {
+		if err == generators.ErrCheck {
 			hasCheck = true
 			continue
 		}

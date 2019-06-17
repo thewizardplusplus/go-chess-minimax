@@ -1,4 +1,4 @@
-package chessminimax
+package generators
 
 import (
 	"errors"

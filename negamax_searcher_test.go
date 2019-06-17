@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/thewizardplusplus/go-chess-minimax/generators"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
@@ -201,7 +202,7 @@ func TestNegamaxSearcherSearchMove(
 	test *testing.T,
 ) {
 	type fields struct {
-		generator  SafeMoveGenerator
+		generator  generators.SafeMoveGenerator
 		terminator terminators.SearchTerminator
 		evaluator  BoardEvaluator
 		searcher   MoveSearcher
@@ -258,7 +259,7 @@ func TestNegamaxSearcherSearchMove(
 				deep:    2,
 			},
 			wantMove: ScoredMove{},
-			wantErr:  ErrCheck,
+			wantErr:  generators.ErrCheck,
 		},
 		data{
 			fields: fields{
@@ -427,7 +428,8 @@ func TestNegamaxSearcherSearchMove(
 						}
 
 						// all moves -> check
-						return ScoredMove{}, ErrCheck
+						return ScoredMove{},
+							generators.ErrCheck
 					},
 				},
 			},
@@ -585,7 +587,8 @@ func TestNegamaxSearcherSearchMove(
 						}
 
 						// all moves -> check
-						return ScoredMove{}, ErrCheck
+						return ScoredMove{},
+							generators.ErrCheck
 					},
 				},
 			},
@@ -740,7 +743,8 @@ func TestNegamaxSearcherSearchMove(
 
 						// move two -> check
 						if checkTwo {
-							return ScoredMove{}, ErrCheck
+							return ScoredMove{},
+								generators.ErrCheck
 						}
 
 						// move one -> 4.2

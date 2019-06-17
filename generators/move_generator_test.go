@@ -1,4 +1,4 @@
-package chessminimax
+package generators
 
 import (
 	"reflect"
@@ -28,6 +28,51 @@ func (
 		storage,
 		color,
 	)
+}
+
+type MockPieceStorage struct {
+	appliedMove models.Move
+
+	applyMove func(
+		move models.Move,
+	) models.PieceStorage
+	checkMoves func(
+		moves []models.Move,
+	) error
+}
+
+func (
+	storage MockPieceStorage,
+) Size() models.Size {
+	panic("not implemented")
+}
+
+func (
+	storage MockPieceStorage,
+) Pieces() []models.Piece {
+	panic("not implemented")
+}
+
+func (storage MockPieceStorage) ApplyMove(
+	move models.Move,
+) models.PieceStorage {
+	panic("not implemented")
+}
+
+func (storage MockPieceStorage) CheckMove(
+	move models.Move,
+) error {
+	panic("not implemented")
+}
+
+func (storage MockPieceStorage) CheckMoves(
+	moves []models.Move,
+) error {
+	if storage.checkMoves == nil {
+		panic("not implemented")
+	}
+
+	return storage.checkMoves(moves)
 }
 
 func TestMoveGeneratorInterface(
