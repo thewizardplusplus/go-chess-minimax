@@ -1,6 +1,7 @@
 package evaluators
 
 import (
+	"reflect"
 	"testing"
 
 	models "github.com/thewizardplusplus/go-chess-models"
@@ -32,7 +33,7 @@ func (
 
 func (storage MockPieceStorage) ApplyMove(
 	move models.Move,
-) PieceStorage {
+) models.PieceStorage {
 	panic("not implemented")
 }
 
@@ -82,6 +83,20 @@ func (piece MockPiece) CheckMove(
 	panic("not implemented")
 }
 
+func TestBoardEvaluatorInterface(
+	test *testing.T,
+) {
+	gotType := reflect.TypeOf(
+		MaterialEvaluator{},
+	)
+	wantType := reflect.
+		TypeOf((*BoardEvaluator)(nil)).
+		Elem()
+	if !gotType.Implements(wantType) {
+		test.Fail()
+	}
+}
+
 func TestMaterialEvaluatorEvaluateBoard(
 	test *testing.T,
 ) {
@@ -116,25 +131,15 @@ func TestMaterialEvaluatorEvaluateBoard(
 		data{
 			args: args{
 				storage: MockPieceStorage{
-					pieces: func() []models.Piece {
-						return []models.Piece{
-							MockPiece{
-								kind: func() models.Kind {
-									return models.Queen
-								},
-								color: func() models.Color {
-									return models.White
-								},
-							},
-							MockPiece{
-								kind: func() models.Kind {
-									return models.Rook
-								},
-								color: func() models.Color {
-									return models.Black
-								},
-							},
-						}
+					pieces: []models.Piece{
+						MockPiece{
+							kind:  models.Queen,
+							color: models.White,
+						},
+						MockPiece{
+							kind:  models.Rook,
+							color: models.Black,
+						},
 					},
 				},
 				color: models.White,
@@ -144,25 +149,15 @@ func TestMaterialEvaluatorEvaluateBoard(
 		data{
 			args: args{
 				storage: MockPieceStorage{
-					pieces: func() []models.Piece {
-						return []models.Piece{
-							MockPiece{
-								kind: func() models.Kind {
-									return models.Queen
-								},
-								color: func() models.Color {
-									return models.Black
-								},
-							},
-							MockPiece{
-								kind: func() models.Kind {
-									return models.Rook
-								},
-								color: func() models.Color {
-									return models.Black
-								},
-							},
-						}
+					pieces: []models.Piece{
+						MockPiece{
+							kind:  models.Queen,
+							color: models.Black,
+						},
+						MockPiece{
+							kind:  models.Rook,
+							color: models.Black,
+						},
 					},
 				},
 				color: models.White,
@@ -172,25 +167,15 @@ func TestMaterialEvaluatorEvaluateBoard(
 		data{
 			args: args{
 				storage: MockPieceStorage{
-					pieces: func() []models.Piece {
-						return []models.Piece{
-							MockPiece{
-								kind: func() models.Kind {
-									return models.Queen
-								},
-								color: func() models.Color {
-									return models.White
-								},
-							},
-							MockPiece{
-								kind: func() models.Kind {
-									return models.Rook
-								},
-								color: func() models.Color {
-									return models.White
-								},
-							},
-						}
+					pieces: []models.Piece{
+						MockPiece{
+							kind:  models.Queen,
+							color: models.White,
+						},
+						MockPiece{
+							kind:  models.Rook,
+							color: models.White,
+						},
 					},
 				},
 				color: models.Black,
@@ -200,25 +185,15 @@ func TestMaterialEvaluatorEvaluateBoard(
 		data{
 			args: args{
 				storage: MockPieceStorage{
-					pieces: func() []models.Piece {
-						return []models.Piece{
-							MockPiece{
-								kind: func() models.Kind {
-									return models.Queen
-								},
-								color: func() models.Color {
-									return models.White
-								},
-							},
-							MockPiece{
-								kind: func() models.Kind {
-									return models.Rook
-								},
-								color: func() models.Color {
-									return models.Black
-								},
-							},
-						}
+					pieces: []models.Piece{
+						MockPiece{
+							kind:  models.Queen,
+							color: models.White,
+						},
+						MockPiece{
+							kind:  models.Rook,
+							color: models.Black,
+						},
 					},
 				},
 				color: models.Black,
@@ -228,25 +203,15 @@ func TestMaterialEvaluatorEvaluateBoard(
 		data{
 			args: args{
 				storage: MockPieceStorage{
-					pieces: func() []models.Piece {
-						return []models.Piece{
-							MockPiece{
-								kind: func() models.Kind {
-									return models.Queen
-								},
-								color: func() models.Color {
-									return models.Black
-								},
-							},
-							MockPiece{
-								kind: func() models.Kind {
-									return models.Rook
-								},
-								color: func() models.Color {
-									return models.Black
-								},
-							},
-						}
+					pieces: []models.Piece{
+						MockPiece{
+							kind:  models.Queen,
+							color: models.Black,
+						},
+						MockPiece{
+							kind:  models.Rook,
+							color: models.Black,
+						},
 					},
 				},
 				color: models.Black,
@@ -280,9 +245,7 @@ func TestColorSign(test *testing.T) {
 		data{
 			args: args{
 				piece: MockPiece{
-					color: func() models.Color {
-						return models.Black
-					},
+					color: models.Black,
 				},
 				color: models.White,
 			},
@@ -291,9 +254,7 @@ func TestColorSign(test *testing.T) {
 		data{
 			args: args{
 				piece: MockPiece{
-					color: func() models.Color {
-						return models.White
-					},
+					color: models.White,
 				},
 				color: models.White,
 			},
