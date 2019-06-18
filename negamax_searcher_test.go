@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
-	"github.com/thewizardplusplus/go-chess-minimax/generators"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
@@ -54,13 +53,7 @@ func (storage MockPieceStorage) CheckMove(
 	panic("not implemented")
 }
 
-func (storage MockPieceStorage) CheckMoves(
-	moves []models.Move,
-) error {
-	panic("not implemented")
-}
-
-type MockSafeMoveGenerator struct {
+type MockMoveGenerator struct {
 	movesForColor func(
 		storage models.PieceStorage,
 		color models.Color,
@@ -68,7 +61,7 @@ type MockSafeMoveGenerator struct {
 }
 
 func (
-	generator MockSafeMoveGenerator,
+	generator MockMoveGenerator,
 ) MovesForColor(
 	storage models.PieceStorage,
 	color models.Color,
@@ -146,6 +139,20 @@ func (
 	)
 }
 
+func TestMoveGeneratorInterface(
+	test *testing.T,
+) {
+	gotType := reflect.TypeOf(
+		models.MoveGenerator{},
+	)
+	wantType := reflect.
+		TypeOf((*MoveGenerator)(nil)).
+		Elem()
+	if !gotType.Implements(wantType) {
+		test.Fail()
+	}
+}
+
 func TestMoveSearcherInterface(
 	test *testing.T,
 ) {
@@ -163,7 +170,7 @@ func TestMoveSearcherInterface(
 func TestNewNegamaxSearcher(
 	test *testing.T,
 ) {
-	var generator MockSafeMoveGenerator
+	var generator MockMoveGenerator
 	var terminator MockSearchTerminator
 	var evaluator MockBoardEvaluator
 	searcher := NewNegamaxSearcher(
@@ -204,7 +211,7 @@ func TestNegamaxSearcherSearchMove(
 	test *testing.T,
 ) {
 	type fields struct {
-		generator  generators.SafeMoveGenerator
+		generator  MoveGenerator
 		terminator terminators.SearchTerminator
 		evaluator  evaluators.BoardEvaluator
 		searcher   MoveSearcher
@@ -224,7 +231,7 @@ func TestNegamaxSearcherSearchMove(
 	for _, data := range []data{
 		data{
 			fields: fields{
-				generator: MockSafeMoveGenerator{
+				generator: MockMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -265,7 +272,7 @@ func TestNegamaxSearcherSearchMove(
 		},
 		data{
 			fields: fields{
-				generator: MockSafeMoveGenerator{
+				generator: MockMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -333,7 +340,7 @@ func TestNegamaxSearcherSearchMove(
 		},
 		data{
 			fields: fields{
-				generator: MockSafeMoveGenerator{
+				generator: MockMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -483,7 +490,7 @@ func TestNegamaxSearcherSearchMove(
 		},
 		data{
 			fields: fields{
-				generator: MockSafeMoveGenerator{
+				generator: MockMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -644,7 +651,7 @@ func TestNegamaxSearcherSearchMove(
 		},
 		data{
 			fields: fields{
-				generator: MockSafeMoveGenerator{
+				generator: MockMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -815,7 +822,7 @@ func TestNegamaxSearcherSearchMove(
 		},
 		data{
 			fields: fields{
-				generator: MockSafeMoveGenerator{
+				generator: MockMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -988,7 +995,7 @@ func TestNegamaxSearcherSearchMove(
 		},
 		data{
 			fields: fields{
-				generator: MockSafeMoveGenerator{
+				generator: MockMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -1164,7 +1171,7 @@ func TestNegamaxSearcherSearchMove(
 		},
 		data{
 			fields: fields{
-				generator: MockSafeMoveGenerator{
+				generator: MockMoveGenerator{
 					movesForColor: func(
 						storage models.PieceStorage,
 						color models.Color,

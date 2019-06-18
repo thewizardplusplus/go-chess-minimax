@@ -4,10 +4,17 @@ import (
 	"errors"
 
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
-	"github.com/thewizardplusplus/go-chess-minimax/generators"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
+
+// MoveGenerator ...
+type MoveGenerator interface {
+	MovesForColor(
+		storage models.PieceStorage,
+		color models.Color,
+	) ([]models.Move, error)
+}
 
 // MoveSearcher ...
 type MoveSearcher interface {
@@ -20,7 +27,7 @@ type MoveSearcher interface {
 
 // NegamaxSearcher ...
 type NegamaxSearcher struct {
-	generator  generators.SafeMoveGenerator
+	generator  MoveGenerator
 	terminator terminators.SearchTerminator
 	evaluator  evaluators.BoardEvaluator
 	searcher   MoveSearcher
@@ -34,7 +41,7 @@ var (
 
 // NewNegamaxSearcher ...
 func NewNegamaxSearcher(
-	generator generators.SafeMoveGenerator,
+	generator MoveGenerator,
 	terminator terminators.SearchTerminator,
 	evaluator evaluators.BoardEvaluator,
 ) *NegamaxSearcher {

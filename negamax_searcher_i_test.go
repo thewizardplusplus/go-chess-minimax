@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
-	"github.com/thewizardplusplus/go-chess-minimax/generators"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 	"github.com/thewizardplusplus/go-chess-models/pieces"
@@ -183,10 +182,6 @@ func TestNegamaxSearcher(test *testing.T) {
 			wantErr: ErrCheckmate,
 		},
 	} {
-		generator :=
-			generators.NewDefaultMoveGenerator(
-				models.MoveGenerator{},
-			)
 		terminator :=
 			terminators.NewDeepTerminator(
 				data.args.maximalDeep,
@@ -196,7 +191,7 @@ func TestNegamaxSearcher(test *testing.T) {
 			data.args.pieces,
 		)
 		searcher := NewNegamaxSearcher(
-			generator,
+			models.MoveGenerator{},
 			terminator,
 			evaluators.MaterialEvaluator{},
 		)

@@ -43,12 +43,6 @@ func (storage MockPieceStorage) CheckMove(
 	panic("not implemented")
 }
 
-func (storage MockPieceStorage) CheckMoves(
-	moves []models.Move,
-) error {
-	panic("not implemented")
-}
-
 type MockPiece struct {
 	kind  models.Kind
 	color models.Color
