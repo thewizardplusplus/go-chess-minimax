@@ -245,19 +245,7 @@ func TestNegamaxSearcherSearchMove(
 							test.Fail()
 						}
 
-						moves := []models.Move{
-							models.Move{
-								Start: models.Position{
-									File: 1,
-									Rank: 2,
-								},
-								Finish: models.Position{
-									File: 3,
-									Rank: 4,
-								},
-							},
-						}
-						return moves,
+						return nil,
 							models.ErrKingCapture
 					},
 				},
