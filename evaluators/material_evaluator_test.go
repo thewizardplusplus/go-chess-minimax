@@ -77,7 +77,7 @@ func (piece MockPiece) CheckMove(
 	panic("not implemented")
 }
 
-func TestBoardEvaluatorInterface(
+func TestMaterialEvaluatorInterface(
 	test *testing.T,
 ) {
 	gotType := reflect.TypeOf(
