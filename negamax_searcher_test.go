@@ -153,20 +153,6 @@ func TestMoveGeneratorInterface(
 	}
 }
 
-func TestMoveSearcherInterface(
-	test *testing.T,
-) {
-	gotType := reflect.TypeOf(
-		NegamaxSearcher{},
-	)
-	wantType := reflect.
-		TypeOf((*MoveSearcher)(nil)).
-		Elem()
-	if !gotType.Implements(wantType) {
-		test.Fail()
-	}
-}
-
 func TestNewNegamaxSearcher(
 	test *testing.T,
 ) {
