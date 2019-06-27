@@ -72,6 +72,51 @@ func TestNegamaxSearcher(test *testing.T) {
 			},
 			wantErr: ErrCheckmate,
 		},
+		data{
+			args: args{
+				boardInFEN:  "7K/8/7q/8/8/8/8/k7",
+				color:       models.White,
+				maximalDeep: 1,
+			},
+			wantMove: ScoredMove{
+				Move: models.Move{
+					Start:  models.Position{7, 7},
+					Finish: models.Position{6, 7},
+				},
+				Score: -9,
+			},
+			wantErr: nil,
+		},
+		data{
+			args: args{
+				boardInFEN:  "7K/8/7q/8/8/8/7Q/k7",
+				color:       models.White,
+				maximalDeep: 1,
+			},
+			wantMove: ScoredMove{
+				Move: models.Move{
+					Start:  models.Position{7, 1},
+					Finish: models.Position{7, 5},
+				},
+				Score: 9,
+			},
+			wantErr: nil,
+		},
+		data{
+			args: args{
+				boardInFEN:  "6K1/8/7q/6p1/8/2B5/pp4PQ/k7",
+				color:       models.White,
+				maximalDeep: 2,
+			},
+			wantMove: ScoredMove{
+				Move: models.Move{
+					Start:  models.Position{7, 1},
+					Finish: models.Position{6, 0},
+				},
+				Score: -evaluateCheckmate(1),
+			},
+			wantErr: nil,
+		},
 	} {
 		storage, err := models.ParseBoard(
 			data.args.boardInFEN,
