@@ -1,13 +1,12 @@
+// +build long
+
 package chessminimax
 
 import (
 	"reflect"
 	"testing"
 
-	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
-	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
-	"github.com/thewizardplusplus/go-chess-models/pieces"
 )
 
 func TestNegamaxSearcher(test *testing.T) {
@@ -161,31 +160,10 @@ func TestNegamaxSearcher(test *testing.T) {
 			wantErr: nil,
 		},
 	} {
-		storage, err := models.ParseBoard(
+		gotMove, gotErr := negamaxSearch(
 			data.args.boardInFEN,
-			pieces.NewPiece,
-		)
-		if err != nil {
-			test.Fail()
-			continue
-		}
-
-		generator := models.MoveGenerator{}
-		terminator :=
-			terminators.NewDeepTerminator(
-				data.args.maximalDeep,
-			)
-		evaluator :=
-			evaluators.MaterialEvaluator{}
-		searcher := NewNegamaxSearcher(
-			generator,
-			terminator,
-			evaluator,
-		)
-		gotMove, gotErr := searcher.SearchMove(
-			storage,
 			data.args.color,
-			0,
+			data.args.maximalDeep,
 		)
 
 		if !reflect.DeepEqual(
