@@ -104,7 +104,8 @@ func TestNegamaxSearcher(test *testing.T) {
 		},
 		data{
 			args: args{
-				boardInFEN:  "6K1/8/7q/6p1/8/2B5/pp4PQ/k7",
+				boardInFEN: "6K1/8/7q/6p1" +
+					"/8/2B5/pp4PQ/k7",
 				color:       models.White,
 				maximalDeep: 2,
 			},
@@ -114,6 +115,38 @@ func TestNegamaxSearcher(test *testing.T) {
 					Finish: models.Position{6, 0},
 				},
 				Score: -evaluateCheckmate(1),
+			},
+			wantErr: nil,
+		},
+		data{
+			args: args{
+				boardInFEN: "5RRK/7P/8/8" +
+					"/8/8/1p6/kr5q",
+				color:       models.White,
+				maximalDeep: 3,
+			},
+			wantMove: ScoredMove{
+				Move: models.Move{
+					Start:  models.Position{5, 7},
+					Finish: models.Position{0, 7},
+				},
+				Score: 0,
+			},
+			wantErr: nil,
+		},
+		data{
+			args: args{
+				boardInFEN: "kn6/n6q/PP6/8" +
+					"/8/8/7P/7K",
+				color:       models.White,
+				maximalDeep: 3,
+			},
+			wantMove: ScoredMove{
+				Move: models.Move{
+					Start:  models.Position{1, 5},
+					Finish: models.Position{1, 6},
+				},
+				Score: -4,
 			},
 			wantErr: nil,
 		},
