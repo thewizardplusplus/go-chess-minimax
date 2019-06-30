@@ -98,7 +98,7 @@ func (
 			alpha = score
 		}
 		if score >= beta {
-			return ScoredMove{Score: score}, nil
+			return ScoredMove{move, score}, nil
 		}
 
 		bestMove.update(scoredMove, move)
