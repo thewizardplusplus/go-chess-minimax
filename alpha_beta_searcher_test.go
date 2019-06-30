@@ -305,6 +305,12 @@ func TestAlphaBetaSearcherSearchMove(
 						if deep != 3 {
 							test.Fail()
 						}
+						if alpha != -3e6 {
+							test.Fail()
+						}
+						if beta != 2e6 {
+							test.Fail()
+						}
 
 						// all moves -> king capture
 						return ScoredMove{},
@@ -468,6 +474,12 @@ func TestAlphaBetaSearcherSearchMove(
 						if deep != 3 {
 							test.Fail()
 						}
+						if alpha != -3e6 {
+							test.Fail()
+						}
+						if beta != 2e6 {
+							test.Fail()
+						}
 
 						// all moves -> king capture
 						return ScoredMove{},
@@ -625,6 +637,12 @@ func TestAlphaBetaSearcherSearchMove(
 							test.Fail()
 						}
 						if deep != 3 {
+							test.Fail()
+						}
+						if alpha != -3e6 {
+							test.Fail()
+						}
+						if beta != 2e6 && beta != 4.2 {
 							test.Fail()
 						}
 
@@ -802,6 +820,12 @@ func TestAlphaBetaSearcherSearchMove(
 						if deep != 3 {
 							test.Fail()
 						}
+						if alpha != -3e6 {
+							test.Fail()
+						}
+						if beta != 2e6 && beta != 4.2 {
+							test.Fail()
+						}
 
 						var move ScoredMove
 						switch true {
@@ -977,6 +1001,12 @@ func TestAlphaBetaSearcherSearchMove(
 							test.Fail()
 						}
 						if deep != 3 {
+							test.Fail()
+						}
+						if alpha != -3e6 {
+							test.Fail()
+						}
+						if beta != 2e6 && beta != 4.2 {
 							test.Fail()
 						}
 
