@@ -30,11 +30,11 @@ func NewAlphaBetaSearcher(
 	generator MoveGenerator,
 	terminator terminators.SearchTerminator,
 	evaluator evaluators.BoardEvaluator,
-) *NegamaxSearcher {
+) *AlphaBetaSearcher {
 	// instance must be created in a heap
 	// so that it's possible to add
 	// a reference to itself inside
-	searcher := &NegamaxSearcher{
+	searcher := &AlphaBetaSearcher{
 		generator:  generator,
 		terminator: terminator,
 		evaluator:  evaluator,
