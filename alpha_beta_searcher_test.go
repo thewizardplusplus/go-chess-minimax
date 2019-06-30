@@ -130,6 +130,8 @@ func TestAlphaBetaSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
+				alpha:   -2e6,
+				beta:    3e6,
 			},
 			wantMove: ScoredMove{},
 			wantErr:  models.ErrKingCapture,
@@ -198,6 +200,8 @@ func TestAlphaBetaSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
+				alpha:   -2e6,
+				beta:    3e6,
 			},
 			wantMove: ScoredMove{Score: 2.3},
 			wantErr:  nil,
@@ -350,6 +354,8 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color: models.White,
 				deep:  2,
+				alpha: -2e6,
+				beta:  3e6,
 			},
 			wantMove: ScoredMove{},
 			wantErr:  ErrDraw,
@@ -511,6 +517,8 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color: models.White,
 				deep:  2,
+				alpha: -2e6,
+				beta:  3e6,
 			},
 			wantMove: ScoredMove{
 				Score: evaluateCheckmate(2),
@@ -674,6 +682,8 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color: models.White,
 				deep:  2,
+				alpha: -2e6,
+				beta:  3e6,
 			},
 			wantMove: ScoredMove{
 				Move: models.Move{
@@ -849,6 +859,8 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color: models.White,
 				deep:  2,
+				alpha: -2e6,
+				beta:  3e6,
 			},
 			wantMove: ScoredMove{
 				Move: models.Move{
@@ -1027,6 +1039,8 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color: models.White,
 				deep:  2,
+				alpha: -2e6,
+				beta:  3e6,
 			},
 			wantMove: ScoredMove{
 				Move: models.Move{
@@ -1078,6 +1092,8 @@ func TestAlphaBetaSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
+				alpha:   -2e6,
+				beta:    3e6,
 			},
 			wantMove: ScoredMove{},
 			wantErr:  ErrDraw,
