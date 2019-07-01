@@ -1,9 +1,19 @@
 package chessminimax
 
+import (
+	"math"
+
+	models "github.com/thewizardplusplus/go-chess-models"
+)
+
 // Bounds ...
 type Bounds struct {
 	Alpha float64
 	Beta  float64
+}
+
+func newBounds() Bounds {
+	return Bounds{math.Inf(-1), math.Inf(+1)}
 }
 
 func (bounds Bounds) next() Bounds {
