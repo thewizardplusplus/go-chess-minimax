@@ -12,7 +12,8 @@ type Bounds struct {
 	Beta  float64
 }
 
-func newBounds() Bounds {
+// NewBounds ...
+func NewBounds() Bounds {
 	return Bounds{math.Inf(-1), math.Inf(+1)}
 }
 

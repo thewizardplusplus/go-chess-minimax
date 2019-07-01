@@ -90,11 +90,12 @@ func (searcher NegamaxSearcher) SearchMove(
 	for _, move := range moves {
 		nextStorage := storage.ApplyMove(move)
 		nextColor := color.Negative()
+		nextDeep := deep + 1
 		scoredMove, err :=
 			searcher.searcher.SearchMove(
 				nextStorage,
 				nextColor,
-				deep+1,
+				nextDeep,
 			)
 		if err == models.ErrKingCapture {
 			hasCheck = true

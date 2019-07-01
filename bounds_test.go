@@ -9,7 +9,7 @@ import (
 )
 
 func TestNewBounds(test *testing.T) {
-	got := newBounds()
+	got := NewBounds()
 
 	want := Bounds{math.Inf(-1), math.Inf(+1)}
 	if !reflect.DeepEqual(got, want) {

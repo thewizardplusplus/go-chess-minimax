@@ -58,6 +58,7 @@ func negamaxSearch(
 		)
 	evaluator :=
 		evaluators.MaterialEvaluator{}
+	initialDeep := 0
 	searcher := NewNegamaxSearcher(
 		generator,
 		terminator,
@@ -66,6 +67,6 @@ func negamaxSearch(
 	return searcher.SearchMove(
 		storage,
 		color,
-		0,
+		initialDeep,
 	)
 }

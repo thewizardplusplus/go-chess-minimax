@@ -1,7 +1,6 @@
 package chessminimax
 
 import (
-	"math"
 	"testing"
 
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
@@ -54,6 +53,8 @@ func alphaBetaSearch(
 		)
 	evaluator :=
 		evaluators.MaterialEvaluator{}
+	initialDeep := 0
+	initialBounds := NewBounds()
 	searcher := NewAlphaBetaSearcher(
 		generator,
 		terminator,
@@ -62,8 +63,7 @@ func alphaBetaSearch(
 	return searcher.SearchMove(
 		storage,
 		color,
-		0,
-		math.Inf(-1),
-		math.Inf(+1),
+		initialDeep,
+		initialBounds,
 	)
 }
