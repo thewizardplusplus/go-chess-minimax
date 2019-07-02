@@ -16,8 +16,8 @@ const (
 	gameCount       = 1
 	maximalDeep     = 2
 	maximalDuration = time.Second
-	boardInFEN      = "rnbqkbnr/pppppppp" +
-		"/8/8/8/8/PPPPPPPP/RNBQKBNR"
+	boardInFEN      = "rnbqk/ppppp/5" +
+		"/PPPPP/RNBQK"
 )
 
 var (
