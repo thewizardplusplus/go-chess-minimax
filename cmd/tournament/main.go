@@ -30,9 +30,11 @@ const (
 
 // ScoreGroup ...
 type ScoreGroup struct {
-	gameCount int64
-	negamax   int64
-	alphaBeta int64
+	gameCount         int64
+	negamaxWinCount   int64
+	negamaxScore      int64
+	alphaBetaWinCount int64
+	alphaBetaScore    int64
 }
 
 // AddGame ...
@@ -46,24 +48,64 @@ func (scores *ScoreGroup) AddGame(
 	case minimax.ErrCheckmate:
 		switch loserSide {
 		case Negamax:
-			atomic.AddInt64(&scores.alphaBeta, 10)
+			atomic.AddInt64(
+				&scores.alphaBetaWinCount,
+				1,
+			)
+			atomic.
+				AddInt64(&scores.alphaBetaScore, 10)
 		case AlphaBeta:
-			atomic.AddInt64(&scores.negamax, 10)
+			atomic.
+				AddInt64(&scores.negamaxWinCount, 1)
+			atomic.
+				AddInt64(&scores.negamaxScore, 10)
 		}
 	case minimax.ErrDraw:
-		atomic.AddInt64(&scores.negamax, 5)
-		atomic.AddInt64(&scores.alphaBeta, 5)
+		atomic.AddInt64(&scores.negamaxScore, 5)
+		atomic.
+			AddInt64(&scores.alphaBetaScore, 5)
 	}
 }
 
 // String ...
 func (scores ScoreGroup) String() string {
+	negamexScore, negamaxElo :=
+		scores.getScore(Negamax)
+	alphaBetaScore, alphaBetaElo :=
+		scores.getScore(AlphaBeta)
 	return fmt.Sprintf(
-		"Games: %d Negamax: %f Alpha-Beta: %f",
+		"Games: %d "+
+			"Negamax: %f (%f) "+
+			"Alpha-Beta: %f (%f)",
 		scores.gameCount,
-		float64(scores.negamax)/10,
-		float64(scores.alphaBeta)/10,
+		negamexScore,
+		negamaxElo,
+		alphaBetaScore,
+		alphaBetaElo,
 	)
+}
+
+func (scores ScoreGroup) getScore(
+	side Side,
+) (score float64, elo float64) {
+	switch side {
+	case Negamax:
+		score = float64(scores.negamaxScore) /
+			10
+		winPercent = float64(scores.gameCount) /
+			float64(scores.negamaxWinCount)
+		elo = 400 *
+			math.Lg(winPercent/(1-winPercent))
+	case AlphaBeta:
+		score = float64(scores.alphaBetaScore) /
+			10
+		winPercent = float64(scores.gameCount) /
+			float64(scores.alphaBetaWinCount)
+		elo = 400 *
+			math.Lg(winPercent/(1-winPercent))
+	}
+
+	return score, elo
 }
 
 const (
