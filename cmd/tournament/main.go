@@ -55,8 +55,8 @@ func (score Score) Score() float64 {
 func (score Score) Elo(
 	gameCount int64,
 ) float64 {
-	winPercent := float64(gameCount) /
-		float64(score.winCount)
+	winPercent := float64(score.winCount) /
+		float64(gameCount)
 	return 400 *
 		math.Log10(winPercent/(1-winPercent))
 }
