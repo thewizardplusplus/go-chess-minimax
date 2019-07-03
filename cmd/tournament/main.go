@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math"
 	"runtime"
 	"sync"
 	"sync/atomic"
@@ -92,17 +93,19 @@ func (scores ScoreGroup) getScore(
 	case Negamax:
 		score = float64(scores.negamaxScore) /
 			10
-		winPercent = float64(scores.gameCount) /
-			float64(scores.negamaxWinCount)
+		winPercent :=
+			float64(scores.gameCount) /
+				float64(scores.negamaxWinCount)
 		elo = 400 *
-			math.Lg(winPercent/(1-winPercent))
+			math.Log10(winPercent/(1-winPercent))
 	case AlphaBeta:
 		score = float64(scores.alphaBetaScore) /
 			10
-		winPercent = float64(scores.gameCount) /
-			float64(scores.alphaBetaWinCount)
+		winPercent :=
+			float64(scores.gameCount) /
+				float64(scores.alphaBetaWinCount)
 		elo = 400 *
-			math.Lg(winPercent/(1-winPercent))
+			math.Log10(winPercent/(1-winPercent))
 	}
 
 	return score, elo
