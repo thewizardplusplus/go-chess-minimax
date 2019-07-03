@@ -61,17 +61,6 @@ func (score Score) Elo(
 		math.Log10(winPercent/(1-winPercent))
 }
 
-// String ...
-func (score Score) String(
-	gameCount int64,
-) string {
-	return fmt.Sprintf(
-		"%f (%f)",
-		score.Score(),
-		score.Elo(gameCount),
-	)
-}
-
 // Scores ...
 type Scores struct {
 	gameCount int64
@@ -102,12 +91,15 @@ func (scores *Scores) AddGame(
 
 // String ...
 func (scores Scores) String() string {
-	gameCount := scores.gameCount
 	return fmt.Sprintf(
-		"Games: %d Negamax: %s Alpha-Beta: %s",
+		"Games: %d "+
+			"Negamax: %f "+
+			"Alpha-Beta: %f\n"+
+			"Alpha-Beta Elo Delta: %f",
 		scores.gameCount,
-		scores.negamax.String(gameCount),
-		scores.alphaBeta.String(gameCount),
+		scores.negamax.Score(),
+		scores.alphaBeta.Score(),
+		scores.alphaBeta.Elo(scores.gameCount),
 	)
 }
 
