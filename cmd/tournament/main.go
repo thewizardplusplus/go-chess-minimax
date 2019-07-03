@@ -93,9 +93,9 @@ func (scores *Scores) AddGame(
 func (scores Scores) String() string {
 	return fmt.Sprintf(
 		"Games: %d "+
-			"Negamax: %f "+
-			"Alpha-Beta: %f\n"+
-			"Alpha-Beta Elo Delta: %f",
+			"Negamax: %.1f "+
+			"Alpha-Beta: %.1f\n"+
+			"Alpha-Beta Elo Delta: %.2f",
 		scores.gameCount,
 		scores.negamax.Score(),
 		scores.alphaBeta.Score(),
