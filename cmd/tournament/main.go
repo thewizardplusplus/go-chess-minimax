@@ -6,6 +6,7 @@ import (
 	"log"
 	"runtime"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	minimax "github.com/thewizardplusplus/go-chess-minimax"
@@ -15,42 +16,41 @@ import (
 	"github.com/thewizardplusplus/go-chess-models/pieces"
 )
 
+// ScoreGroup ...
 type ScoreGroup struct {
-	locker    sync.Mutex
-	gameCount int
-	negamax   float64
-	alphaBeta float64
+	gameCount int64
+	negamax   int64
+	alphaBeta int64
 }
 
+// AddGame ...
 func (scores *ScoreGroup) AddGame(
 	initialColor models.Color,
 	loserColor models.Color,
 	err error,
 ) {
-	scores.locker.Lock()
-	defer scores.locker.Unlock()
-
-	scores.gameCount++
+	atomic.AddInt64(&scores.gameCount, 1)
 
 	switch err {
 	case minimax.ErrCheckmate:
 		if loserColor != initialColor {
-			scores.negamax++
+			atomic.AddInt64(&scores.negamax, 10)
 		} else {
-			scores.alphaBeta++
+			atomic.AddInt64(&scores.alphaBeta, 10)
 		}
 	case minimax.ErrDraw:
-		scores.negamax += 0.5
-		scores.alphaBeta += 0.5
+		atomic.AddInt64(&scores.negamax, 5)
+		atomic.AddInt64(&scores.alphaBeta, 5)
 	}
 }
 
+// String ...
 func (scores ScoreGroup) String() string {
 	return fmt.Sprintf(
 		"Games: %d Negamax: %f Alpha-Beta: %f",
 		scores.gameCount,
-		scores.negamax,
-		scores.alphaBeta,
+		float64(scores.negamax)/10,
+		float64(scores.alphaBeta)/10,
 	)
 }
 
