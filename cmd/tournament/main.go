@@ -19,6 +19,15 @@ import (
 // TaskInbox ...
 type TaskInbox chan func()
 
+// Side ...
+type Side int
+
+// ...
+const (
+	Negamax Side = iota
+	AlphaBeta
+)
+
 // ScoreGroup ...
 type ScoreGroup struct {
 	gameCount int64
@@ -28,18 +37,18 @@ type ScoreGroup struct {
 
 // AddGame ...
 func (scores *ScoreGroup) AddGame(
-	initialColor models.Color,
-	loserColor models.Color,
+	loserSide Side,
 	err error,
 ) {
 	atomic.AddInt64(&scores.gameCount, 1)
 
 	switch err {
 	case minimax.ErrCheckmate:
-		if loserColor != initialColor {
-			atomic.AddInt64(&scores.negamax, 10)
-		} else {
+		switch loserSide {
+		case Negamax:
 			atomic.AddInt64(&scores.alphaBeta, 10)
+		case AlphaBeta:
+			atomic.AddInt64(&scores.negamax, 10)
 		}
 	case minimax.ErrDraw:
 		atomic.AddInt64(&scores.negamax, 5)
@@ -71,6 +80,28 @@ var (
 
 	errTooLong = errors.New("too long")
 )
+
+func pool() (tasks TaskInbox, wait func()) {
+	threadCount := runtime.NumCPU()
+
+	var waiter sync.WaitGroup
+	waiter.Add(threadCount)
+
+	tasks = make(TaskInbox)
+	for i := 0; i < threadCount; i++ {
+		go func() {
+			defer waiter.Done()
+			fmt.Print("#")
+
+			for task := range tasks {
+				fmt.Print("%")
+				task()
+			}
+		}()
+	}
+
+	return tasks, func() { waiter.Wait() }
+}
 
 func makeTerminator(
 	maxDeep int,
@@ -133,22 +164,13 @@ func alphaBetaSearch(
 	)
 }
 
-func markSide(err error, winner rune) {
-	switch err {
-	case minimax.ErrCheckmate:
-		fmt.Print(string(winner))
-	case minimax.ErrDraw:
-		fmt.Print("D")
-	}
-}
-
 func game(
 	storage models.PieceStorage,
 	color models.Color,
 	maxDeep int,
 	maxDuration time.Duration,
 	maxMoveCount int,
-) (models.Color, error) {
+) (Side, error) {
 	for i := 0; i < maxMoveCount; i++ {
 		if i%5 == 0 {
 			fmt.Print(".")
@@ -161,8 +183,7 @@ func game(
 			maxDuration,
 		)
 		if err != nil {
-			markSide(err, 'A')
-			return color, err
+			return Negamax, err
 		}
 
 		storage = storage.ApplyMove(move.Move)
@@ -175,38 +196,30 @@ func game(
 			maxDuration,
 		)
 		if err != nil {
-			markSide(err, 'N')
-			return color, err
+			return AlphaBeta, err
 		}
 
 		storage = storage.ApplyMove(move.Move)
 		color = color.Negative()
 	}
 
-	fmt.Print("L")
 	return 0, errTooLong
 }
 
-func pool() (tasks TaskInbox, wait func()) {
-	threadCount := runtime.NumCPU()
-
-	var waiter sync.WaitGroup
-	waiter.Add(threadCount)
-
-	tasks = make(TaskInbox)
-	for i := 0; i < threadCount; i++ {
-		go func() {
-			defer waiter.Done()
-			fmt.Print("#")
-
-			for task := range tasks {
-				fmt.Print("%")
-				task()
-			}
-		}()
+func markGame(loserSide Side, err error) {
+	switch err {
+	case minimax.ErrCheckmate:
+		switch loserSide {
+		case Negamax:
+			fmt.Print("A")
+		case AlphaBeta:
+			fmt.Print("N")
+		}
+	case minimax.ErrDraw:
+		fmt.Print("D")
+	case errTooLong:
+		fmt.Print("L")
 	}
-
-	return tasks, func() { waiter.Wait() }
 }
 
 func main() {
@@ -225,22 +238,17 @@ func main() {
 	for scores.gameCount < gameCount {
 		initialColorCopy := initialColor
 		tasks <- func() {
-			loserColor, err := game(
+			loserSide, err := game(
 				storage,
-				initialColor,
+				initialColorCopy,
 				maxDeep,
 				maxDuration,
 				maxMoveCount,
 			)
-			if err == errTooLong {
-				return
+			markGame(loserSide, err)
+			if err != errTooLong {
+				scores.AddGame(loserSide, err)
 			}
-
-			scores.AddGame(
-				initialColorCopy,
-				loserColor,
-				err,
-			)
 		}
 
 		initialColor = initialColor.Negative()
