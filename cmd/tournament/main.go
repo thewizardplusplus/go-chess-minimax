@@ -16,6 +16,9 @@ import (
 	"github.com/thewizardplusplus/go-chess-models/pieces"
 )
 
+// TaskInbox ...
+type TaskInbox chan func()
+
 // ScoreGroup ...
 type ScoreGroup struct {
 	gameCount int64
@@ -55,10 +58,10 @@ func (scores ScoreGroup) String() string {
 }
 
 const (
-	gameCount    = 1
+	gameCount    = 10
 	maxDeep      = 4
 	maxDuration  = 500 * time.Millisecond
-	maxMoveCount = 20
+	maxMoveCount = 40
 	boardInFEN   = "rnbqk/ppppp/5/PPPPP/RNBQK"
 )
 
@@ -130,6 +133,15 @@ func alphaBetaSearch(
 	)
 }
 
+func markSide(err error, winner rune) {
+	switch err {
+	case minimax.ErrCheckmate:
+		fmt.Print(string(winner))
+	case minimax.ErrDraw:
+		fmt.Print("D")
+	}
+}
+
 func game(
 	storage models.PieceStorage,
 	color models.Color,
@@ -149,6 +161,7 @@ func game(
 			maxDuration,
 		)
 		if err != nil {
+			markSide(err, 'A')
 			return color, err
 		}
 
@@ -162,6 +175,7 @@ func game(
 			maxDuration,
 		)
 		if err != nil {
+			markSide(err, 'N')
 			return color, err
 		}
 
@@ -169,7 +183,30 @@ func game(
 		color = color.Negative()
 	}
 
+	fmt.Print("L")
 	return 0, errTooLong
+}
+
+func pool() (tasks TaskInbox, wait func()) {
+	threadCount := runtime.NumCPU()
+
+	var waiter sync.WaitGroup
+	waiter.Add(threadCount)
+
+	tasks = make(TaskInbox)
+	for i := 0; i < threadCount; i++ {
+		go func() {
+			defer waiter.Done()
+			fmt.Print("#")
+
+			for task := range tasks {
+				fmt.Print("%")
+				task()
+			}
+		}()
+	}
+
+	return tasks, func() { waiter.Wait() }
 }
 
 func main() {
@@ -183,38 +220,34 @@ func main() {
 	}
 
 	var scores ScoreGroup
-	threadCount := runtime.NumCPU()
+	tasks, wait := pool()
 	initialColor := models.White
-	for i := 0; i < gameCount; i++ {
-		var waiter sync.WaitGroup
-		waiter.Add(threadCount)
+	for scores.gameCount < gameCount {
+		initialColorCopy := initialColor
+		tasks <- func() {
+			loserColor, err := game(
+				storage,
+				initialColor,
+				maxDeep,
+				maxDuration,
+				maxMoveCount,
+			)
+			if err == errTooLong {
+				return
+			}
 
-		for j := 0; j < threadCount; j++ {
-			go func() {
-				defer waiter.Done()
-
-				loserColor, err := game(
-					storage,
-					initialColor,
-					maxDeep,
-					maxDuration,
-					maxMoveCount,
-				)
-				if err == errTooLong {
-					return
-				}
-
-				scores.AddGame(
-					initialColor,
-					loserColor,
-					err,
-				)
-			}()
+			scores.AddGame(
+				initialColorCopy,
+				loserColor,
+				err,
+			)
 		}
-		waiter.Wait()
 
 		initialColor = initialColor.Negative()
 	}
+
+	close(tasks)
+	wait()
 
 	fmt.Println()
 	fmt.Println(scores)
