@@ -43,6 +43,12 @@ func (storage MockPieceStorage) CheckMove(
 	panic("not implemented")
 }
 
+func (
+	storage MockPieceStorage,
+) ToFEN() (string, error) {
+	panic("not implemented")
+}
+
 type MockPiece struct {
 	kind  models.Kind
 	color models.Color
