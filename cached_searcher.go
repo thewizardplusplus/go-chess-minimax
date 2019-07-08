@@ -14,9 +14,11 @@ type CachedData struct {
 type Cache interface {
 	Get(
 		storage models.PieceStorage,
+		color models.Color,
 	) (data CachedData, ok bool)
 	Set(
 		storage models.PieceStorage,
+		color models.Color,
 		data CachedData,
 	)
 }
@@ -54,19 +56,16 @@ func (
 	deep int,
 	bounds Bounds,
 ) (ScoredMove, error) {
-	data, ok := searcher.cache.Get(storage)
+	data, ok := searcher.cache.
+		Get(storage, color)
 	if ok {
 		return data.Move, data.Error
 	}
 
 	move, err := searcher.searcher.
 		SearchMove(storage, color, deep, bounds)
-	if color == models.Black {
-		move.Score *= -1
-	}
-
 	data = CachedData{move, err}
-	searcher.cache.Set(storage, data)
+	searcher.cache.Set(storage, color, data)
 
 	return move, err
 }

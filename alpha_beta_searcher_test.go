@@ -10,8 +10,6 @@ import (
 )
 
 type MockBoundedMoveSearcher struct {
-	id int
-
 	setSearcher func(
 		innerSearcher BoundedMoveSearcher,
 	)
@@ -87,49 +85,6 @@ func TestNewAlphaBetaSearcher(
 		searcher.searcher,
 		searcher,
 	) {
-		test.Fail()
-	}
-}
-
-func TestAlphaBetaSearcherSetSearcher(
-	test *testing.T,
-) {
-	var generator MockMoveGenerator
-	var terminator MockSearchTerminator
-	var evaluator MockBoardEvaluator
-	searcher := NewAlphaBetaSearcher(
-		generator,
-		terminator,
-		evaluator,
-	)
-
-	innerSearcher := MockBoundedMoveSearcher{id: 2}
-	searcher.SetSearcher(innerSearcher)
-
-	if !reflect.DeepEqual(
-		searcher.generator,
-		generator,
-	) {
-		test.Fail()
-	}
-	if !reflect.DeepEqual(
-		searcher.terminator,
-		terminator,
-	) {
-		test.Fail()
-	}
-	if !reflect.DeepEqual(
-		searcher.evaluator,
-		evaluator,
-	) {
-		test.Fail()
-	}
-	if !reflect.DeepEqual(
-		searcher.searcher,
-		innerSearcher,
-	) {
-		test.Logf("%+v %+v", searcher.searcher,
-			innerSearcher)
 		test.Fail()
 	}
 }
