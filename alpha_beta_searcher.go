@@ -8,6 +8,9 @@ import (
 
 // BoundedMoveSearcher ...
 type BoundedMoveSearcher interface {
+	SetInnerSearcher(
+		innerSearcher BoundedMoveSearcher,
+	)
 	SearchMove(
 		storage models.PieceStorage,
 		color models.Color,
@@ -44,6 +47,15 @@ func NewAlphaBetaSearcher(
 	searcher.searcher = searcher
 
 	return searcher
+}
+
+// SetInnerSearcher ...
+func (
+	searcher *AlphaBetaSearcher,
+) SetInnerSearcher(
+	innerSearcher BoundedMoveSearcher,
+) {
+	searcher.searcher = innerSearcher
 }
 
 // SearchMove ...

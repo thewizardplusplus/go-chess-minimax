@@ -10,12 +10,27 @@ import (
 )
 
 type MockBoundedMoveSearcher struct {
+	setInnerSearcher func(
+		innerSearcher BoundedMoveSearcher,
+	)
 	searchMove func(
 		storage models.PieceStorage,
 		color models.Color,
 		deep int,
 		bounds Bounds,
 	) (ScoredMove, error)
+}
+
+func (
+	searcher MockBoundedMoveSearcher,
+) SetInnerSearcher(
+	innerSearcher BoundedMoveSearcher,
+) {
+	if searcher.setInnerSearcher == nil {
+		panic("not implemented")
+	}
+
+	searcher.setInnerSearcher(innerSearcher)
 }
 
 func (
@@ -73,6 +88,47 @@ func TestNewAlphaBetaSearcher(
 	if !reflect.DeepEqual(
 		searcher.searcher,
 		searcher,
+	) {
+		test.Fail()
+	}
+}
+
+func TestAlphaBetaSearcherSetInnerSearcher(
+	test *testing.T,
+) {
+	var generator MockMoveGenerator
+	var terminator MockSearchTerminator
+	var evaluator MockBoardEvaluator
+	searcher := NewAlphaBetaSearcher(
+		generator,
+		terminator,
+		evaluator,
+	)
+
+	var innerSearcher MockBoundedMoveSearcher
+	searcher.SetInnerSearcher(innerSearcher)
+
+	if !reflect.DeepEqual(
+		searcher.generator,
+		generator,
+	) {
+		test.Fail()
+	}
+	if !reflect.DeepEqual(
+		searcher.terminator,
+		terminator,
+	) {
+		test.Fail()
+	}
+	if !reflect.DeepEqual(
+		searcher.evaluator,
+		evaluator,
+	) {
+		test.Fail()
+	}
+	if !reflect.DeepEqual(
+		searcher.searcher,
+		innerSearcher,
 	) {
 		test.Fail()
 	}
