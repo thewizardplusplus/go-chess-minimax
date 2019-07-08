@@ -10,7 +10,9 @@ import (
 )
 
 type MockBoundedMoveSearcher struct {
-	setInnerSearcher func(
+	id int
+
+	setSearcher func(
 		innerSearcher BoundedMoveSearcher,
 	)
 	searchMove func(
@@ -23,14 +25,10 @@ type MockBoundedMoveSearcher struct {
 
 func (
 	searcher MockBoundedMoveSearcher,
-) SetInnerSearcher(
+) SetSearcher(
 	innerSearcher BoundedMoveSearcher,
 ) {
-	if searcher.setInnerSearcher == nil {
-		panic("not implemented")
-	}
-
-	searcher.setInnerSearcher(innerSearcher)
+	panic("not implemented")
 }
 
 func (
@@ -93,7 +91,7 @@ func TestNewAlphaBetaSearcher(
 	}
 }
 
-func TestAlphaBetaSearcherSetInnerSearcher(
+func TestAlphaBetaSearcherSetSearcher(
 	test *testing.T,
 ) {
 	var generator MockMoveGenerator
@@ -105,8 +103,8 @@ func TestAlphaBetaSearcherSetInnerSearcher(
 		evaluator,
 	)
 
-	var innerSearcher MockBoundedMoveSearcher
-	searcher.SetInnerSearcher(innerSearcher)
+	innerSearcher := MockBoundedMoveSearcher{id: 2}
+	searcher.SetSearcher(innerSearcher)
 
 	if !reflect.DeepEqual(
 		searcher.generator,
@@ -130,6 +128,8 @@ func TestAlphaBetaSearcherSetInnerSearcher(
 		searcher.searcher,
 		innerSearcher,
 	) {
+		test.Logf("%+v %+v", searcher.searcher,
+			innerSearcher)
 		test.Fail()
 	}
 }
@@ -1736,8 +1736,10 @@ func TestAlphaBetaSearcherSearchMove(
 			generator:  data.fields.generator,
 			terminator: data.fields.terminator,
 			evaluator:  data.fields.evaluator,
-			searcher:   data.fields.searcher,
 		}
+		searcher.searcher =
+			data.fields.searcher
+
 		gotMove, gotErr := searcher.SearchMove(
 			data.args.storage,
 			data.args.color,

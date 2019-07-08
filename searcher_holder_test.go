@@ -5,23 +5,11 @@ import (
 	"testing"
 )
 
-func TestNewSearcherHolder(test *testing.T) {
-	var searcher MockBoundedMoveSearcher
-	holder := newSearcherHolder(searcher)
-
-	if !reflect.DeepEqual(
-		holder.searcher,
-		searcher,
-	) {
-		test.Fail()
-	}
-}
-
 func TestSearcherHolderSetSearcher(
 	test *testing.T,
 ) {
 	var searcher MockBoundedMoveSearcher
-	holder := newSearcherHolder(nil)
+	var holder searcherHolder
 	holder.SetSearcher(searcher)
 
 	if !reflect.DeepEqual(

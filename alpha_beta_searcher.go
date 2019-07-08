@@ -8,8 +8,8 @@ import (
 
 // BoundedMoveSearcher ...
 type BoundedMoveSearcher interface {
-	SetInnerSearcher(
-		innerSearcher BoundedMoveSearcher,
+	SetSearcher(
+		searcher BoundedMoveSearcher,
 	)
 	SearchMove(
 		storage models.PieceStorage,
@@ -21,10 +21,11 @@ type BoundedMoveSearcher interface {
 
 // AlphaBetaSearcher ...
 type AlphaBetaSearcher struct {
+	searcherHolder
+
 	generator  MoveGenerator
 	terminator terminators.SearchTerminator
 	evaluator  evaluators.BoardEvaluator
-	searcher   BoundedMoveSearcher
 }
 
 // NewAlphaBetaSearcher ...
@@ -47,15 +48,6 @@ func NewAlphaBetaSearcher(
 	searcher.searcher = searcher
 
 	return searcher
-}
-
-// SetInnerSearcher ...
-func (
-	searcher *AlphaBetaSearcher,
-) SetInnerSearcher(
-	innerSearcher BoundedMoveSearcher,
-) {
-	searcher.searcher = innerSearcher
 }
 
 // SearchMove ...

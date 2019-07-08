@@ -23,8 +23,9 @@ type Cache interface {
 
 // CachedSearcher ...
 type CachedSearcher struct {
-	cache    Cache
-	searcher BoundedMoveSearcher
+	searcherHolder
+
+	cache Cache
 }
 
 // NewCachedSearcher ...
@@ -32,27 +33,16 @@ func NewCachedSearcher(
 	cache Cache,
 	innerSearcher BoundedMoveSearcher,
 ) *CachedSearcher {
-	searcher := &CachedSearcher{
-		cache:    cache,
-		searcher: innerSearcher,
-	}
+	searcher := &CachedSearcher{cache: cache}
+	searcher.searcher = innerSearcher
 
 	// set itself as an inner searcher
 	// for passed one
 	// in order to recursive calls
 	// will be cached too
-	innerSearcher.SetInnerSearcher(searcher)
+	innerSearcher.SetSearcher(searcher)
 
 	return searcher
-}
-
-// SetInnerSearcher ...
-func (
-	searcher *CachedSearcher,
-) SetInnerSearcher(
-	innerSearcher BoundedMoveSearcher,
-) {
-	searcher.searcher = innerSearcher
 }
 
 // SearchMove ...
