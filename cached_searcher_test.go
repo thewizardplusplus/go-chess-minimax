@@ -154,6 +154,125 @@ func TestCachedSearcherSearchMove(
 			},
 			wantErr: true,
 		},
+		data{
+			fields: fields{
+				searcher: MockBoundedMoveSearcher{
+					searchMove: func(
+						storage models.PieceStorage,
+						color models.Color,
+						deep int,
+						bounds Bounds,
+					) (ScoredMove, error) {
+						_, ok :=
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+						if color != models.White {
+							test.Fail()
+						}
+						if deep != 2 {
+							test.Fail()
+						}
+						if !reflect.DeepEqual(
+							bounds,
+							Bounds{-2e6, 3e6},
+						) {
+							test.Fail()
+						}
+
+						move := ScoredMove{
+							Move: models.Move{
+								Start: models.Position{
+									File: 5,
+									Rank: 6,
+								},
+								Finish: models.Position{
+									File: 7,
+									Rank: 8,
+								},
+							},
+							Score: 4.2,
+						}
+						return move, errors.New("dummy")
+					},
+				},
+				cache: MockCache{
+					get: func(
+						storage models.PieceStorage,
+						color models.Color,
+					) (data CachedData, ok bool) {
+						_, ok =
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+						if color != models.White {
+							test.Fail()
+						}
+
+						return CachedData{}, false
+					},
+					set: func(
+						storage models.PieceStorage,
+						color models.Color,
+						data CachedData,
+					) {
+						_, ok :=
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+						if color != models.White {
+							test.Fail()
+						}
+
+						expectedData := CachedData{
+							Move: ScoredMove{
+								Move: models.Move{
+									Start: models.Position{
+										File: 5,
+										Rank: 6,
+									},
+									Finish: models.Position{
+										File: 7,
+										Rank: 8,
+									},
+								},
+								Score: 4.2,
+							},
+							Error: errors.New("dummy"),
+						}
+						if !reflect.DeepEqual(
+							data,
+							expectedData,
+						) {
+							test.Fail()
+						}
+					},
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{},
+				color:   models.White,
+				deep:    2,
+				bounds:  Bounds{-2e6, 3e6},
+			},
+			wantMove: ScoredMove{
+				Move: models.Move{
+					Start: models.Position{
+						File: 5,
+						Rank: 6,
+					},
+					Finish: models.Position{
+						File: 7,
+						Rank: 8,
+					},
+				},
+				Score: 4.2,
+			},
+			wantErr: true,
+		},
 	} {
 		searcher := CachedSearcher{
 			cache: data.fields.cache,
