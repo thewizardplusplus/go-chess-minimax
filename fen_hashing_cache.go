@@ -5,22 +5,19 @@ import (
 )
 
 // FENHashingCache ...
-type FENHashingCache struct {
-	data map[string]CachedData
-}
-
-// NewFENHashingCache ...
-func NewFENHashingCache() FENHashingCache {
-	data := make(map[string]CachedData)
-	return FENHashingCache{data}
-}
+type FENHashingCache map[string]CachedData
 
 // Get ...
 func (cache FENHashingCache) Get(
 	storage models.PieceStorage,
 	color models.Color,
 ) (data CachedData, ok bool) {
-	data, ok = cache.data[storage.ToFEN()]
+	fen, err := storage.ToFEN()
+	if err != nil {
+		return CachedData{}, false
+	}
+
+	data, ok = cache.data[fen]
 	return applyColor(data, color), ok
 }
 
@@ -30,11 +27,15 @@ func (cache FENHashingCache) Set(
 	color models.Color,
 	data CachedData,
 ) {
-	cache.data[storage.ToFEN()] =
-		applyColor(data, color)
+	fen, err := storage.ToFEN()
+	if err != nil {
+		return CachedData{}, false
+	}
+
+	cache.data[fen] = applyColor(data, color)
 }
 
-func (cache FENHashingCache) applyColor(
+func applyColor(
 	data CachedData,
 	color models.Color,
 ) CachedData {
