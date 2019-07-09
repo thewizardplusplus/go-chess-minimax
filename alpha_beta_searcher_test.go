@@ -26,7 +26,11 @@ func (
 ) SetSearcher(
 	innerSearcher BoundedMoveSearcher,
 ) {
-	panic("not implemented")
+	if searcher.setSearcher == nil {
+		panic("not implemented")
+	}
+
+	searcher.setSearcher(innerSearcher)
 }
 
 func (
