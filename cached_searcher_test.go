@@ -74,3 +74,52 @@ func TestNewCachedSearcher(test *testing.T) {
 		test.Fail()
 	}
 }
+
+func TestCachedSearcherSearchMove(
+	test *testing.T,
+) {
+	type fields struct {
+		searcher BoundedMoveSearcher
+		cache    Cache
+	}
+	type args struct {
+		storage models.PieceStorage
+		color   models.Color
+		deep    int
+		bounds  Bounds
+	}
+	type data struct {
+		fields   fields
+		args     args
+		wantMove ScoredMove
+		wantErr  error
+	}
+
+	for _, data := range []data{} {
+		searcher := CachedSearcher{
+			cache: data.fields.cache,
+		}
+		searcher.searcher =
+			data.fields.searcher
+
+		gotMove, gotErr := searcher.SearchMove(
+			data.args.storage,
+			data.args.color,
+			data.args.deep,
+			data.args.bounds,
+		)
+
+		if !reflect.DeepEqual(
+			gotMove,
+			data.wantMove,
+		) {
+			test.Fail()
+		}
+		if !reflect.DeepEqual(
+			gotErr,
+			data.wantErr,
+		) {
+			test.Fail()
+		}
+	}
+}
