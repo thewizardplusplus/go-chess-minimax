@@ -1,6 +1,7 @@
 package chessminimax
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
@@ -92,10 +93,68 @@ func TestCachedSearcherSearchMove(
 		fields   fields
 		args     args
 		wantMove ScoredMove
-		wantErr  error
+		wantErr  bool
 	}
 
-	for _, data := range []data{} {
+	for _, data := range []data{
+		data{
+			fields: fields{
+				cache: MockCache{
+					get: func(
+						storage models.PieceStorage,
+						color models.Color,
+					) (data CachedData, ok bool) {
+						_, ok =
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+						if color != models.White {
+							test.Fail()
+						}
+
+						data = CachedData{
+							Move: ScoredMove{
+								Move: models.Move{
+									Start: models.Position{
+										File: 1,
+										Rank: 2,
+									},
+									Finish: models.Position{
+										File: 3,
+										Rank: 4,
+									},
+								},
+								Score: 2.3,
+							},
+							Error: errors.New("dummy"),
+						}
+						return data, true
+					},
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{},
+				color:   models.White,
+				deep:    2,
+				bounds:  Bounds{-2e6, 3e6},
+			},
+			wantMove: ScoredMove{
+				Move: models.Move{
+					Start: models.Position{
+						File: 1,
+						Rank: 2,
+					},
+					Finish: models.Position{
+						File: 3,
+						Rank: 4,
+					},
+				},
+				Score: 2.3,
+			},
+			wantErr: true,
+		},
+	} {
 		searcher := CachedSearcher{
 			cache: data.fields.cache,
 		}
@@ -115,10 +174,9 @@ func TestCachedSearcherSearchMove(
 		) {
 			test.Fail()
 		}
-		if !reflect.DeepEqual(
-			gotErr,
-			data.wantErr,
-		) {
+
+		hasErr := gotErr != nil
+		if hasErr != data.wantErr {
 			test.Fail()
 		}
 	}
