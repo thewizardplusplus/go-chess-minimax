@@ -17,7 +17,7 @@ func (cache FENHashingCache) Get(
 		return CachedData{}, false
 	}
 
-	data, ok = cache.data[fen]
+	data, ok = cache[fen]
 	return applyColor(data, color), ok
 }
 
@@ -29,10 +29,10 @@ func (cache FENHashingCache) Set(
 ) {
 	fen, err := storage.ToFEN()
 	if err != nil {
-		return CachedData{}, false
+		return
 	}
 
-	cache.data[fen] = applyColor(data, color)
+	cache[fen] = applyColor(data, color)
 }
 
 func applyColor(
