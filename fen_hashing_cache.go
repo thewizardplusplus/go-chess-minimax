@@ -21,7 +21,7 @@ func (cache FENHashingCache) Get(
 	color models.Color,
 ) (data CachedData, ok bool) {
 	data, ok = cache.data[storage.ToFEN()]
-	return data, ok
+	return applyColor(data, color), ok
 }
 
 // Set ...
@@ -30,5 +30,17 @@ func (cache FENHashingCache) Set(
 	color models.Color,
 	data CachedData,
 ) {
-	cache.data[storage.ToFEN()] = data
+	cache.data[storage.ToFEN()] =
+		applyColor(data, color)
+}
+
+func (cache FENHashingCache) applyColor(
+	data CachedData,
+	color models.Color,
+) CachedData {
+	if color == models.Black {
+		data.Move.Score *= -1
+	}
+
+	return data
 }
