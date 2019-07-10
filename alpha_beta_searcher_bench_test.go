@@ -9,6 +9,11 @@ import (
 	"github.com/thewizardplusplus/go-chess-models/pieces"
 )
 
+var (
+	initial = "rnbqkbnr/pppppppp/8/8" +
+		"/8/8/PPPPPPPP/RNBQKBNR"
+)
+
 func BenchmarkAlphaBetaSearcher_1Ply(
 	benchmark *testing.B,
 ) {
