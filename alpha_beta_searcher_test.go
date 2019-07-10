@@ -9,6 +9,121 @@ import (
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
+type MockPieceStorage struct {
+	appliedMove models.Move
+
+	applyMove func(
+		move models.Move,
+	) models.PieceStorage
+	toFEN func() (string, error)
+}
+
+func (
+	storage MockPieceStorage,
+) Size() models.Size {
+	panic("not implemented")
+}
+
+func (
+	storage MockPieceStorage,
+) Piece(
+	position models.Position,
+) (piece models.Piece, ok bool) {
+	panic("not implemented")
+}
+
+func (
+	storage MockPieceStorage,
+) Pieces() []models.Piece {
+	panic("not implemented")
+}
+
+func (storage MockPieceStorage) ApplyMove(
+	move models.Move,
+) models.PieceStorage {
+	if storage.applyMove == nil {
+		panic("not implemented")
+	}
+
+	return storage.applyMove(move)
+}
+
+func (storage MockPieceStorage) CheckMove(
+	move models.Move,
+) error {
+	panic("not implemented")
+}
+
+func (
+	storage MockPieceStorage,
+) ToFEN() (string, error) {
+	if storage.toFEN == nil {
+		panic("not implemented")
+	}
+
+	return storage.toFEN()
+}
+
+type MockMoveGenerator struct {
+	movesForColor func(
+		storage models.PieceStorage,
+		color models.Color,
+	) ([]models.Move, error)
+}
+
+func (
+	generator MockMoveGenerator,
+) MovesForColor(
+	storage models.PieceStorage,
+	color models.Color,
+) ([]models.Move, error) {
+	if generator.movesForColor == nil {
+		panic("not implemented")
+	}
+
+	return generator.movesForColor(
+		storage,
+		color,
+	)
+}
+
+type MockSearchTerminator struct {
+	isSearchTerminate func(deep int) bool
+}
+
+func (
+	terminator MockSearchTerminator,
+) IsSearchTerminate(deep int) bool {
+	if terminator.isSearchTerminate == nil {
+		panic("not implemented")
+	}
+
+	return terminator.isSearchTerminate(deep)
+}
+
+type MockBoardEvaluator struct {
+	evaluateBoard func(
+		storage models.PieceStorage,
+		color models.Color,
+	) float64
+}
+
+func (
+	evaluator MockBoardEvaluator,
+) EvaluateBoard(
+	storage models.PieceStorage,
+	color models.Color,
+) float64 {
+	if evaluator.evaluateBoard == nil {
+		panic("not implemented")
+	}
+
+	return evaluator.evaluateBoard(
+		storage,
+		color,
+	)
+}
+
 type MockBoundedMoveSearcher struct {
 	setSearcher func(
 		innerSearcher BoundedMoveSearcher,
@@ -1718,5 +1833,22 @@ func TestAlphaBetaSearcherSearchMove(
 		) {
 			test.Fail()
 		}
+	}
+}
+
+func TestEvaluateCheckmate(
+	test *testing.T,
+) {
+	scoreOne := evaluateCheckmate(2)
+	scoreTwo := evaluateCheckmate(3)
+
+	if scoreOne >= 0 {
+		test.Fail()
+	}
+	if scoreTwo >= 0 {
+		test.Fail()
+	}
+	if scoreTwo >= scoreOne {
+		test.Fail()
 	}
 }
