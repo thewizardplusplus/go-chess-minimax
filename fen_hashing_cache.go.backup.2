@@ -4,8 +4,14 @@ import (
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
+// FENHashKey ...
+type FENHashKey struct {
+	BoardInFEN string
+	Color      models.Color
+}
+
 // FENHashingCache ...
-type FENHashingCache map[string]CachedData
+type FENHashingCache map[FENHashKey]CachedData
 
 // Get ...
 func (cache FENHashingCache) Get(
@@ -17,8 +23,8 @@ func (cache FENHashingCache) Get(
 		return CachedData{}, false
 	}
 
-	data, ok = cache[fen]
-	return data, ok
+	data, ok = cache[FENHashKey{fen, color}]
+	return applyColor(data, color), ok
 }
 
 // Set ...
@@ -32,7 +38,8 @@ func (cache FENHashingCache) Set(
 		return
 	}
 
-	cache[fen] = applyColor(data, color)
+	cache[FENHashKey{fen, color}] =
+		applyColor(data, color)
 }
 
 func applyColor(

@@ -256,9 +256,9 @@ func markGame(loserSide Side, err error) {
 	case minimax.ErrCheckmate:
 		switch loserSide {
 		case AlphaBeta:
-			fmt.Print("A")
-		case Cached:
 			fmt.Print("C")
+		case Cached:
+			fmt.Print("A")
 		}
 	case minimax.ErrDraw:
 		fmt.Print("D")
