@@ -93,8 +93,8 @@ func (scores *Scores) AddGame(
 func (scores Scores) String() string {
 	return fmt.Sprintf(
 		"Games: %d "+
-			"Alpha-Beta: %.1f\n"+
-			"Cached: %.1f "+
+			"Alpha-Beta: %.1f "+
+			"Cached: %.1f\n"+
 			"Cached Elo Delta: %.2f",
 		scores.gameCount,
 		scores.alphaBeta.Score(),
@@ -256,7 +256,7 @@ func markGame(loserSide Side, err error) {
 	case minimax.ErrCheckmate:
 		switch loserSide {
 		case AlphaBeta:
-			fmt.Print("N")
+			fmt.Print("A")
 		case Cached:
 			fmt.Print("C")
 		}
