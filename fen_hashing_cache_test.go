@@ -356,427 +356,448 @@ func TestFENHashingCacheGet(
 	}
 }
 
-/*
 func TestFENHashingCacheSet(
-  test *testing.T,
+	test *testing.T,
 ) {
-  type args struct {
-    storage models.PieceStorage
-    color   models.Color
-    data    CachedData
-  }
-  type data struct {
-    cache     FENHashingCache
-    args      args
-    wantCache FENHashingCache
-  }
+	type args struct {
+		storage models.PieceStorage
+		color   models.Color
+		data    CachedData
+	}
+	type data struct {
+		cache     FENHashingCache
+		args      args
+		wantCache FENHashingCache
+	}
 
-  for _, data := range []data{
-    data{
-      cache: FENHashingCache{
-        "fen #1": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 1,
-                Rank: 2,
-              },
-              Finish: models.Position{
-                File: 3,
-                Rank: 4,
-              },
-            },
-            Score: 2.3,
-          },
-          Error: errors.New("dummy #1"),
-        },
-        "fen #2": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 5,
-                Rank: 6,
-              },
-              Finish: models.Position{
-                File: 7,
-                Rank: 8,
-              },
-            },
-            Score: 4.2,
-          },
-          Error: errors.New("dummy #2"),
-        },
-      },
-      args: args{
-        storage: MockPieceStorage{
-          toFEN: func() (string, error) {
-            return "", errors.New("dummy")
-          },
-        },
-        color: models.White,
-      },
-      wantCache: FENHashingCache{
-        "fen #1": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 1,
-                Rank: 2,
-              },
-              Finish: models.Position{
-                File: 3,
-                Rank: 4,
-              },
-            },
-            Score: 2.3,
-          },
-          Error: errors.New("dummy #1"),
-        },
-        "fen #2": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 5,
-                Rank: 6,
-              },
-              Finish: models.Position{
-                File: 7,
-                Rank: 8,
-              },
-            },
-            Score: 4.2,
-          },
-          Error: errors.New("dummy #2"),
-        },
-      },
-    },
-    data{
-      cache: FENHashingCache{
-        "fen #1": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 1,
-                Rank: 2,
-              },
-              Finish: models.Position{
-                File: 3,
-                Rank: 4,
-              },
-            },
-            Score: 2.3,
-          },
-          Error: errors.New("dummy #1"),
-        },
-        "fen #2": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 5,
-                Rank: 6,
-              },
-              Finish: models.Position{
-                File: 7,
-                Rank: 8,
-              },
-            },
-            Score: 4.2,
-          },
-          Error: errors.New("dummy #2"),
-        },
-      },
-      args: args{
-        storage: MockPieceStorage{
-          toFEN: func() (string, error) {
-            return "fen #3", nil
-          },
-        },
-        color: models.White,
-        data: CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 9,
-                Rank: 10,
-              },
-              Finish: models.Position{
-                File: 11,
-                Rank: 12,
-              },
-            },
-            Score: 1.2,
-          },
-          Error: errors.New("dummy #3"),
-        },
-      },
-      wantCache: FENHashingCache{
-        "fen #1": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 1,
-                Rank: 2,
-              },
-              Finish: models.Position{
-                File: 3,
-                Rank: 4,
-              },
-            },
-            Score: 2.3,
-          },
-          Error: errors.New("dummy #1"),
-        },
-        "fen #2": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 5,
-                Rank: 6,
-              },
-              Finish: models.Position{
-                File: 7,
-                Rank: 8,
-              },
-            },
-            Score: 4.2,
-          },
-          Error: errors.New("dummy #2"),
-        },
-        "fen #3": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 9,
-                Rank: 10,
-              },
-              Finish: models.Position{
-                File: 11,
-                Rank: 12,
-              },
-            },
-            Score: 1.2,
-          },
-          Error: errors.New("dummy #3"),
-        },
-      },
-    },
-    data{
-      cache: FENHashingCache{
-        "fen #1": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 1,
-                Rank: 2,
-              },
-              Finish: models.Position{
-                File: 3,
-                Rank: 4,
-              },
-            },
-            Score: 2.3,
-          },
-          Error: errors.New("dummy #1"),
-        },
-        "fen #2": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 5,
-                Rank: 6,
-              },
-              Finish: models.Position{
-                File: 7,
-                Rank: 8,
-              },
-            },
-            Score: 4.2,
-          },
-          Error: errors.New("dummy #2"),
-        },
-      },
-      args: args{
-        storage: MockPieceStorage{
-          toFEN: func() (string, error) {
-            return "fen #3", nil
-          },
-        },
-        color: models.Black,
-        data: CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 9,
-                Rank: 10,
-              },
-              Finish: models.Position{
-                File: 11,
-                Rank: 12,
-              },
-            },
-            Score: 1.2,
-          },
-          Error: errors.New("dummy #3"),
-        },
-      },
-      wantCache: FENHashingCache{
-        "fen #1": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 1,
-                Rank: 2,
-              },
-              Finish: models.Position{
-                File: 3,
-                Rank: 4,
-              },
-            },
-            Score: 2.3,
-          },
-          Error: errors.New("dummy #1"),
-        },
-        "fen #2": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 5,
-                Rank: 6,
-              },
-              Finish: models.Position{
-                File: 7,
-                Rank: 8,
-              },
-            },
-            Score: 4.2,
-          },
-          Error: errors.New("dummy #2"),
-        },
-        "fen #3": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 9,
-                Rank: 10,
-              },
-              Finish: models.Position{
-                File: 11,
-                Rank: 12,
-              },
-            },
-            Score: -1.2,
-          },
-          Error: errors.New("dummy #3"),
-        },
-      },
-    },
-    data{
-      cache: FENHashingCache{
-        "fen #1": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 1,
-                Rank: 2,
-              },
-              Finish: models.Position{
-                File: 3,
-                Rank: 4,
-              },
-            },
-            Score: 2.3,
-          },
-          Error: errors.New("dummy #1"),
-        },
-        "fen #2": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 5,
-                Rank: 6,
-              },
-              Finish: models.Position{
-                File: 7,
-                Rank: 8,
-              },
-            },
-            Score: 4.2,
-          },
-          Error: errors.New("dummy #2"),
-        },
-      },
-      args: args{
-        storage: MockPieceStorage{
-          toFEN: func() (string, error) {
-            return "fen #2", nil
-          },
-        },
-        color: models.White,
-        data: CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 9,
-                Rank: 10,
-              },
-              Finish: models.Position{
-                File: 11,
-                Rank: 12,
-              },
-            },
-            Score: 1.2,
-          },
-          Error: errors.New("dummy #3"),
-        },
-      },
-      wantCache: FENHashingCache{
-        "fen #1": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 1,
-                Rank: 2,
-              },
-              Finish: models.Position{
-                File: 3,
-                Rank: 4,
-              },
-            },
-            Score: 2.3,
-          },
-          Error: errors.New("dummy #1"),
-        },
-        "fen #2": CachedData{
-          Move: ScoredMove{
-            Move: models.Move{
-              Start: models.Position{
-                File: 9,
-                Rank: 10,
-              },
-              Finish: models.Position{
-                File: 11,
-                Rank: 12,
-              },
-            },
-            Score: 1.2,
-          },
-          Error: errors.New("dummy #3"),
-        },
-      },
-    },
-  } {
-    data.cache.Set(
-      data.args.storage,
-      data.args.color,
-      data.args.data,
-    )
+	for _, data := range []data{
+		data{
+			cache: FENHashingCache{
+				FENHashKey{
+					BoardInFEN: "fen #1",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #1"),
+				},
+				FENHashKey{
+					BoardInFEN: "fen #2",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 4.2,
+					},
+					Error: errors.New("dummy #2"),
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{
+					toFEN: func() (string, error) {
+						return "", errors.New("dummy")
+					},
+				},
+				color: models.White,
+			},
+			wantCache: FENHashingCache{
+				FENHashKey{
+					BoardInFEN: "fen #1",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #1"),
+				},
+				FENHashKey{
+					BoardInFEN: "fen #2",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 4.2,
+					},
+					Error: errors.New("dummy #2"),
+				},
+			},
+		},
+		data{
+			cache: FENHashingCache{
+				FENHashKey{
+					BoardInFEN: "fen #1",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #1"),
+				},
+				FENHashKey{
+					BoardInFEN: "fen #2",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 4.2,
+					},
+					Error: errors.New("dummy #2"),
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{
+					toFEN: func() (string, error) {
+						return "fen #3", nil
+					},
+				},
+				color: models.White,
+				data: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 9,
+								Rank: 10,
+							},
+							Finish: models.Position{
+								File: 11,
+								Rank: 12,
+							},
+						},
+						Score: 1.2,
+					},
+					Error: errors.New("dummy #3"),
+				},
+			},
+			wantCache: FENHashingCache{
+				FENHashKey{
+					BoardInFEN: "fen #1",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #1"),
+				},
+				FENHashKey{
+					BoardInFEN: "fen #2",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 4.2,
+					},
+					Error: errors.New("dummy #2"),
+				},
+				FENHashKey{
+					BoardInFEN: "fen #3",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 9,
+								Rank: 10,
+							},
+							Finish: models.Position{
+								File: 11,
+								Rank: 12,
+							},
+						},
+						Score: 1.2,
+					},
+					Error: errors.New("dummy #3"),
+				},
+			},
+		},
+		data{
+			cache: FENHashingCache{
+				FENHashKey{
+					BoardInFEN: "fen #1",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #1"),
+				},
+				FENHashKey{
+					BoardInFEN: "fen #2",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 4.2,
+					},
+					Error: errors.New("dummy #2"),
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{
+					toFEN: func() (string, error) {
+						return "fen #2", nil
+					},
+				},
+				color: models.White,
+				data: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 9,
+								Rank: 10,
+							},
+							Finish: models.Position{
+								File: 11,
+								Rank: 12,
+							},
+						},
+						Score: 1.2,
+					},
+					Error: errors.New("dummy #3"),
+				},
+			},
+			wantCache: FENHashingCache{
+				FENHashKey{
+					BoardInFEN: "fen #1",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #1"),
+				},
+				FENHashKey{
+					BoardInFEN: "fen #2",
+					Color:      models.White,
+				}: CachedData{
+					Move: ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 9,
+								Rank: 10,
+							},
+							Finish: models.Position{
+								File: 11,
+								Rank: 12,
+							},
+						},
+						Score: 1.2,
+					},
+					Error: errors.New("dummy #3"),
+				},
+			},
+		},
+		/*data{
+		  cache: FENHashingCache{
+		    "fen #1": CachedData{
+		      Move: ScoredMove{
+		        Move: models.Move{
+		          Start: models.Position{
+		            File: 1,
+		            Rank: 2,
+		          },
+		          Finish: models.Position{
+		            File: 3,
+		            Rank: 4,
+		          },
+		        },
+		        Score: 2.3,
+		      },
+		      Error: errors.New("dummy #1"),
+		    },
+		    "fen #2": CachedData{
+		      Move: ScoredMove{
+		        Move: models.Move{
+		          Start: models.Position{
+		            File: 5,
+		            Rank: 6,
+		          },
+		          Finish: models.Position{
+		            File: 7,
+		            Rank: 8,
+		          },
+		        },
+		        Score: 4.2,
+		      },
+		      Error: errors.New("dummy #2"),
+		    },
+		  },
+		  args: args{
+		    storage: MockPieceStorage{
+		      toFEN: func() (string, error) {
+		        return "fen #2", nil
+		      },
+		    },
+		    color: models.White,
+		    data: CachedData{
+		      Move: ScoredMove{
+		        Move: models.Move{
+		          Start: models.Position{
+		            File: 9,
+		            Rank: 10,
+		          },
+		          Finish: models.Position{
+		            File: 11,
+		            Rank: 12,
+		          },
+		        },
+		        Score: 1.2,
+		      },
+		      Error: errors.New("dummy #3"),
+		    },
+		  },
+		  wantCache: FENHashingCache{
+		    "fen #1": CachedData{
+		      Move: ScoredMove{
+		        Move: models.Move{
+		          Start: models.Position{
+		            File: 1,
+		            Rank: 2,
+		          },
+		          Finish: models.Position{
+		            File: 3,
+		            Rank: 4,
+		          },
+		        },
+		        Score: 2.3,
+		      },
+		      Error: errors.New("dummy #1"),
+		    },
+		    "fen #2": CachedData{
+		      Move: ScoredMove{
+		        Move: models.Move{
+		          Start: models.Position{
+		            File: 9,
+		            Rank: 10,
+		          },
+		          Finish: models.Position{
+		            File: 11,
+		            Rank: 12,
+		          },
+		        },
+		        Score: 1.2,
+		      },
+		      Error: errors.New("dummy #3"),
+		    },
+		  },
+		},*/
+	} {
+		data.cache.Set(
+			data.args.storage,
+			data.args.color,
+			data.args.data,
+		)
 
-    if !reflect.DeepEqual(
-      data.cache,
-      data.wantCache,
-    ) {
-      test.Fail()
-    }
-  }
+		if !reflect.DeepEqual(
+			data.cache,
+			data.wantCache,
+		) {
+			test.Fail()
+		}
+	}
 }
-*/
