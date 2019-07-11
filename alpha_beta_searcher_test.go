@@ -131,7 +131,7 @@ type MockMoveSearcher struct {
 		storage models.PieceStorage,
 		color models.Color,
 		deep int,
-		bounds Bounds,
+		bounds moves.Bounds,
 	) (moves.ScoredMove, error)
 }
 
@@ -153,7 +153,7 @@ func (
 	storage models.PieceStorage,
 	color models.Color,
 	deep int,
-	bounds Bounds,
+	bounds moves.Bounds,
 ) (moves.ScoredMove, error) {
 	if searcher.searchMove == nil {
 		panic("not implemented")
@@ -220,7 +220,7 @@ func TestAlphaBetaSearcherSearchMove(
 		storage models.PieceStorage
 		color   models.Color
 		deep    int
-		bounds  Bounds
+		bounds  moves.Bounds
 	}
 	type data struct {
 		fields   fields
@@ -255,7 +255,7 @@ func TestAlphaBetaSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
-				bounds:  Bounds{-2e6, 3e6},
+				bounds:  moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{},
 			wantErr:  models.ErrKingCapture,
@@ -324,7 +324,7 @@ func TestAlphaBetaSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
-				bounds:  Bounds{-2e6, 3e6},
+				bounds:  moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Score: 2.3,
@@ -388,7 +388,7 @@ func TestAlphaBetaSearcherSearchMove(
 						storage models.PieceStorage,
 						color models.Color,
 						deep int,
-						bounds Bounds,
+						bounds moves.Bounds,
 					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
@@ -431,7 +431,7 @@ func TestAlphaBetaSearcherSearchMove(
 						}
 						if !reflect.DeepEqual(
 							bounds,
-							Bounds{-3e6, 2e6},
+							moves.Bounds{-3e6, 2e6},
 						) {
 							test.Fail()
 						}
@@ -484,7 +484,7 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color:  models.White,
 				deep:   2,
-				bounds: Bounds{-2e6, 3e6},
+				bounds: moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{},
 			wantErr:  ErrDraw,
@@ -555,7 +555,7 @@ func TestAlphaBetaSearcherSearchMove(
 						storage models.PieceStorage,
 						color models.Color,
 						deep int,
-						bounds Bounds,
+						bounds moves.Bounds,
 					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
@@ -598,7 +598,7 @@ func TestAlphaBetaSearcherSearchMove(
 						}
 						if !reflect.DeepEqual(
 							bounds,
-							Bounds{-3e6, 2e6},
+							moves.Bounds{-3e6, 2e6},
 						) {
 							test.Fail()
 						}
@@ -651,7 +651,7 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color:  models.White,
 				deep:   2,
-				bounds: Bounds{-2e6, 3e6},
+				bounds: moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Score: evaluateCheckmate(2),
@@ -718,7 +718,7 @@ func TestAlphaBetaSearcherSearchMove(
 						storage models.PieceStorage,
 						color models.Color,
 						deep int,
-						bounds Bounds,
+						bounds moves.Bounds,
 					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
@@ -762,11 +762,11 @@ func TestAlphaBetaSearcherSearchMove(
 
 						checkOne = reflect.DeepEqual(
 							bounds,
-							Bounds{-3e6, 2e6},
+							moves.Bounds{-3e6, 2e6},
 						)
 						checkTwo = reflect.DeepEqual(
 							bounds,
-							Bounds{-3e6, 4.2},
+							moves.Bounds{-3e6, 4.2},
 						)
 						if !checkOne && !checkTwo {
 							test.Fail()
@@ -828,7 +828,7 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color:  models.White,
 				deep:   2,
-				bounds: Bounds{-2e6, 3e6},
+				bounds: moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -905,7 +905,7 @@ func TestAlphaBetaSearcherSearchMove(
 						storage models.PieceStorage,
 						color models.Color,
 						deep int,
-						bounds Bounds,
+						bounds moves.Bounds,
 					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
@@ -949,11 +949,11 @@ func TestAlphaBetaSearcherSearchMove(
 
 						checkOne = reflect.DeepEqual(
 							bounds,
-							Bounds{-3e6, 2e6},
+							moves.Bounds{-3e6, 2e6},
 						)
 						checkTwo = reflect.DeepEqual(
 							bounds,
-							Bounds{-3e6, 4.2},
+							moves.Bounds{-3e6, 4.2},
 						)
 						if !checkOne && !checkTwo {
 							test.Fail()
@@ -1015,7 +1015,7 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color:  models.White,
 				deep:   2,
-				bounds: Bounds{-2e6, 3e6},
+				bounds: moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -1092,7 +1092,7 @@ func TestAlphaBetaSearcherSearchMove(
 						storage models.PieceStorage,
 						color models.Color,
 						deep int,
-						bounds Bounds,
+						bounds moves.Bounds,
 					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
@@ -1135,7 +1135,7 @@ func TestAlphaBetaSearcherSearchMove(
 						}
 						if !reflect.DeepEqual(
 							bounds,
-							Bounds{-3e6, 2e6},
+							moves.Bounds{-3e6, 2e6},
 						) {
 							test.Fail()
 						}
@@ -1197,7 +1197,7 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color:  models.White,
 				deep:   2,
-				bounds: Bounds{-2e6, 3e6},
+				bounds: moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -1274,7 +1274,7 @@ func TestAlphaBetaSearcherSearchMove(
 						storage models.PieceStorage,
 						color models.Color,
 						deep int,
-						bounds Bounds,
+						bounds moves.Bounds,
 					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
@@ -1317,7 +1317,7 @@ func TestAlphaBetaSearcherSearchMove(
 						}
 						if !reflect.DeepEqual(
 							bounds,
-							Bounds{-3e6, 2e6},
+							moves.Bounds{-3e6, 2e6},
 						) {
 							test.Fail()
 						}
@@ -1379,7 +1379,7 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color:  models.White,
 				deep:   2,
-				bounds: Bounds{-2e6, 3e6},
+				bounds: moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -1456,7 +1456,7 @@ func TestAlphaBetaSearcherSearchMove(
 						storage models.PieceStorage,
 						color models.Color,
 						deep int,
-						bounds Bounds,
+						bounds moves.Bounds,
 					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
@@ -1499,7 +1499,7 @@ func TestAlphaBetaSearcherSearchMove(
 						}
 						if !reflect.DeepEqual(
 							bounds,
-							Bounds{-3e6, 2e6},
+							moves.Bounds{-3e6, 2e6},
 						) {
 							test.Fail()
 						}
@@ -1561,7 +1561,7 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color:  models.White,
 				deep:   2,
-				bounds: Bounds{-2e6, 3e6},
+				bounds: moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -1638,7 +1638,7 @@ func TestAlphaBetaSearcherSearchMove(
 						storage models.PieceStorage,
 						color models.Color,
 						deep int,
-						bounds Bounds,
+						bounds moves.Bounds,
 					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
@@ -1682,11 +1682,11 @@ func TestAlphaBetaSearcherSearchMove(
 
 						checkOne = reflect.DeepEqual(
 							bounds,
-							Bounds{-3e6, 2e6},
+							moves.Bounds{-3e6, 2e6},
 						)
 						checkTwo = reflect.DeepEqual(
 							bounds,
-							Bounds{-3e6, 4.2},
+							moves.Bounds{-3e6, 4.2},
 						)
 						if !checkOne && !checkTwo {
 							test.Fail()
@@ -1751,7 +1751,7 @@ func TestAlphaBetaSearcherSearchMove(
 				},
 				color:  models.White,
 				deep:   2,
-				bounds: Bounds{-2e6, 3e6},
+				bounds: moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -1803,7 +1803,7 @@ func TestAlphaBetaSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
-				bounds:  Bounds{-2e6, 3e6},
+				bounds:  moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{},
 			wantErr:  ErrDraw,

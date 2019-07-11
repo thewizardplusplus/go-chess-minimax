@@ -56,7 +56,7 @@ func cachedSearch(
 	evaluator :=
 		evaluators.MaterialEvaluator{}
 	initialDeep := 0
-	initialBounds := NewBounds()
+	initialBounds := moves.NewBounds()
 	innerSearcher := NewAlphaBetaSearcher(
 		generator,
 		terminator,

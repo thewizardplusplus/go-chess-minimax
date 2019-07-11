@@ -60,7 +60,7 @@ func alphaBetaSearch(
 	evaluator :=
 		evaluators.MaterialEvaluator{}
 	initialDeep := 0
-	initialBounds := NewBounds()
+	initialBounds := moves.NewBounds()
 	searcher := NewAlphaBetaSearcher(
 		generator,
 		terminator,

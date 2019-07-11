@@ -90,7 +90,7 @@ func TestCachedSearcherSearchMove(
 		storage models.PieceStorage
 		color   models.Color
 		deep    int
-		bounds  Bounds
+		bounds  moves.Bounds
 	}
 	type data struct {
 		fields   fields
@@ -143,7 +143,7 @@ func TestCachedSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
-				bounds:  Bounds{-2e6, 3e6},
+				bounds:  moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -167,7 +167,7 @@ func TestCachedSearcherSearchMove(
 						storage models.PieceStorage,
 						color models.Color,
 						deep int,
-						bounds Bounds,
+						bounds moves.Bounds,
 					) (moves.ScoredMove, error) {
 						_, ok :=
 							storage.(MockPieceStorage)
@@ -182,7 +182,7 @@ func TestCachedSearcherSearchMove(
 						}
 						if !reflect.DeepEqual(
 							bounds,
-							Bounds{-2e6, 3e6},
+							moves.Bounds{-2e6, 3e6},
 						) {
 							test.Fail()
 						}
@@ -266,7 +266,7 @@ func TestCachedSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
-				bounds:  Bounds{-2e6, 3e6},
+				bounds:  moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{

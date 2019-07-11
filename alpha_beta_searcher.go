@@ -24,7 +24,7 @@ type MoveSearcher interface {
 		storage models.PieceStorage,
 		color models.Color,
 		deep int,
-		bounds Bounds,
+		bounds moves.Bounds,
 	) (moves.ScoredMove, error)
 }
 
@@ -72,7 +72,7 @@ func (
 	storage models.PieceStorage,
 	color models.Color,
 	deep int,
-	bounds Bounds,
+	bounds moves.Bounds,
 ) (moves.ScoredMove, error) {
 	// check for a check should be first,
 	// including before a termination check,
@@ -99,7 +99,7 @@ func (
 		nextStorage := storage.ApplyMove(move)
 		nextColor := color.Negative()
 		nextDeep := deep + 1
-		nextBounds := bounds.next()
+		nextBounds := bounds.Next()
 		scoredMove, err :=
 			searcher.searcher.SearchMove(
 				nextStorage,
@@ -113,7 +113,7 @@ func (
 		}
 
 		scoredMove, ok :=
-			bounds.update(scoredMove, move)
+			bounds.Update(scoredMove, move)
 		if !ok {
 			return scoredMove, nil
 		}

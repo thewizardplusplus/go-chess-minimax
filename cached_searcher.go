@@ -47,7 +47,7 @@ func (searcher CachedSearcher) SearchMove(
 	storage models.PieceStorage,
 	color models.Color,
 	deep int,
-	bounds Bounds,
+	bounds moves.Bounds,
 ) (moves.ScoredMove, error) {
 	data, ok := searcher.cache.
 		Get(storage, color)

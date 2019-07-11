@@ -166,7 +166,7 @@ func alphaBetaSearch(
 		maxDeep,
 		maxDuration,
 	)
-	bounds := minimax.NewBounds()
+	bounds := moves.NewBounds()
 	searcher := minimax.NewAlphaBetaSearcher(
 		generator,
 		terminator,
@@ -191,7 +191,7 @@ func cachedSearch(
 		maxDeep,
 		maxDuration,
 	)
-	bounds := minimax.NewBounds()
+	bounds := moves.NewBounds()
 	innerSearcher :=
 		minimax.NewAlphaBetaSearcher(
 			generator,
