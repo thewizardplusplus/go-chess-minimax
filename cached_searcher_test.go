@@ -43,7 +43,9 @@ func (cache MockCache) Set(
 	cache.set(storage, color, data)
 }
 
-func TestNewCachedSearcher(test *testing.T) {
+func TestNewCachedSearcher(
+	test *testing.T,
+) {
 	innerSearcher := MockMoveSearcher{
 		setSearcher: func(
 			innerSearcher MoveSearcher,

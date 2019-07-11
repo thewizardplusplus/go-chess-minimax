@@ -24,9 +24,7 @@ func (
 	panic("not implemented")
 }
 
-func (
-	storage MockPieceStorage,
-) Piece(
+func (storage MockPieceStorage) Piece(
 	position models.Position,
 ) (piece models.Piece, ok bool) {
 	panic("not implemented")

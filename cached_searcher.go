@@ -48,9 +48,7 @@ func NewCachedSearcher(
 }
 
 // SearchMove ...
-func (
-	searcher CachedSearcher,
-) SearchMove(
+func (searcher CachedSearcher) SearchMove(
 	storage models.PieceStorage,
 	color models.Color,
 	deep int,

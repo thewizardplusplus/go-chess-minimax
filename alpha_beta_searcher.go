@@ -18,9 +18,7 @@ type MoveGenerator interface {
 
 // MoveSearcher ...
 type MoveSearcher interface {
-	SetSearcher(
-		searcher MoveSearcher,
-	)
+	SetSearcher(searcher MoveSearcher)
 	SearchMove(
 		storage models.PieceStorage,
 		color models.Color,
