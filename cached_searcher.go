@@ -1,33 +1,21 @@
 package chessminimax
 
 import (
+	"github.com/thewizardplusplus/go-chess-minimax/caches"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
-
-// Cache ...
-type Cache interface {
-	Get(
-		storage models.PieceStorage,
-		color models.Color,
-	) (data moves.FailedMove, ok bool)
-	Set(
-		storage models.PieceStorage,
-		color models.Color,
-		data moves.FailedMove,
-	)
-}
 
 // CachedSearcher ...
 type CachedSearcher struct {
 	searcherHolder
 
-	cache Cache
+	cache caches.Cache
 }
 
 // NewCachedSearcher ...
 func NewCachedSearcher(
-	cache Cache,
+	cache caches.Cache,
 	innerSearcher MoveSearcher,
 ) *CachedSearcher {
 	searcher := &CachedSearcher{cache: cache}

@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/thewizardplusplus/go-chess-minimax/caches"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
@@ -59,7 +60,7 @@ func TestNewCachedSearcher(
 		},
 	}
 
-	var cache Cache
+	var cache MockCache
 	searcher := NewCachedSearcher(
 		cache,
 		innerSearcher,
@@ -84,7 +85,7 @@ func TestCachedSearcherSearchMove(
 ) {
 	type fields struct {
 		searcher MoveSearcher
-		cache    Cache
+		cache    caches.Cache
 	}
 	type args struct {
 		storage models.PieceStorage
