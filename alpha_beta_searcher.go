@@ -78,7 +78,7 @@ func (
 	// including before a termination check,
 	// because a terminated evaluation
 	// doesn't make sense for a check position
-	moves, err := searcher.generator.
+	moveGroup, err := searcher.generator.
 		MovesForColor(storage, color)
 	if err != nil {
 		return moves.ScoredMove{}, err
@@ -94,8 +94,8 @@ func (
 	}
 
 	var hasCheck bool
-	bestMove := newmoves.ScoredMove()
-	for _, move := range moves {
+	bestMove := moves.NewScoredMove()
+	for _, move := range moveGroup {
 		nextStorage := storage.ApplyMove(move)
 		nextColor := color.Negative()
 		nextDeep := deep + 1
@@ -118,10 +118,10 @@ func (
 			return scoredMove, nil
 		}
 
-		bestMove.update(scoredMove, move)
+		bestMove.Update(scoredMove, move)
 	}
 	// has a legal move
-	if bestMove.isUpdated() {
+	if bestMove.IsUpdated() {
 		return bestMove, nil
 	}
 

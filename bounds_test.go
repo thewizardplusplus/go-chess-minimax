@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
@@ -32,14 +33,14 @@ func TestBoundsUpdate(test *testing.T) {
 		beta  float64
 	}
 	type args struct {
-		scoredMove ScoredMove
+		scoredMove moves.ScoredMove
 		rawMove    models.Move
 	}
 	type data struct {
 		fields     fields
 		args       args
 		wantBounds Bounds
-		wantMove   ScoredMove
+		wantMove   moves.ScoredMove
 		wantOk     bool
 	}
 
@@ -47,7 +48,7 @@ func TestBoundsUpdate(test *testing.T) {
 		data{
 			fields: fields{-2.3, 4.2},
 			args: args{
-				scoredMove: ScoredMove{
+				scoredMove: moves.ScoredMove{
 					Move: models.Move{
 						Start:  models.Position{1, 2},
 						Finish: models.Position{3, 4},
@@ -60,7 +61,7 @@ func TestBoundsUpdate(test *testing.T) {
 				},
 			},
 			wantBounds: Bounds{-2.3, 4.2},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start:  models.Position{1, 2},
 					Finish: models.Position{3, 4},
@@ -72,7 +73,7 @@ func TestBoundsUpdate(test *testing.T) {
 		data{
 			fields: fields{-2.3, 4.2},
 			args: args{
-				scoredMove: ScoredMove{
+				scoredMove: moves.ScoredMove{
 					Move: models.Move{
 						Start:  models.Position{1, 2},
 						Finish: models.Position{3, 4},
@@ -85,7 +86,7 @@ func TestBoundsUpdate(test *testing.T) {
 				},
 			},
 			wantBounds: Bounds{-1.2, 4.2},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start:  models.Position{1, 2},
 					Finish: models.Position{3, 4},
@@ -97,7 +98,7 @@ func TestBoundsUpdate(test *testing.T) {
 		data{
 			fields: fields{-2.3, 4.2},
 			args: args{
-				scoredMove: ScoredMove{
+				scoredMove: moves.ScoredMove{
 					Move: models.Move{
 						Start:  models.Position{1, 2},
 						Finish: models.Position{3, 4},
@@ -110,7 +111,7 @@ func TestBoundsUpdate(test *testing.T) {
 				},
 			},
 			wantBounds: Bounds{4.2, 4.2},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start:  models.Position{5, 6},
 					Finish: models.Position{7, 8},
@@ -122,7 +123,7 @@ func TestBoundsUpdate(test *testing.T) {
 		data{
 			fields: fields{-2.3, 4.2},
 			args: args{
-				scoredMove: ScoredMove{
+				scoredMove: moves.ScoredMove{
 					Move: models.Move{
 						Start:  models.Position{1, 2},
 						Finish: models.Position{3, 4},
@@ -135,7 +136,7 @@ func TestBoundsUpdate(test *testing.T) {
 				},
 			},
 			wantBounds: Bounds{5, 4.2},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start:  models.Position{5, 6},
 					Finish: models.Position{7, 8},

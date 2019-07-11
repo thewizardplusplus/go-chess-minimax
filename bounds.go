@@ -3,6 +3,7 @@ package chessminimax
 import (
 	"math"
 
+	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
@@ -23,15 +24,16 @@ func (bounds Bounds) next() Bounds {
 }
 
 func (bounds *Bounds) update(
-	scoredMove ScoredMove,
+	scoredMove moves.ScoredMove,
 	rawMove models.Move,
-) (newScoredMove ScoredMove, ok bool) {
+) (newScoredMove moves.ScoredMove, ok bool) {
 	score := -scoredMove.Score
 	if score > bounds.Alpha {
 		bounds.Alpha = score
 	}
 	if score >= bounds.Beta {
-		return ScoredMove{rawMove, score}, false
+		return moves.ScoredMove{rawMove, score},
+			false
 	}
 
 	return scoredMove, true
