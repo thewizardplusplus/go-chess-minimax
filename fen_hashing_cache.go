@@ -1,6 +1,7 @@
 package chessminimax
 
 import (
+	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
@@ -11,16 +12,16 @@ type FENHashKey struct {
 }
 
 // FENHashingCache ...
-type FENHashingCache map[FENHashKey]FailedMove
+type FENHashingCache map[FENHashKey]moves.FailedMove
 
 // Get ...
 func (cache FENHashingCache) Get(
 	storage models.PieceStorage,
 	color models.Color,
-) (data FailedMove, ok bool) {
+) (data moves.FailedMove, ok bool) {
 	fen, err := storage.ToFEN()
 	if err != nil {
-		return FailedMove{}, false
+		return moves.FailedMove{}, false
 	}
 
 	data, ok = cache[FENHashKey{fen, color}]
@@ -31,7 +32,7 @@ func (cache FENHashingCache) Get(
 func (cache FENHashingCache) Set(
 	storage models.PieceStorage,
 	color models.Color,
-	data FailedMove,
+	data moves.FailedMove,
 ) {
 	fen, err := storage.ToFEN()
 	if err != nil {

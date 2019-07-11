@@ -13,18 +13,18 @@ type MockCache struct {
 	get func(
 		storage models.PieceStorage,
 		color models.Color,
-	) (data FailedMove, ok bool)
+	) (data moves.FailedMove, ok bool)
 	set func(
 		storage models.PieceStorage,
 		color models.Color,
-		data FailedMove,
+		data moves.FailedMove,
 	)
 }
 
 func (cache MockCache) Get(
 	storage models.PieceStorage,
 	color models.Color,
-) (data FailedMove, ok bool) {
+) (data moves.FailedMove, ok bool) {
 	if cache.get == nil {
 		panic("not implemented")
 	}
@@ -35,7 +35,7 @@ func (cache MockCache) Get(
 func (cache MockCache) Set(
 	storage models.PieceStorage,
 	color models.Color,
-	data FailedMove,
+	data moves.FailedMove,
 ) {
 	if cache.set == nil {
 		panic("not implemented")
@@ -106,7 +106,10 @@ func TestCachedSearcherSearchMove(
 					get: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) (data FailedMove, ok bool) {
+					) (
+						data moves.FailedMove,
+						ok bool,
+					) {
 						_, ok =
 							storage.(MockPieceStorage)
 						if !ok {
@@ -116,7 +119,7 @@ func TestCachedSearcherSearchMove(
 							test.Fail()
 						}
 
-						data = FailedMove{
+						data = moves.FailedMove{
 							Move: moves.ScoredMove{
 								Move: models.Move{
 									Start: models.Position{
@@ -204,7 +207,10 @@ func TestCachedSearcherSearchMove(
 					get: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) (data FailedMove, ok bool) {
+					) (
+						data moves.FailedMove,
+						ok bool,
+					) {
 						_, ok =
 							storage.(MockPieceStorage)
 						if !ok {
@@ -214,12 +220,12 @@ func TestCachedSearcherSearchMove(
 							test.Fail()
 						}
 
-						return FailedMove{}, false
+						return moves.FailedMove{}, false
 					},
 					set: func(
 						storage models.PieceStorage,
 						color models.Color,
-						data FailedMove,
+						data moves.FailedMove,
 					) {
 						_, ok :=
 							storage.(MockPieceStorage)
@@ -230,22 +236,23 @@ func TestCachedSearcherSearchMove(
 							test.Fail()
 						}
 
-						expectedData := FailedMove{
-							Move: moves.ScoredMove{
-								Move: models.Move{
-									Start: models.Position{
-										File: 5,
-										Rank: 6,
+						expectedData :=
+							moves.FailedMove{
+								Move: moves.ScoredMove{
+									Move: models.Move{
+										Start: models.Position{
+											File: 5,
+											Rank: 6,
+										},
+										Finish: models.Position{
+											File: 7,
+											Rank: 8,
+										},
 									},
-									Finish: models.Position{
-										File: 7,
-										Rank: 8,
-									},
+									Score: 4.2,
 								},
-								Score: 4.2,
-							},
-							Error: errors.New("dummy"),
-						}
+								Error: errors.New("dummy"),
+							}
 						if !reflect.DeepEqual(
 							data,
 							expectedData,
