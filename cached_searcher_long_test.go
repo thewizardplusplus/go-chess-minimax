@@ -170,14 +170,12 @@ func TestCachedSearcher(test *testing.T) {
 			gotMove,
 			data.wantMove,
 		) {
-			test.Log(gotMove, data.wantMove)
 			test.Fail()
 		}
 		if !reflect.DeepEqual(
 			gotErr,
 			data.wantErr,
 		) {
-			test.Log(gotErr, data.wantErr)
 			test.Fail()
 		}
 	}
