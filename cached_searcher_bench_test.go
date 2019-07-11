@@ -3,6 +3,7 @@ package chessminimax
 import (
 	"testing"
 
+	"github.com/thewizardplusplus/go-chess-minimax/caches"
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
@@ -47,7 +48,7 @@ func cachedSearch(
 		return moves.ScoredMove{}, err
 	}
 
-	cache := make(FENHashingCache)
+	cache := make(caches.FENHashingCache)
 	generator := models.MoveGenerator{}
 	terminator :=
 		terminators.NewDeepTerminator(

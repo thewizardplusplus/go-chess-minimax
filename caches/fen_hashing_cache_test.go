@@ -1,4 +1,4 @@
-package chessminimax
+package caches
 
 import (
 	"errors"
@@ -8,6 +8,50 @@ import (
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
+
+type MockPieceStorage struct {
+	toFEN func() (string, error)
+}
+
+func (
+	storage MockPieceStorage,
+) Size() models.Size {
+	panic("not implemented")
+}
+
+func (storage MockPieceStorage) Piece(
+	position models.Position,
+) (piece models.Piece, ok bool) {
+	panic("not implemented")
+}
+
+func (
+	storage MockPieceStorage,
+) Pieces() []models.Piece {
+	panic("not implemented")
+}
+
+func (storage MockPieceStorage) ApplyMove(
+	move models.Move,
+) models.PieceStorage {
+	panic("not implemented")
+}
+
+func (storage MockPieceStorage) CheckMove(
+	move models.Move,
+) error {
+	panic("not implemented")
+}
+
+func (
+	storage MockPieceStorage,
+) ToFEN() (string, error) {
+	if storage.toFEN == nil {
+		panic("not implemented")
+	}
+
+	return storage.toFEN()
+}
 
 func TestFENHashingCacheGet(
 	test *testing.T,

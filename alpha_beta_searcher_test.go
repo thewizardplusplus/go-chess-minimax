@@ -16,7 +16,6 @@ type MockPieceStorage struct {
 	applyMove func(
 		move models.Move,
 	) models.PieceStorage
-	toFEN func() (string, error)
 }
 
 func (
@@ -56,11 +55,7 @@ func (storage MockPieceStorage) CheckMove(
 func (
 	storage MockPieceStorage,
 ) ToFEN() (string, error) {
-	if storage.toFEN == nil {
-		panic("not implemented")
-	}
-
-	return storage.toFEN()
+	panic("not implemented")
 }
 
 type MockMoveGenerator struct {

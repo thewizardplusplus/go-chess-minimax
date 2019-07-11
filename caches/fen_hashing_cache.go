@@ -1,4 +1,4 @@
-package chessminimax
+package caches
 
 import (
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"

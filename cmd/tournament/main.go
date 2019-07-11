@@ -11,6 +11,7 @@ import (
 	"time"
 
 	minimax "github.com/thewizardplusplus/go-chess-minimax"
+	"github.com/thewizardplusplus/go-chess-minimax/caches"
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
@@ -186,7 +187,7 @@ func cachedSearch(
 	maxDeep int,
 	maxDuration time.Duration,
 ) (moves.ScoredMove, error) {
-	cache := make(minimax.FENHashingCache)
+	cache := make(caches.FENHashingCache)
 	terminator := makeTerminator(
 		maxDeep,
 		maxDuration,
