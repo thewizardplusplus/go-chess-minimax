@@ -11,16 +11,16 @@ type FENHashKey struct {
 }
 
 // FENHashingCache ...
-type FENHashingCache map[FENHashKey]CachedData
+type FENHashingCache map[FENHashKey]FailedMove
 
 // Get ...
 func (cache FENHashingCache) Get(
 	storage models.PieceStorage,
 	color models.Color,
-) (data CachedData, ok bool) {
+) (data FailedMove, ok bool) {
 	fen, err := storage.ToFEN()
 	if err != nil {
-		return CachedData{}, false
+		return FailedMove{}, false
 	}
 
 	data, ok = cache[FENHashKey{fen, color}]
@@ -31,7 +31,7 @@ func (cache FENHashingCache) Get(
 func (cache FENHashingCache) Set(
 	storage models.PieceStorage,
 	color models.Color,
-	data CachedData,
+	data FailedMove,
 ) {
 	fen, err := storage.ToFEN()
 	if err != nil {

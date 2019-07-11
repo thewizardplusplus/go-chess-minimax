@@ -4,8 +4,8 @@ import (
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
-// CachedData ...
-type CachedData struct {
+// FailedMove ...
+type FailedMove struct {
 	Move  ScoredMove
 	Error error
 }
@@ -15,11 +15,11 @@ type Cache interface {
 	Get(
 		storage models.PieceStorage,
 		color models.Color,
-	) (data CachedData, ok bool)
+	) (data FailedMove, ok bool)
 	Set(
 		storage models.PieceStorage,
 		color models.Color,
-		data CachedData,
+		data FailedMove,
 	)
 }
 
@@ -62,7 +62,7 @@ func (searcher CachedSearcher) SearchMove(
 
 	move, err := searcher.searcher.
 		SearchMove(storage, color, deep, bounds)
-	data = CachedData{move, err}
+	data = FailedMove{move, err}
 	searcher.cache.Set(storage, color, data)
 
 	return move, err

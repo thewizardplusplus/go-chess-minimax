@@ -12,18 +12,18 @@ type MockCache struct {
 	get func(
 		storage models.PieceStorage,
 		color models.Color,
-	) (data CachedData, ok bool)
+	) (data FailedMove, ok bool)
 	set func(
 		storage models.PieceStorage,
 		color models.Color,
-		data CachedData,
+		data FailedMove,
 	)
 }
 
 func (cache MockCache) Get(
 	storage models.PieceStorage,
 	color models.Color,
-) (data CachedData, ok bool) {
+) (data FailedMove, ok bool) {
 	if cache.get == nil {
 		panic("not implemented")
 	}
@@ -34,7 +34,7 @@ func (cache MockCache) Get(
 func (cache MockCache) Set(
 	storage models.PieceStorage,
 	color models.Color,
-	data CachedData,
+	data FailedMove,
 ) {
 	if cache.set == nil {
 		panic("not implemented")
@@ -105,7 +105,7 @@ func TestCachedSearcherSearchMove(
 					get: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) (data CachedData, ok bool) {
+					) (data FailedMove, ok bool) {
 						_, ok =
 							storage.(MockPieceStorage)
 						if !ok {
@@ -115,7 +115,7 @@ func TestCachedSearcherSearchMove(
 							test.Fail()
 						}
 
-						data = CachedData{
+						data = FailedMove{
 							Move: ScoredMove{
 								Move: models.Move{
 									Start: models.Position{
@@ -203,7 +203,7 @@ func TestCachedSearcherSearchMove(
 					get: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) (data CachedData, ok bool) {
+					) (data FailedMove, ok bool) {
 						_, ok =
 							storage.(MockPieceStorage)
 						if !ok {
@@ -213,12 +213,12 @@ func TestCachedSearcherSearchMove(
 							test.Fail()
 						}
 
-						return CachedData{}, false
+						return FailedMove{}, false
 					},
 					set: func(
 						storage models.PieceStorage,
 						color models.Color,
-						data CachedData,
+						data FailedMove,
 					) {
 						_, ok :=
 							storage.(MockPieceStorage)
@@ -229,7 +229,7 @@ func TestCachedSearcherSearchMove(
 							test.Fail()
 						}
 
-						expectedData := CachedData{
+						expectedData := FailedMove{
 							Move: ScoredMove{
 								Move: models.Move{
 									Start: models.Position{

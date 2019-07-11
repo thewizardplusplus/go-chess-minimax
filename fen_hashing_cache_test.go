@@ -19,7 +19,7 @@ func TestFENHashingCacheGet(
 		cache     FENHashingCache
 		args      args
 		wantCache FENHashingCache
-		wantData  CachedData
+		wantData  FailedMove
 		wantOk    bool
 	}
 
@@ -29,7 +29,7 @@ func TestFENHashingCacheGet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -48,7 +48,7 @@ func TestFENHashingCacheGet(
 				FENHashKey{
 					BoardInFEN: "fen #2",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -77,7 +77,7 @@ func TestFENHashingCacheGet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -96,7 +96,7 @@ func TestFENHashingCacheGet(
 				FENHashKey{
 					BoardInFEN: "fen #2",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -113,7 +113,7 @@ func TestFENHashingCacheGet(
 					Error: errors.New("dummy #2"),
 				},
 			},
-			wantData: CachedData{},
+			wantData: FailedMove{},
 			wantOk:   false,
 		},
 		data{
@@ -121,7 +121,7 @@ func TestFENHashingCacheGet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -140,7 +140,7 @@ func TestFENHashingCacheGet(
 				FENHashKey{
 					BoardInFEN: "fen #2",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -169,7 +169,7 @@ func TestFENHashingCacheGet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -188,7 +188,7 @@ func TestFENHashingCacheGet(
 				FENHashKey{
 					BoardInFEN: "fen #2",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -205,7 +205,7 @@ func TestFENHashingCacheGet(
 					Error: errors.New("dummy #2"),
 				},
 			},
-			wantData: CachedData{
+			wantData: FailedMove{
 				Move: ScoredMove{
 					Move: models.Move{
 						Start: models.Position{
@@ -228,7 +228,7 @@ func TestFENHashingCacheGet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -247,7 +247,7 @@ func TestFENHashingCacheGet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.Black,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -276,7 +276,7 @@ func TestFENHashingCacheGet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -295,7 +295,7 @@ func TestFENHashingCacheGet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.Black,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -312,7 +312,7 @@ func TestFENHashingCacheGet(
 					Error: errors.New("dummy #2"),
 				},
 			},
-			wantData: CachedData{
+			wantData: FailedMove{
 				Move: ScoredMove{
 					Move: models.Move{
 						Start: models.Position{
@@ -362,7 +362,7 @@ func TestFENHashingCacheSet(
 	type args struct {
 		storage models.PieceStorage
 		color   models.Color
-		data    CachedData
+		data    FailedMove
 	}
 	type data struct {
 		cache     FENHashingCache
@@ -376,7 +376,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -395,7 +395,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #2",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -424,7 +424,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -443,7 +443,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #2",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -466,7 +466,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -485,7 +485,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #2",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -509,7 +509,7 @@ func TestFENHashingCacheSet(
 					},
 				},
 				color: models.White,
-				data: CachedData{
+				data: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -530,7 +530,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -549,7 +549,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #2",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -568,7 +568,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #3",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -591,7 +591,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -610,7 +610,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #2",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -634,7 +634,7 @@ func TestFENHashingCacheSet(
 					},
 				},
 				color: models.White,
-				data: CachedData{
+				data: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -655,7 +655,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -674,7 +674,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #2",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -697,7 +697,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -716,7 +716,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.Black,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -740,7 +740,7 @@ func TestFENHashingCacheSet(
 					},
 				},
 				color: models.Black,
-				data: CachedData{
+				data: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -761,7 +761,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.White,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
@@ -780,7 +780,7 @@ func TestFENHashingCacheSet(
 				FENHashKey{
 					BoardInFEN: "fen #1",
 					Color:      models.Black,
-				}: CachedData{
+				}: FailedMove{
 					Move: ScoredMove{
 						Move: models.Move{
 							Start: models.Position{
