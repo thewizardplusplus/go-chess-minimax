@@ -1,11 +1,11 @@
 package chessminimax
 
 type searcherHolder struct {
-	searcher BoundedMoveSearcher
+	searcher MoveSearcher
 }
 
 func (holder *searcherHolder) SetSearcher(
-	searcher BoundedMoveSearcher,
+	searcher MoveSearcher,
 ) {
 	holder.searcher = searcher
 }

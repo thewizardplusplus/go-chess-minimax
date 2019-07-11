@@ -33,7 +33,7 @@ type CachedSearcher struct {
 // NewCachedSearcher ...
 func NewCachedSearcher(
 	cache Cache,
-	innerSearcher BoundedMoveSearcher,
+	innerSearcher MoveSearcher,
 ) *CachedSearcher {
 	searcher := &CachedSearcher{cache: cache}
 	searcher.searcher = innerSearcher

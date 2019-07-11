@@ -8,7 +8,7 @@ import (
 func TestSearcherHolderSetSearcher(
 	test *testing.T,
 ) {
-	var searcher MockBoundedMoveSearcher
+	var searcher MockMoveSearcher
 	var holder searcherHolder
 	holder.SetSearcher(searcher)
 

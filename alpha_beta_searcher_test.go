@@ -124,9 +124,9 @@ func (
 	)
 }
 
-type MockBoundedMoveSearcher struct {
+type MockMoveSearcher struct {
 	setSearcher func(
-		innerSearcher BoundedMoveSearcher,
+		innerSearcher MoveSearcher,
 	)
 	searchMove func(
 		storage models.PieceStorage,
@@ -137,9 +137,9 @@ type MockBoundedMoveSearcher struct {
 }
 
 func (
-	searcher MockBoundedMoveSearcher,
+	searcher MockMoveSearcher,
 ) SetSearcher(
-	innerSearcher BoundedMoveSearcher,
+	innerSearcher MoveSearcher,
 ) {
 	if searcher.setSearcher == nil {
 		panic("not implemented")
@@ -149,7 +149,7 @@ func (
 }
 
 func (
-	searcher MockBoundedMoveSearcher,
+	searcher MockMoveSearcher,
 ) SearchMove(
 	storage models.PieceStorage,
 	color models.Color,
@@ -215,7 +215,7 @@ func TestAlphaBetaSearcherSearchMove(
 		generator  MoveGenerator
 		terminator terminators.SearchTerminator
 		evaluator  evaluators.BoardEvaluator
-		searcher   BoundedMoveSearcher
+		searcher   MoveSearcher
 	}
 	type args struct {
 		storage models.PieceStorage
@@ -382,7 +382,7 @@ func TestAlphaBetaSearcherSearchMove(
 						return false
 					},
 				},
-				searcher: MockBoundedMoveSearcher{
+				searcher: MockMoveSearcher{
 					searchMove: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -549,7 +549,7 @@ func TestAlphaBetaSearcherSearchMove(
 						return false
 					},
 				},
-				searcher: MockBoundedMoveSearcher{
+				searcher: MockMoveSearcher{
 					searchMove: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -712,7 +712,7 @@ func TestAlphaBetaSearcherSearchMove(
 						return false
 					},
 				},
-				searcher: MockBoundedMoveSearcher{
+				searcher: MockMoveSearcher{
 					searchMove: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -897,7 +897,7 @@ func TestAlphaBetaSearcherSearchMove(
 						return false
 					},
 				},
-				searcher: MockBoundedMoveSearcher{
+				searcher: MockMoveSearcher{
 					searchMove: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -1084,7 +1084,7 @@ func TestAlphaBetaSearcherSearchMove(
 						return false
 					},
 				},
-				searcher: MockBoundedMoveSearcher{
+				searcher: MockMoveSearcher{
 					searchMove: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -1266,7 +1266,7 @@ func TestAlphaBetaSearcherSearchMove(
 						return false
 					},
 				},
-				searcher: MockBoundedMoveSearcher{
+				searcher: MockMoveSearcher{
 					searchMove: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -1448,7 +1448,7 @@ func TestAlphaBetaSearcherSearchMove(
 						return false
 					},
 				},
-				searcher: MockBoundedMoveSearcher{
+				searcher: MockMoveSearcher{
 					searchMove: func(
 						storage models.PieceStorage,
 						color models.Color,
@@ -1630,7 +1630,7 @@ func TestAlphaBetaSearcherSearchMove(
 						return false
 					},
 				},
-				searcher: MockBoundedMoveSearcher{
+				searcher: MockMoveSearcher{
 					searchMove: func(
 						storage models.PieceStorage,
 						color models.Color,

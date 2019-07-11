@@ -16,10 +16,10 @@ type MoveGenerator interface {
 	) ([]models.Move, error)
 }
 
-// BoundedMoveSearcher ...
-type BoundedMoveSearcher interface {
+// MoveSearcher ...
+type MoveSearcher interface {
 	SetSearcher(
-		searcher BoundedMoveSearcher,
+		searcher MoveSearcher,
 	)
 	SearchMove(
 		storage models.PieceStorage,

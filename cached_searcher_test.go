@@ -44,9 +44,9 @@ func (cache MockCache) Set(
 }
 
 func TestNewCachedSearcher(test *testing.T) {
-	innerSearcher := MockBoundedMoveSearcher{
+	innerSearcher := MockMoveSearcher{
 		setSearcher: func(
-			innerSearcher BoundedMoveSearcher,
+			innerSearcher MoveSearcher,
 		) {
 			mock, ok :=
 				innerSearcher.(*CachedSearcher)
@@ -70,7 +70,7 @@ func TestNewCachedSearcher(test *testing.T) {
 	}
 
 	_, ok := searcher.
-		searcher.(MockBoundedMoveSearcher)
+		searcher.(MockMoveSearcher)
 	if !ok {
 		test.Fail()
 	}
@@ -80,7 +80,7 @@ func TestCachedSearcherSearchMove(
 	test *testing.T,
 ) {
 	type fields struct {
-		searcher BoundedMoveSearcher
+		searcher MoveSearcher
 		cache    Cache
 	}
 	type args struct {
@@ -156,7 +156,7 @@ func TestCachedSearcherSearchMove(
 		},
 		data{
 			fields: fields{
-				searcher: MockBoundedMoveSearcher{
+				searcher: MockMoveSearcher{
 					searchMove: func(
 						storage models.PieceStorage,
 						color models.Color,
