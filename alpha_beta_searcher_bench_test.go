@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
+	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 	"github.com/thewizardplusplus/go-chess-models/pieces"
@@ -42,13 +43,13 @@ func alphaBetaSearch(
 	boardInFEN string,
 	color models.Color,
 	maximalDeep int,
-) (ScoredMove, error) {
+) (moves.ScoredMove, error) {
 	storage, err := models.ParseBoard(
 		boardInFEN,
 		pieces.NewPiece,
 	)
 	if err != nil {
-		return ScoredMove{}, err
+		return moves.ScoredMove{}, err
 	}
 
 	generator := models.MoveGenerator{}

@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
+	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
@@ -24,7 +25,7 @@ type MoveSearcher interface {
 		color models.Color,
 		deep int,
 		bounds Bounds,
-	) (ScoredMove, error)
+	) (moves.ScoredMove, error)
 }
 
 // AlphaBetaSearcher ...
@@ -72,7 +73,7 @@ func (
 	color models.Color,
 	deep int,
 	bounds Bounds,
-) (ScoredMove, error) {
+) (moves.ScoredMove, error) {
 	// check for a check should be first,
 	// including before a termination check,
 	// because a terminated evaluation
@@ -80,7 +81,7 @@ func (
 	moves, err := searcher.generator.
 		MovesForColor(storage, color)
 	if err != nil {
-		return ScoredMove{}, err
+		return moves.ScoredMove{}, err
 	}
 
 	ok := searcher.terminator.
@@ -88,11 +89,12 @@ func (
 	if ok {
 		score := searcher.evaluator.
 			EvaluateBoard(storage, color)
-		return ScoredMove{Score: score}, nil
+		return moves.ScoredMove{Score: score},
+			nil
 	}
 
 	var hasCheck bool
-	bestMove := newScoredMove()
+	bestMove := newmoves.ScoredMove()
 	for _, move := range moves {
 		nextStorage := storage.ApplyMove(move)
 		nextColor := color.Negative()
@@ -131,13 +133,13 @@ func (
 			MovesForColor(storage, nextColor)
 		if err != nil {
 			score := evaluateCheckmate(deep)
-			return ScoredMove{Score: score},
+			return moves.ScoredMove{Score: score},
 				ErrCheckmate
 		}
 	}
 
 	// score of a draw is a null
-	return ScoredMove{}, ErrDraw
+	return moves.ScoredMove{}, ErrDraw
 }
 
 // it evaluates a score of a checkmate

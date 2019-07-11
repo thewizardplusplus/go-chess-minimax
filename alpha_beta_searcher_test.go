@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
+	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
@@ -131,7 +132,7 @@ type MockMoveSearcher struct {
 		color models.Color,
 		deep int,
 		bounds Bounds,
-	) (ScoredMove, error)
+	) (moves.ScoredMove, error)
 }
 
 func (
@@ -153,7 +154,7 @@ func (
 	color models.Color,
 	deep int,
 	bounds Bounds,
-) (ScoredMove, error) {
+) (moves.ScoredMove, error) {
 	if searcher.searchMove == nil {
 		panic("not implemented")
 	}
@@ -224,7 +225,7 @@ func TestAlphaBetaSearcherSearchMove(
 	type data struct {
 		fields   fields
 		args     args
-		wantMove ScoredMove
+		wantMove moves.ScoredMove
 		wantErr  error
 	}
 
@@ -256,7 +257,7 @@ func TestAlphaBetaSearcherSearchMove(
 				deep:    2,
 				bounds:  Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{},
+			wantMove: moves.ScoredMove{},
 			wantErr:  models.ErrKingCapture,
 		},
 		data{
@@ -325,8 +326,10 @@ func TestAlphaBetaSearcherSearchMove(
 				deep:    2,
 				bounds:  Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{Score: 2.3},
-			wantErr:  nil,
+			wantMove: moves.ScoredMove{
+				Score: 2.3,
+			},
+			wantErr: nil,
 		},
 		data{
 			fields: fields{
@@ -386,7 +389,7 @@ func TestAlphaBetaSearcherSearchMove(
 						color models.Color,
 						deep int,
 						bounds Bounds,
-					) (ScoredMove, error) {
+					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
 							MockPieceStorage{
@@ -434,7 +437,7 @@ func TestAlphaBetaSearcherSearchMove(
 						}
 
 						// all moves -> king capture
-						return ScoredMove{},
+						return moves.ScoredMove{},
 							models.ErrKingCapture
 					},
 				},
@@ -483,7 +486,7 @@ func TestAlphaBetaSearcherSearchMove(
 				deep:   2,
 				bounds: Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{},
+			wantMove: moves.ScoredMove{},
 			wantErr:  ErrDraw,
 		},
 		data{
@@ -553,7 +556,7 @@ func TestAlphaBetaSearcherSearchMove(
 						color models.Color,
 						deep int,
 						bounds Bounds,
-					) (ScoredMove, error) {
+					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
 							MockPieceStorage{
@@ -601,7 +604,7 @@ func TestAlphaBetaSearcherSearchMove(
 						}
 
 						// all moves -> king capture
-						return ScoredMove{},
+						return moves.ScoredMove{},
 							models.ErrKingCapture
 					},
 				},
@@ -650,7 +653,7 @@ func TestAlphaBetaSearcherSearchMove(
 				deep:   2,
 				bounds: Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Score: evaluateCheckmate(2),
 			},
 			wantErr: ErrCheckmate,
@@ -716,7 +719,7 @@ func TestAlphaBetaSearcherSearchMove(
 						color models.Color,
 						deep int,
 						bounds Bounds,
-					) (ScoredMove, error) {
+					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
 							MockPieceStorage{
@@ -771,12 +774,14 @@ func TestAlphaBetaSearcherSearchMove(
 
 						// move two -> king capture
 						if checkTwo {
-							return ScoredMove{},
+							return moves.ScoredMove{},
 								models.ErrKingCapture
 						}
 
 						// move one -> 4.2
-						move := ScoredMove{Score: 4.2}
+						move := moves.ScoredMove{
+							Score: 4.2,
+						}
 						return move, nil
 					},
 				},
@@ -825,7 +830,7 @@ func TestAlphaBetaSearcherSearchMove(
 				deep:   2,
 				bounds: Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start: models.Position{
 						File: 1,
@@ -901,7 +906,7 @@ func TestAlphaBetaSearcherSearchMove(
 						color models.Color,
 						deep int,
 						bounds Bounds,
-					) (ScoredMove, error) {
+					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
 							MockPieceStorage{
@@ -954,7 +959,7 @@ func TestAlphaBetaSearcherSearchMove(
 							test.Fail()
 						}
 
-						var move ScoredMove
+						var move moves.ScoredMove
 						switch true {
 						case checkOne:
 							// move one -> 4.2
@@ -1012,7 +1017,7 @@ func TestAlphaBetaSearcherSearchMove(
 				deep:   2,
 				bounds: Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start: models.Position{
 						File: 5,
@@ -1088,7 +1093,7 @@ func TestAlphaBetaSearcherSearchMove(
 						color models.Color,
 						deep int,
 						bounds Bounds,
-					) (ScoredMove, error) {
+					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
 							MockPieceStorage{
@@ -1135,7 +1140,7 @@ func TestAlphaBetaSearcherSearchMove(
 							test.Fail()
 						}
 
-						var move ScoredMove
+						var move moves.ScoredMove
 						switch true {
 						case checkOne:
 							// move one ->
@@ -1194,7 +1199,7 @@ func TestAlphaBetaSearcherSearchMove(
 				deep:   2,
 				bounds: Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start: models.Position{
 						File: 5,
@@ -1270,7 +1275,7 @@ func TestAlphaBetaSearcherSearchMove(
 						color models.Color,
 						deep int,
 						bounds Bounds,
-					) (ScoredMove, error) {
+					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
 							MockPieceStorage{
@@ -1317,7 +1322,7 @@ func TestAlphaBetaSearcherSearchMove(
 							test.Fail()
 						}
 
-						var move ScoredMove
+						var move moves.ScoredMove
 						switch true {
 						case checkOne:
 							// move one ->
@@ -1376,7 +1381,7 @@ func TestAlphaBetaSearcherSearchMove(
 				deep:   2,
 				bounds: Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start: models.Position{
 						File: 1,
@@ -1452,7 +1457,7 @@ func TestAlphaBetaSearcherSearchMove(
 						color models.Color,
 						deep int,
 						bounds Bounds,
-					) (ScoredMove, error) {
+					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
 							MockPieceStorage{
@@ -1499,7 +1504,7 @@ func TestAlphaBetaSearcherSearchMove(
 							test.Fail()
 						}
 
-						var move ScoredMove
+						var move moves.ScoredMove
 						switch true {
 						case checkOne:
 							// move one ->
@@ -1558,7 +1563,7 @@ func TestAlphaBetaSearcherSearchMove(
 				deep:   2,
 				bounds: Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start: models.Position{
 						File: 1,
@@ -1634,7 +1639,7 @@ func TestAlphaBetaSearcherSearchMove(
 						color models.Color,
 						deep int,
 						bounds Bounds,
-					) (ScoredMove, error) {
+					) (moves.ScoredMove, error) {
 						checkOne := reflect.DeepEqual(
 							storage,
 							MockPieceStorage{
@@ -1687,7 +1692,7 @@ func TestAlphaBetaSearcherSearchMove(
 							test.Fail()
 						}
 
-						var move ScoredMove
+						var move moves.ScoredMove
 						var err error
 						switch true {
 						case checkOne:
@@ -1748,7 +1753,7 @@ func TestAlphaBetaSearcherSearchMove(
 				deep:   2,
 				bounds: Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start: models.Position{
 						File: 5,
@@ -1800,7 +1805,7 @@ func TestAlphaBetaSearcherSearchMove(
 				deep:    2,
 				bounds:  Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{},
+			wantMove: moves.ScoredMove{},
 			wantErr:  ErrDraw,
 		},
 	} {

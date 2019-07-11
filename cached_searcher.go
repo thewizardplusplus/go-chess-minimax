@@ -1,12 +1,13 @@
 package chessminimax
 
 import (
+	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
 // FailedMove ...
 type FailedMove struct {
-	Move  ScoredMove
+	Move  moves.ScoredMove
 	Error error
 }
 
@@ -53,7 +54,7 @@ func (searcher CachedSearcher) SearchMove(
 	color models.Color,
 	deep int,
 	bounds Bounds,
-) (ScoredMove, error) {
+) (moves.ScoredMove, error) {
 	data, ok := searcher.cache.
 		Get(storage, color)
 	if ok {

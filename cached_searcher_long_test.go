@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"testing"
 
+	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
@@ -17,7 +18,7 @@ func TestCachedSearcher(test *testing.T) {
 	}
 	type data struct {
 		args     args
-		wantMove ScoredMove
+		wantMove moves.ScoredMove
 		wantErr  error
 	}
 
@@ -29,7 +30,7 @@ func TestCachedSearcher(test *testing.T) {
 				color:       models.White,
 				maximalDeep: 0,
 			},
-			wantMove: ScoredMove{},
+			wantMove: moves.ScoredMove{},
 			wantErr:  models.ErrKingCapture,
 		},
 		// termination
@@ -39,7 +40,7 @@ func TestCachedSearcher(test *testing.T) {
 				color:       models.Black,
 				maximalDeep: 0,
 			},
-			wantMove: ScoredMove{Score: -5},
+			wantMove: moves.ScoredMove{Score: -5},
 			wantErr:  nil,
 		},
 		// draw without checks
@@ -49,7 +50,7 @@ func TestCachedSearcher(test *testing.T) {
 				color:       models.Black,
 				maximalDeep: 1,
 			},
-			wantMove: ScoredMove{},
+			wantMove: moves.ScoredMove{},
 			wantErr:  ErrDraw,
 		},
 		// draw with checks on a first ply
@@ -60,7 +61,7 @@ func TestCachedSearcher(test *testing.T) {
 				color:       models.Black,
 				maximalDeep: 1,
 			},
-			wantMove: ScoredMove{},
+			wantMove: moves.ScoredMove{},
 			wantErr:  ErrDraw,
 		},
 		// draw with checks on a third ply
@@ -71,7 +72,7 @@ func TestCachedSearcher(test *testing.T) {
 				color:       models.White,
 				maximalDeep: 3,
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start:  models.Position{4, 0},
 					Finish: models.Position{2, 2},
@@ -88,7 +89,7 @@ func TestCachedSearcher(test *testing.T) {
 				color:       models.Black,
 				maximalDeep: 1,
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Score: evaluateCheckmate(0),
 			},
 			wantErr: ErrCheckmate,
@@ -101,7 +102,7 @@ func TestCachedSearcher(test *testing.T) {
 				color:       models.White,
 				maximalDeep: 2,
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start:  models.Position{7, 1},
 					Finish: models.Position{6, 0},
@@ -117,7 +118,7 @@ func TestCachedSearcher(test *testing.T) {
 				color:       models.White,
 				maximalDeep: 1,
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start:  models.Position{7, 7},
 					Finish: models.Position{6, 7},
@@ -133,7 +134,7 @@ func TestCachedSearcher(test *testing.T) {
 				color:       models.White,
 				maximalDeep: 1,
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start:  models.Position{7, 1},
 					Finish: models.Position{7, 5},
@@ -150,7 +151,7 @@ func TestCachedSearcher(test *testing.T) {
 				color:       models.White,
 				maximalDeep: 3,
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start:  models.Position{1, 5},
 					Finish: models.Position{1, 6},

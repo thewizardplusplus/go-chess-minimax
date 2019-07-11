@@ -1,4 +1,4 @@
-package chessminimax
+package models
 
 import (
 	"reflect"
@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewScoredMove(test *testing.T) {
-	got := newScoredMove()
+	got := NewScoredMove()
 
 	want := ScoredMove{Score: initialScore}
 	if !reflect.DeepEqual(got, want) {
@@ -40,7 +40,7 @@ func TestScoredMoveIsUpdated(
 		move := ScoredMove{
 			Score: data.fields.score,
 		}
-		got := move.isUpdated()
+		got := move.IsUpdated()
 
 		if got != data.want {
 			test.Fail()
@@ -151,7 +151,7 @@ func TestScoredMoveUpdate(test *testing.T) {
 			Move:  data.fields.move,
 			Score: data.fields.score,
 		}
-		move.update(
+		move.Update(
 			data.args.scoredMove,
 			data.args.rawMove,
 		)

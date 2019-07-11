@@ -12,6 +12,7 @@ import (
 
 	minimax "github.com/thewizardplusplus/go-chess-minimax"
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
+	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 	"github.com/thewizardplusplus/go-chess-models/pieces"
@@ -160,7 +161,7 @@ func alphaBetaSearch(
 	color models.Color,
 	maxDeep int,
 	maxDuration time.Duration,
-) (minimax.ScoredMove, error) {
+) (moves.ScoredMove, error) {
 	terminator := makeTerminator(
 		maxDeep,
 		maxDuration,
@@ -184,7 +185,7 @@ func cachedSearch(
 	color models.Color,
 	maxDeep int,
 	maxDuration time.Duration,
-) (minimax.ScoredMove, error) {
+) (moves.ScoredMove, error) {
 	cache := make(minimax.FENHashingCache)
 	terminator := makeTerminator(
 		maxDeep,

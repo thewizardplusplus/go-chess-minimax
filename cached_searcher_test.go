@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
@@ -94,7 +95,7 @@ func TestCachedSearcherSearchMove(
 	type data struct {
 		fields   fields
 		args     args
-		wantMove ScoredMove
+		wantMove moves.ScoredMove
 		wantErr  bool
 	}
 
@@ -116,7 +117,7 @@ func TestCachedSearcherSearchMove(
 						}
 
 						data = FailedMove{
-							Move: ScoredMove{
+							Move: moves.ScoredMove{
 								Move: models.Move{
 									Start: models.Position{
 										File: 1,
@@ -141,7 +142,7 @@ func TestCachedSearcherSearchMove(
 				deep:    2,
 				bounds:  Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start: models.Position{
 						File: 1,
@@ -164,7 +165,7 @@ func TestCachedSearcherSearchMove(
 						color models.Color,
 						deep int,
 						bounds Bounds,
-					) (ScoredMove, error) {
+					) (moves.ScoredMove, error) {
 						_, ok :=
 							storage.(MockPieceStorage)
 						if !ok {
@@ -183,7 +184,7 @@ func TestCachedSearcherSearchMove(
 							test.Fail()
 						}
 
-						move := ScoredMove{
+						move := moves.ScoredMove{
 							Move: models.Move{
 								Start: models.Position{
 									File: 5,
@@ -230,7 +231,7 @@ func TestCachedSearcherSearchMove(
 						}
 
 						expectedData := FailedMove{
-							Move: ScoredMove{
+							Move: moves.ScoredMove{
 								Move: models.Move{
 									Start: models.Position{
 										File: 5,
@@ -260,7 +261,7 @@ func TestCachedSearcherSearchMove(
 				deep:    2,
 				bounds:  Bounds{-2e6, 3e6},
 			},
-			wantMove: ScoredMove{
+			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start: models.Position{
 						File: 5,

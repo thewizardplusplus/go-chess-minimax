@@ -1,4 +1,4 @@
-package chessminimax
+package models
 
 import (
 	"math"
@@ -16,15 +16,18 @@ var (
 	initialScore = math.Inf(-1)
 )
 
-func newScoredMove() ScoredMove {
+// NewScoredMove ...
+func NewScoredMove() ScoredMove {
 	return ScoredMove{Score: initialScore}
 }
 
-func (move ScoredMove) isUpdated() bool {
+// IsUpdated ...
+func (move ScoredMove) IsUpdated() bool {
 	return move.Score != initialScore
 }
 
-func (move *ScoredMove) update(
+// Update ...
+func (move *ScoredMove) Update(
 	scoredMove ScoredMove,
 	rawMove models.Move,
 ) {
