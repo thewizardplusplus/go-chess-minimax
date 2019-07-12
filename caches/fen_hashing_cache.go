@@ -25,6 +25,14 @@ func (cache FENHashingCache) Get(
 	}
 
 	data, ok = cache[FENHashKey{fen, color}]
+	// for debug
+	if ok {
+		move := cache[FENHashKey{"hits", 0}]
+		move.Move.Score++
+
+		cache[FENHashKey{"hits", 0}] = move
+	}
+
 	return data, ok
 }
 

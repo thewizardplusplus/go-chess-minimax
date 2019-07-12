@@ -1,6 +1,7 @@
 package chessminimax
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/thewizardplusplus/go-chess-minimax/caches"
@@ -35,6 +36,15 @@ func BenchmarkCachedSearcher_3Ply(
 	}
 }
 
+// for debug
+func TestCacheHits(test *testing.T) {
+	for deep := 1; deep < 5; deep++ {
+		fmt.Printf("deep: %v\n", deep)
+		cachedSearch(initial, models.White, deep)
+		fmt.Println()
+	}
+}
+
 func cachedSearch(
 	boardInFEN string,
 	color models.Color,
@@ -49,6 +59,14 @@ func cachedSearch(
 	}
 
 	cache := make(caches.FENHashingCache)
+	// for debug
+	defer func() {
+		move :=
+			cache[caches.FENHashKey{"hits", 0}]
+		fmt.Printf("hits: %v\n", move.Move.Score)
+		fmt.Printf("size: %v\n", len(cache))
+	}()
+
 	generator := models.MoveGenerator{}
 	terminator :=
 		terminators.NewDeepTerminator(
