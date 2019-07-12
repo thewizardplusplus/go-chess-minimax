@@ -4,6 +4,7 @@ type searcherHolder struct {
 	searcher MoveSearcher
 }
 
+// SetSearcher ...
 func (holder *searcherHolder) SetSearcher(
 	searcher MoveSearcher,
 ) {
