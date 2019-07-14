@@ -10,7 +10,7 @@ import (
 )
 
 type MockPieceStorage struct {
-	toFEN func() (string, error)
+	toFEN func() string
 }
 
 func (
@@ -45,7 +45,7 @@ func (storage MockPieceStorage) CheckMove(
 
 func (
 	storage MockPieceStorage,
-) ToFEN() (string, error) {
+) ToFEN() string {
 	if storage.toFEN == nil {
 		panic("not implemented")
 	}
@@ -126,100 +126,8 @@ func TestFENHashingCacheGet(
 			},
 			args: args{
 				storage: MockPieceStorage{
-					toFEN: func() (string, error) {
-						return "", errors.New("dummy")
-					},
-				},
-				color: models.White,
-			},
-			wantCache: FENHashingCache{
-				FENHashKey{
-					BoardInFEN: "fen #1",
-					Color:      models.White,
-				}: moves.FailedMove{
-					Move: moves.ScoredMove{
-						Move: models.Move{
-							Start: models.Position{
-								File: 1,
-								Rank: 2,
-							},
-							Finish: models.Position{
-								File: 3,
-								Rank: 4,
-							},
-						},
-						Score: 2.3,
-					},
-					Error: errors.New("dummy #1"),
-				},
-				FENHashKey{
-					BoardInFEN: "fen #2",
-					Color:      models.White,
-				}: moves.FailedMove{
-					Move: moves.ScoredMove{
-						Move: models.Move{
-							Start: models.Position{
-								File: 5,
-								Rank: 6,
-							},
-							Finish: models.Position{
-								File: 7,
-								Rank: 8,
-							},
-						},
-						Score: 4.2,
-					},
-					Error: errors.New("dummy #2"),
-				},
-			},
-			wantData: moves.FailedMove{},
-			wantOk:   false,
-		},
-		data{
-			cache: FENHashingCache{
-				FENHashKey{
-					BoardInFEN: "fen #1",
-					Color:      models.White,
-				}: moves.FailedMove{
-					Move: moves.ScoredMove{
-						Move: models.Move{
-							Start: models.Position{
-								File: 1,
-								Rank: 2,
-							},
-							Finish: models.Position{
-								File: 3,
-								Rank: 4,
-							},
-						},
-						Score: 2.3,
-					},
-					Error: errors.New("dummy #1"),
-				},
-				FENHashKey{
-					BoardInFEN: "fen #2",
-					Color:      models.White,
-				}: moves.FailedMove{
-					Move: moves.ScoredMove{
-						Move: models.Move{
-							Start: models.Position{
-								File: 5,
-								Rank: 6,
-							},
-							Finish: models.Position{
-								File: 7,
-								Rank: 8,
-							},
-						},
-						Score: 4.2,
-					},
-					Error: errors.New("dummy #2"),
-				},
-			},
-			args: args{
-				storage: MockPieceStorage{
-					toFEN: func() (string, error) {
-						return "fen #1", nil
+					toFEN: func() string {
+						return "fen #1"
 					},
 				},
 				color: models.White,
@@ -325,8 +233,8 @@ func TestFENHashingCacheGet(
 			},
 			args: args{
 				storage: MockPieceStorage{
-					toFEN: func() (string, error) {
-						return "fen #1", nil
+					toFEN: func() string {
+						return "fen #1"
 					},
 				},
 				color: models.Black,
@@ -388,6 +296,190 @@ func TestFENHashingCacheGet(
 				Error: errors.New("dummy #2"),
 			},
 			wantOk: true,
+		},
+		data{
+			cache: FENHashingCache{
+				FENHashKey{
+					BoardInFEN: "fen #1",
+					Color:      models.White,
+				}: moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #1"),
+				},
+				FENHashKey{
+					BoardInFEN: "fen #2",
+					Color:      models.White,
+				}: moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 4.2,
+					},
+					Error: errors.New("dummy #2"),
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{
+					toFEN: func() string {
+						return "fen #0"
+					},
+				},
+				color: models.White,
+			},
+			wantCache: FENHashingCache{
+				FENHashKey{
+					BoardInFEN: "fen #1",
+					Color:      models.White,
+				}: moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #1"),
+				},
+				FENHashKey{
+					BoardInFEN: "fen #2",
+					Color:      models.White,
+				}: moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 4.2,
+					},
+					Error: errors.New("dummy #2"),
+				},
+			},
+			wantData: moves.FailedMove{},
+			wantOk:   false,
+		},
+		data{
+			cache: FENHashingCache{
+				FENHashKey{
+					BoardInFEN: "fen #1",
+					Color:      models.White,
+				}: moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #1"),
+				},
+				FENHashKey{
+					BoardInFEN: "fen #2",
+					Color:      models.White,
+				}: moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 4.2,
+					},
+					Error: errors.New("dummy #2"),
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{
+					toFEN: func() string {
+						return "fen #1"
+					},
+				},
+				color: models.Black,
+			},
+			wantCache: FENHashingCache{
+				FENHashKey{
+					BoardInFEN: "fen #1",
+					Color:      models.White,
+				}: moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #1"),
+				},
+				FENHashKey{
+					BoardInFEN: "fen #2",
+					Color:      models.White,
+				}: moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 4.2,
+					},
+					Error: errors.New("dummy #2"),
+				},
+			},
+			wantData: moves.FailedMove{},
+			wantOk:   false,
 		},
 	} {
 		gotData, gotOk := data.cache.Get(
@@ -473,98 +565,8 @@ func TestFENHashingCacheSet(
 			},
 			args: args{
 				storage: MockPieceStorage{
-					toFEN: func() (string, error) {
-						return "", errors.New("dummy")
-					},
-				},
-				color: models.White,
-			},
-			wantCache: FENHashingCache{
-				FENHashKey{
-					BoardInFEN: "fen #1",
-					Color:      models.White,
-				}: moves.FailedMove{
-					Move: moves.ScoredMove{
-						Move: models.Move{
-							Start: models.Position{
-								File: 1,
-								Rank: 2,
-							},
-							Finish: models.Position{
-								File: 3,
-								Rank: 4,
-							},
-						},
-						Score: 2.3,
-					},
-					Error: errors.New("dummy #1"),
-				},
-				FENHashKey{
-					BoardInFEN: "fen #2",
-					Color:      models.White,
-				}: moves.FailedMove{
-					Move: moves.ScoredMove{
-						Move: models.Move{
-							Start: models.Position{
-								File: 5,
-								Rank: 6,
-							},
-							Finish: models.Position{
-								File: 7,
-								Rank: 8,
-							},
-						},
-						Score: 4.2,
-					},
-					Error: errors.New("dummy #2"),
-				},
-			},
-		},
-		data{
-			cache: FENHashingCache{
-				FENHashKey{
-					BoardInFEN: "fen #1",
-					Color:      models.White,
-				}: moves.FailedMove{
-					Move: moves.ScoredMove{
-						Move: models.Move{
-							Start: models.Position{
-								File: 1,
-								Rank: 2,
-							},
-							Finish: models.Position{
-								File: 3,
-								Rank: 4,
-							},
-						},
-						Score: 2.3,
-					},
-					Error: errors.New("dummy #1"),
-				},
-				FENHashKey{
-					BoardInFEN: "fen #2",
-					Color:      models.White,
-				}: moves.FailedMove{
-					Move: moves.ScoredMove{
-						Move: models.Move{
-							Start: models.Position{
-								File: 5,
-								Rank: 6,
-							},
-							Finish: models.Position{
-								File: 7,
-								Rank: 8,
-							},
-						},
-						Score: 4.2,
-					},
-					Error: errors.New("dummy #2"),
-				},
-			},
-			args: args{
-				storage: MockPieceStorage{
-					toFEN: func() (string, error) {
-						return "fen #3", nil
+					toFEN: func() string {
+						return "fen #3"
 					},
 				},
 				color: models.White,
@@ -688,8 +690,8 @@ func TestFENHashingCacheSet(
 			},
 			args: args{
 				storage: MockPieceStorage{
-					toFEN: func() (string, error) {
-						return "fen #2", nil
+					toFEN: func() string {
+						return "fen #2"
 					},
 				},
 				color: models.White,
@@ -794,8 +796,8 @@ func TestFENHashingCacheSet(
 			},
 			args: args{
 				storage: MockPieceStorage{
-					toFEN: func() (string, error) {
-						return "fen #1", nil
+					toFEN: func() string {
+						return "fen #1"
 					},
 				},
 				color: models.Black,
