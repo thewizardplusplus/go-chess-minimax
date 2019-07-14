@@ -6,30 +6,6 @@ import (
 	"time"
 )
 
-func TestClockType(test *testing.T) {
-	gotType := reflect.TypeOf(time.Now)
-	wantType := reflect.
-		TypeOf((*Clock)(nil)).
-		Elem()
-	if !gotType.AssignableTo(wantType) {
-		test.Fail()
-	}
-}
-
-func TestTimeTerminatorInterface(
-	test *testing.T,
-) {
-	gotType := reflect.TypeOf(
-		TimeTerminator{},
-	)
-	wantType := reflect.
-		TypeOf((*SearchTerminator)(nil)).
-		Elem()
-	if !gotType.Implements(wantType) {
-		test.Fail()
-	}
-}
-
 func TestNewTimeTerminator(
 	test *testing.T,
 ) {

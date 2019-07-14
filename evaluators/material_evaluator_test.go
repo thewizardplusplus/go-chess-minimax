@@ -1,7 +1,6 @@
 package evaluators
 
 import (
-	"reflect"
 	"testing"
 
 	models "github.com/thewizardplusplus/go-chess-models"
@@ -81,20 +80,6 @@ func (piece MockPiece) CheckMove(
 	storage models.PieceStorage,
 ) bool {
 	panic("not implemented")
-}
-
-func TestMaterialEvaluatorInterface(
-	test *testing.T,
-) {
-	gotType := reflect.TypeOf(
-		MaterialEvaluator{},
-	)
-	wantType := reflect.
-		TypeOf((*BoardEvaluator)(nil)).
-		Elem()
-	if !gotType.Implements(wantType) {
-		test.Fail()
-	}
 }
 
 func TestMaterialEvaluatorEvaluateBoard(

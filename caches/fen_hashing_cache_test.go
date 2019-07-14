@@ -53,20 +53,6 @@ func (
 	return storage.toFEN()
 }
 
-func TestFENHashingCacheInterface(
-	test *testing.T,
-) {
-	gotType := reflect.TypeOf(
-		FENHashingCache{},
-	)
-	wantType := reflect.
-		TypeOf((*Cache)(nil)).
-		Elem()
-	if !gotType.Implements(wantType) {
-		test.Fail()
-	}
-}
-
 func TestFENHashingCacheGet(
 	test *testing.T,
 ) {

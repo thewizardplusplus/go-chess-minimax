@@ -19,20 +19,6 @@ func (
 	return terminator.isSearchTerminate(deep)
 }
 
-func TestGroupTerminatorInterface(
-	test *testing.T,
-) {
-	gotType := reflect.TypeOf(
-		GroupTerminator{},
-	)
-	wantType := reflect.
-		TypeOf((*SearchTerminator)(nil)).
-		Elem()
-	if !gotType.Implements(wantType) {
-		test.Fail()
-	}
-}
-
 func TestNewGroupTerminator(
 	test *testing.T,
 ) {
