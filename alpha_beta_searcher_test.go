@@ -122,6 +122,9 @@ type MockMoveSearcher struct {
 	setSearcher func(
 		innerSearcher MoveSearcher,
 	)
+	setTerminator func(
+		terminator terminators.SearchTerminator,
+	)
 	searchMove func(
 		storage models.PieceStorage,
 		color models.Color,
@@ -140,6 +143,18 @@ func (
 	}
 
 	searcher.setSearcher(innerSearcher)
+}
+
+func (
+	searcher MockMoveSearcher,
+) SetTerminator(
+	terminator terminators.SearchTerminator,
+) {
+	if searcher.setTerminator == nil {
+		panic("not implemented")
+	}
+
+	searcher.setTerminator(terminator)
 }
 
 func (

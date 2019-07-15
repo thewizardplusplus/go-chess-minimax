@@ -1,24 +1,24 @@
 package chessminimax
 
 import (
-	"github.com/thewizardplusplus/go-chess-minimax/terminators"
+  "github.com/thewizardplusplus/go-chess-minimax/terminators"
 )
 
 type baseSearcher struct {
-	searcher   MoveSearcher
-	terminator terminators.SearchTerminator
+  searcher   MoveSearcher
+  terminator terminators.SearchTerminator
 }
 
 // SetSearcher ...
 func (searcher *baseSearcher) SetSearcher(
-	innerSearcher MoveSearcher,
+  innerSearcher MoveSearcher,
 ) {
-	searcher.searcher = innerSearcher
+  searcher.searcher = innerSearcher
 }
 
 // SetTerminator ...
 func (searcher *baseSearcher) SetTerminator(
-	terminator terminators.SearchTerminator,
+  terminator terminators.SearchTerminator,
 ) {
-	searcher.terminator = terminator
+  searcher.terminator = terminator
 }
