@@ -19,3 +19,18 @@ func TestBaseSearcherSetSearcher(
 		test.Fail()
 	}
 }
+
+func TestBaseSearcherSetTerminator(
+	test *testing.T,
+) {
+	var terminator MockSearchTerminator
+	var searcher baseSearcher
+	searcher.SetTerminator(terminator)
+
+	if !reflect.DeepEqual(
+		searcher.terminator,
+		terminator,
+	) {
+		test.Fail()
+	}
+}

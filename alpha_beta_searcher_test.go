@@ -1805,12 +1805,13 @@ func TestAlphaBetaSearcherSearchMove(
 		},
 	} {
 		searcher := AlphaBetaSearcher{
-			generator:  data.fields.generator,
-			terminator: data.fields.terminator,
-			evaluator:  data.fields.evaluator,
+			generator: data.fields.generator,
+			evaluator: data.fields.evaluator,
 		}
 		searcher.searcher =
 			data.fields.searcher
+		searcher.terminator =
+			data.fields.terminator
 
 		gotMove, gotErr := searcher.SearchMove(
 			data.args.storage,
