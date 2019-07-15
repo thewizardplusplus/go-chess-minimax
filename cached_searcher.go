@@ -8,7 +8,7 @@ import (
 
 // CachedSearcher ...
 type CachedSearcher struct {
-	searcherHolder
+	MoveSearcher
 
 	cache caches.Cache
 }
@@ -18,8 +18,11 @@ func NewCachedSearcher(
 	cache caches.Cache,
 	innerSearcher MoveSearcher,
 ) *CachedSearcher {
-	searcher := &CachedSearcher{cache: cache}
-	searcher.searcher = innerSearcher
+	searcher := &CachedSearcher{
+		MoveSearcher: innerSearcher,
+
+		cache: cache,
+	}
 
 	// set itself as an inner searcher
 	// for passed one
@@ -43,7 +46,7 @@ func (searcher CachedSearcher) SearchMove(
 		return data.Move, data.Error
 	}
 
-	move, err := searcher.searcher.
+	move, err := searcher.MoveSearcher.
 		SearchMove(storage, color, deep, bounds)
 	data = moves.FailedMove{move, err}
 	searcher.cache.Set(storage, color, data)

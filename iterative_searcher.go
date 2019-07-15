@@ -7,15 +7,16 @@ import (
 
 // IterativeSearcher ...
 type IterativeSearcher struct {
-	searcherHolder
+	MoveSearcher
 }
 
 // NewIterativeSearcher ...
 func NewIterativeSearcher(
 	innerSearcher MoveSearcher,
 ) *IterativeSearcher {
-	searcher := &IterativeSearcher{}
-	searcher.searcher = innerSearcher
+	searcher := &IterativeSearcher{
+		MoveSearcher: innerSearcher,
+	}
 
 	// set itself as an inner searcher
 	// for passed one
@@ -33,7 +34,7 @@ func (searcher IterativeSearcher) SearchMove(
 	deep int,
 	bounds moves.Bounds,
 ) (moves.ScoredMove, error) {
-	move, err := searcher.searcher.
+	move, err := searcher.MoveSearcher.
 		SearchMove(storage, color, deep, bounds)
 	return move, err
 }

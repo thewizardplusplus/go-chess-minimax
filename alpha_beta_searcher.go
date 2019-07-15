@@ -30,7 +30,7 @@ type MoveSearcher interface {
 
 // AlphaBetaSearcher ...
 type AlphaBetaSearcher struct {
-	searcherHolder
+	baseSearcher
 
 	generator  MoveGenerator
 	terminator terminators.SearchTerminator

@@ -74,7 +74,7 @@ func TestNewCachedSearcher(
 	}
 
 	_, ok := searcher.
-		searcher.(MockMoveSearcher)
+		MoveSearcher.(MockMoveSearcher)
 	if !ok {
 		test.Fail()
 	}
@@ -286,10 +286,10 @@ func TestCachedSearcherSearchMove(
 		},
 	} {
 		searcher := CachedSearcher{
+			MoveSearcher: data.fields.searcher,
+
 			cache: data.fields.cache,
 		}
-		searcher.searcher =
-			data.fields.searcher
 
 		gotMove, gotErr := searcher.SearchMove(
 			data.args.storage,
