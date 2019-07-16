@@ -41,7 +41,8 @@ func (searcher IterativeSearcher) SearchMove(
 	bounds moves.Bounds,
 ) (moves.ScoredMove, error) {
 	var lastMove moves.FailedMove
-	for deep := 1; ; deep++ {
+	const startDeep = 1
+	for deep := startDeep; ; deep++ {
 		searcher.MoveSearcher.SetTerminator(
 			terminators.NewGroupTerminator(
 				searcher.terminator,
@@ -56,11 +57,9 @@ func (searcher IterativeSearcher) SearchMove(
 				deep,
 				bounds,
 			)
-		isFirstIteration :=
-			!lastMove.Move.IsUpdated()
 		isTimeout := searcher.terminator.
 			IsSearchTerminate(deep)
-		if isFirstIteration || !isTimeout {
+		if deep == startDeep || !isTimeout {
 			lastMove = moves.FailedMove{move, err}
 		}
 		if isTimeout {

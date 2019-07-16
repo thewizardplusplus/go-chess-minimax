@@ -69,6 +69,10 @@ func TestIterativeSearcherSearchMove(
 		data{
 			fields: fields{
 				searcher: MockMoveSearcher{
+					setTerminator: func(
+						terminator terminators.SearchTerminator,
+					) {
+					},
 					searchMove: func(
 						storage models.PieceStorage,
 						color models.Color,
