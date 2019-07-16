@@ -50,11 +50,13 @@ func (searcher IterativeSearcher) SearchMove(
 		searcher.maximalDuration,
 	)
 	isTimeout := func() bool {
+		// time terminator doesn't depend
+		// on a deep
 		return timer.IsSearchTerminate(0)
 	}
 
 	var lastMove moves.FailedMove
-	for deep := 1; isTimeout(); deep++ {
+	for deep := 1; ; deep++ {
 		searcher.MoveSearcher.SetTerminator(
 			terminators.NewGroupTerminator(
 				timer,
@@ -73,6 +75,9 @@ func (searcher IterativeSearcher) SearchMove(
 			!lastMove.Move.IsUpdated()
 		if isFirstIteration || !isTimeout() {
 			lastMove = moves.FailedMove{move, err}
+		}
+		if isTimeout() {
+			break
 		}
 	}
 

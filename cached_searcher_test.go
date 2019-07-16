@@ -66,16 +66,16 @@ func TestNewCachedSearcher(
 		innerSearcher,
 	)
 
+	_, ok := searcher.
+		MoveSearcher.(MockMoveSearcher)
+	if !ok {
+		test.Fail()
+	}
+
 	if !reflect.DeepEqual(
 		searcher.cache,
 		cache,
 	) {
-		test.Fail()
-	}
-
-	_, ok := searcher.
-		MoveSearcher.(MockMoveSearcher)
-	if !ok {
 		test.Fail()
 	}
 }
