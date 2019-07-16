@@ -1,6 +1,7 @@
 package chessminimax
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 	"time"
@@ -76,129 +77,73 @@ func TestIterativeSearcherSearchMove(
 	}
 
 	for _, data := range []data{
-	/*data{
-	  fields: fields{
-	    searcher: MockMoveSearcher{
-	      searchMove: func(
-	        storage models.PieceStorage,
-	        color models.Color,
-	        deep int,
-	        bounds moves.Bounds,
-	      ) (moves.ScoredMove, error) {
-	        _, ok :=
-	          storage.(MockPieceStorage)
-	        if !ok {
-	          test.Fail()
-	        }
-	        if color != models.White {
-	          test.Fail()
-	        }
-	        if deep != 2 {
-	          test.Fail()
-	        }
-	        if !reflect.DeepEqual(
-	          bounds,
-	          moves.Bounds{-2e6, 3e6},
-	        ) {
-	          test.Fail()
-	        }
+		data{
+			fields: fields{
+				searcher: MockMoveSearcher{
+					searchMove: func(
+						storage models.PieceStorage,
+						color models.Color,
+						deep int,
+						bounds moves.Bounds,
+					) (moves.ScoredMove, error) {
+						_, ok :=
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+						if color != models.White {
+							test.Fail()
+						}
+						if deep != 2 {
+							test.Fail()
+						}
+						if !reflect.DeepEqual(
+							bounds,
+							moves.Bounds{-2e6, 3e6},
+						) {
+							test.Fail()
+						}
 
-	        move := moves.ScoredMove{
-	          Move: models.Move{
-	            Start: models.Position{
-	              File: 5,
-	              Rank: 6,
-	            },
-	            Finish: models.Position{
-	              File: 7,
-	              Rank: 8,
-	            },
-	          },
-	          Score: 4.2,
-	        }
-	        return move, errors.New("dummy")
-	      },
-	    },
-	    cache: MockCache{
-	      get: func(
-	        storage models.PieceStorage,
-	        color models.Color,
-	      ) (
-	        data moves.FailedMove,
-	        ok bool,
-	      ) {
-	        _, ok =
-	          storage.(MockPieceStorage)
-	        if !ok {
-	          test.Fail()
-	        }
-	        if color != models.White {
-	          test.Fail()
-	        }
-
-	        return moves.FailedMove{}, false
-	      },
-	      set: func(
-	        storage models.PieceStorage,
-	        color models.Color,
-	        data moves.FailedMove,
-	      ) {
-	        _, ok :=
-	          storage.(MockPieceStorage)
-	        if !ok {
-	          test.Fail()
-	        }
-	        if color != models.White {
-	          test.Fail()
-	        }
-
-	        expectedData :=
-	          moves.FailedMove{
-	            Move: moves.ScoredMove{
-	              Move: models.Move{
-	                Start: models.Position{
-	                  File: 5,
-	                  Rank: 6,
-	                },
-	                Finish: models.Position{
-	                  File: 7,
-	                  Rank: 8,
-	                },
-	              },
-	              Score: 4.2,
-	            },
-	            Error: errors.New("dummy"),
-	          }
-	        if !reflect.DeepEqual(
-	          data,
-	          expectedData,
-	        ) {
-	          test.Fail()
-	        }
-	      },
-	    },
-	  },
-	  args: args{
-	    storage: MockPieceStorage{},
-	    color:   models.White,
-	    deep:    2,
-	    bounds:  moves.Bounds{-2e6, 3e6},
-	  },
-	  wantMove: moves.ScoredMove{
-	    Move: models.Move{
-	      Start: models.Position{
-	        File: 5,
-	        Rank: 6,
-	      },
-	      Finish: models.Position{
-	        File: 7,
-	        Rank: 8,
-	      },
-	    },
-	    Score: 4.2,
-	  },
-	  wantErr: true,
-	},*/
+						move := moves.ScoredMove{
+							Move: models.Move{
+								Start: models.Position{
+									File: 5,
+									Rank: 6,
+								},
+								Finish: models.Position{
+									File: 7,
+									Rank: 8,
+								},
+							},
+							Score: 4.2,
+						}
+						return move, errors.New("dummy")
+					},
+				},
+				clock:           clock,
+				maximalDuration: 5 * time.Second,
+			},
+			args: args{
+				storage: MockPieceStorage{},
+				color:   models.White,
+				deep:    2,
+				bounds:  moves.Bounds{-2e6, 3e6},
+			},
+			wantMove: moves.ScoredMove{
+				Move: models.Move{
+					Start: models.Position{
+						File: 5,
+						Rank: 6,
+					},
+					Finish: models.Position{
+						File: 7,
+						Rank: 8,
+					},
+				},
+				Score: 4.2,
+			},
+			wantErr: true,
+		},
 	} {
 		searcher := IterativeSearcher{
 			MoveSearcher: data.fields.searcher,
