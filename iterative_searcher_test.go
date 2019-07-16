@@ -4,7 +4,6 @@ import (
 	"errors"
 	"reflect"
 	"testing"
-	"time"
 
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
@@ -26,11 +25,10 @@ func TestNewIterativeSearcher(
 		},
 	}
 
-	maximalDuration := 5 * time.Second
+	var terminator MockSearchTerminator
 	searcher := NewIterativeSearcher(
+		terminator,
 		innerSearcher,
-		clock,
-		maximalDuration,
 	)
 
 	_, ok := searcher.
@@ -39,18 +37,10 @@ func TestNewIterativeSearcher(
 		test.Fail()
 	}
 
-	gotClock := reflect.
-		ValueOf(searcher.clock).
-		Pointer()
-	wantClock := reflect.
-		ValueOf(clock).
-		Pointer()
-	if gotClock != wantClock {
-		test.Fail()
-	}
-
-	if searcher.maximalDuration !=
-		maximalDuration {
+	if !reflect.DeepEqual(
+		searcher.terminator,
+		terminator,
+	) {
 		test.Fail()
 	}
 }
@@ -59,9 +49,8 @@ func TestIterativeSearcherSearchMove(
 	test *testing.T,
 ) {
 	type fields struct {
-		searcher        MoveSearcher
-		clock           terminators.Clock
-		maximalDuration time.Duration
+		searcher   MoveSearcher
+		terminator terminators.SearchTerminator
 	}
 	type args struct {
 		storage models.PieceStorage
@@ -120,8 +109,13 @@ func TestIterativeSearcherSearchMove(
 						return move, errors.New("dummy")
 					},
 				},
-				clock:           clock,
-				maximalDuration: 5 * time.Second,
+				terminator: MockSearchTerminator{
+					isSearchTerminate: func(
+						deep int,
+					) bool {
+						return true
+					},
+				},
 			},
 			args: args{
 				storage: MockPieceStorage{},
@@ -148,9 +142,7 @@ func TestIterativeSearcherSearchMove(
 		searcher := IterativeSearcher{
 			MoveSearcher: data.fields.searcher,
 
-			clock: data.fields.clock,
-			maximalDuration: data.fields.
-				maximalDuration,
+			terminator: data.fields.terminator,
 		}
 
 		gotMove, gotErr := searcher.SearchMove(
@@ -172,15 +164,4 @@ func TestIterativeSearcherSearchMove(
 			test.Fail()
 		}
 	}
-}
-
-func clock() time.Time {
-	year, month, day := 2006, time.January, 2
-	hour, minute, second := 15, 4, 5
-	return time.Date(
-		year, month, day,
-		hour, minute, second,
-		0,        // nanosecond
-		time.UTC, // location
-	)
 }

@@ -1,8 +1,6 @@
 package chessminimax
 
 import (
-	"time"
-
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
@@ -12,21 +10,18 @@ import (
 type IterativeSearcher struct {
 	MoveSearcher
 
-	clock           terminators.Clock
-	maximalDuration time.Duration
+	terminator terminators.SearchTerminator
 }
 
 // NewIterativeSearcher ...
 func NewIterativeSearcher(
+	terminator terminators.SearchTerminator,
 	innerSearcher MoveSearcher,
-	clock terminators.Clock,
-	maximalDuration time.Duration,
 ) *IterativeSearcher {
 	searcher := &IterativeSearcher{
 		MoveSearcher: innerSearcher,
 
-		clock:           clock,
-		maximalDuration: maximalDuration,
+		terminator: terminator,
 	}
 
 	// set itself as an inner searcher
@@ -45,21 +40,11 @@ func (searcher IterativeSearcher) SearchMove(
 	deep int,
 	bounds moves.Bounds,
 ) (moves.ScoredMove, error) {
-	timer := terminators.NewTimeTerminator(
-		searcher.clock,
-		searcher.maximalDuration,
-	)
-	isTimeout := func() bool {
-		// time terminator doesn't depend
-		// on a deep
-		return timer.IsSearchTerminate(0)
-	}
-
 	var lastMove moves.FailedMove
 	for deep := 1; ; deep++ {
 		searcher.MoveSearcher.SetTerminator(
 			terminators.NewGroupTerminator(
-				timer,
+				searcher.terminator,
 				terminators.NewDeepTerminator(deep),
 			),
 		)
@@ -73,10 +58,12 @@ func (searcher IterativeSearcher) SearchMove(
 			)
 		isFirstIteration :=
 			!lastMove.Move.IsUpdated()
-		if isFirstIteration || !isTimeout() {
+		isTimeout := searcher.terminator.
+			IsSearchTerminate(deep)
+		if isFirstIteration || !isTimeout {
 			lastMove = moves.FailedMove{move, err}
 		}
-		if isTimeout() {
+		if isTimeout {
 			break
 		}
 	}
