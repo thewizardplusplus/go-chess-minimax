@@ -65,6 +65,9 @@ func (searcher IterativeSearcher) SearchMove(
 		if !isTimeout || deep == startDeep {
 			lastMove = moves.FailedMove{move, err}
 		}
+		// check at the loop end,
+		// because there should be
+		// at least one iteration
 		if isTimeout {
 			break
 		}

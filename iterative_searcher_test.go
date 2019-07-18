@@ -61,17 +61,21 @@ func TestIterativeSearcherSearchMove(
 	type data struct {
 		fields   fields
 		args     args
+		wantDeep int
 		wantMove moves.ScoredMove
 		wantErr  bool
 	}
 
+	var testDeep int
 	for _, data := range []data{
 		data{
 			fields: fields{
 				searcher: MockMoveSearcher{
-					setTerminator: func(
-						terminator terminators.SearchTerminator,
-					) {
+					setTerminator: func(terminator terminators.SearchTerminator) {
+						_, ok := terminator.(terminators.GroupTerminator)
+						if !ok {
+							test.Fail()
+						}
 					},
 					searchMove: func(
 						storage models.PieceStorage,
@@ -79,6 +83,8 @@ func TestIterativeSearcherSearchMove(
 						deep int,
 						bounds moves.Bounds,
 					) (moves.ScoredMove, error) {
+						defer func() { testDeep++ }()
+
 						_, ok :=
 							storage.(MockPieceStorage)
 						if !ok {
@@ -87,8 +93,8 @@ func TestIterativeSearcherSearchMove(
 						if color != models.White {
 							test.Fail()
 						}
-						if deep != 2 {
-							//test.Fail()
+						if deep != testDeep {
+							test.Fail()
 						}
 						if !reflect.DeepEqual(
 							bounds,
@@ -100,15 +106,15 @@ func TestIterativeSearcherSearchMove(
 						move := moves.ScoredMove{
 							Move: models.Move{
 								Start: models.Position{
-									File: 5,
-									Rank: 6,
+									File: deep + 1,
+									Rank: deep + 2,
 								},
 								Finish: models.Position{
-									File: 7,
-									Rank: 8,
+									File: deep + 3,
+									Rank: deep + 4,
 								},
 							},
-							Score: 4.2,
+							Score: float64(deep + 5),
 						}
 						return move, errors.New("dummy")
 					},
@@ -117,7 +123,7 @@ func TestIterativeSearcherSearchMove(
 					isSearchTerminate: func(
 						deep int,
 					) bool {
-						return true
+						return deep == startDeep
 					},
 				},
 			},
@@ -127,22 +133,25 @@ func TestIterativeSearcherSearchMove(
 				deep:    2,
 				bounds:  moves.Bounds{-2e6, 3e6},
 			},
+			wantDeep: startDeep + 1,
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start: models.Position{
-						File: 5,
-						Rank: 6,
+						File: startDeep + 1,
+						Rank: startDeep + 2,
 					},
 					Finish: models.Position{
-						File: 7,
-						Rank: 8,
+						File: startDeep + 3,
+						Rank: startDeep + 4,
 					},
 				},
-				Score: 4.2,
+				Score: float64(startDeep + 5),
 			},
 			wantErr: true,
 		},
 	} {
+		testDeep = startDeep
+
 		searcher := IterativeSearcher{
 			MoveSearcher: data.fields.searcher,
 
@@ -155,6 +164,10 @@ func TestIterativeSearcherSearchMove(
 			data.args.deep,
 			data.args.bounds,
 		)
+
+		if testDeep != data.wantDeep {
+			test.Fail()
+		}
 
 		if !reflect.DeepEqual(
 			gotMove,
