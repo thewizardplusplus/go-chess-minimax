@@ -15,6 +15,10 @@ import (
 	"github.com/thewizardplusplus/go-chess-models/pieces"
 )
 
+const (
+	duration = 500 * time.Millisecond
+)
+
 func TestIterativeSearcher(
 	test *testing.T,
 ) {
@@ -29,14 +33,14 @@ func TestIterativeSearcher(
 		wantErr  error
 	}
 
-	for _, data := range []data{
+	for index, data := range []data{
 		// king capture
 		data{
 			args: args{
-				boardInFEN: "7K/8/8/8/8/8/8/k6R",
-				color:      models.White,
-				maximalDuration: 5000 *
-					time.Millisecond,
+				boardInFEN: "7K/8/8/8" +
+					"/8/8/8/k6R",
+				color:           models.White,
+				maximalDuration: duration,
 			},
 			wantMove: moves.ScoredMove{},
 			wantErr:  models.ErrKingCapture,
@@ -44,10 +48,10 @@ func TestIterativeSearcher(
 		// termination
 		data{
 			args: args{
-				boardInFEN: "7K/8/8/8/8/8/8/k6R",
-				color:      models.Black,
-				maximalDuration: 5000 *
-					time.Millisecond,
+				boardInFEN: "7K/8/8/8" +
+					"/8/8/8/k6R",
+				color:           models.Black,
+				maximalDuration: duration,
 			},
 			wantMove: moves.ScoredMove{Score: -5},
 			wantErr:  nil,
@@ -55,10 +59,10 @@ func TestIterativeSearcher(
 		// draw without checks
 		data{
 			args: args{
-				boardInFEN: "7K/8/8/8/8/8/pp6/kp6",
-				color:      models.Black,
-				maximalDuration: 5000 *
-					time.Millisecond,
+				boardInFEN: "7K/8/8/8" +
+					"/8/8/pp6/kp6",
+				color:           models.Black,
+				maximalDuration: duration,
 			},
 			wantMove: moves.ScoredMove{},
 			wantErr:  ErrDraw,
@@ -68,9 +72,8 @@ func TestIterativeSearcher(
 			args: args{
 				boardInFEN: "7K/8/8/8" +
 					"/8/pp6/kp5R/7R",
-				color: models.Black,
-				maximalDuration: 5000 *
-					time.Millisecond,
+				color:           models.Black,
+				maximalDuration: duration,
 			},
 			wantMove: moves.ScoredMove{},
 			wantErr:  ErrDraw,
@@ -80,9 +83,8 @@ func TestIterativeSearcher(
 			args: args{
 				boardInFEN: "7K/6P1/8/2q5" +
 					"/8/8/b7/kb2B3",
-				color: models.White,
-				maximalDuration: 5000 *
-					time.Millisecond,
+				color:           models.White,
+				maximalDuration: duration,
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -98,9 +100,8 @@ func TestIterativeSearcher(
 			args: args{
 				boardInFEN: "6BK/8/8/8" +
 					"/8/pp6/k6R/7R",
-				color: models.Black,
-				maximalDuration: 5000 *
-					time.Millisecond,
+				color:           models.Black,
+				maximalDuration: duration,
 			},
 			wantMove: moves.ScoredMove{
 				Score: evaluateCheckmate(0),
@@ -112,9 +113,8 @@ func TestIterativeSearcher(
 			args: args{
 				boardInFEN: "6K1/8/7q/6p1" +
 					"/8/2B5/pp4PQ/k7",
-				color: models.White,
-				maximalDuration: 5000 *
-					time.Millisecond,
+				color:           models.White,
+				maximalDuration: duration,
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -128,10 +128,10 @@ func TestIterativeSearcher(
 		// single legal move
 		data{
 			args: args{
-				boardInFEN: "7K/8/7q/8/8/8/8/k7",
-				color:      models.White,
-				maximalDuration: 5000 *
-					time.Millisecond,
+				boardInFEN: "7K/8/7q/8" +
+					"/8/8/8/k7",
+				color:           models.White,
+				maximalDuration: duration,
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -145,10 +145,10 @@ func TestIterativeSearcher(
 		// single profitable move on a first ply
 		data{
 			args: args{
-				boardInFEN: "7K/8/7q/8/8/8/7Q/k7",
-				color:      models.White,
-				maximalDuration: 5000 *
-					time.Millisecond,
+				boardInFEN: "7K/8/7q/8" +
+					"/8/8/7Q/k7",
+				color:           models.White,
+				maximalDuration: duration,
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -164,9 +164,8 @@ func TestIterativeSearcher(
 			args: args{
 				boardInFEN: "kn6/n6q/PP6/8" +
 					"/8/8/7P/7K",
-				color: models.White,
-				maximalDuration: 5000 *
-					time.Millisecond,
+				color:           models.White,
+				maximalDuration: duration,
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -188,8 +187,13 @@ func TestIterativeSearcher(
 			gotMove,
 			data.wantMove,
 		) {
-			test.Log(gotMove,
-				data.wantMove)
+			test.Logf(
+				"#%d:\ngot:  %v\nwant: %v",
+				index,
+				gotMove,
+				data.wantMove,
+			)
+
 			test.Fail()
 		}
 		if !reflect.DeepEqual(
@@ -223,7 +227,8 @@ func iterativeSearch(
 		nil,
 		evaluator,
 	)
-	NewCachedSearcher(cache, innerSearcher)
+	cachedSearcher :=
+		NewCachedSearcher(cache, innerSearcher)
 
 	terminator :=
 		terminators.NewTimeTerminator(
@@ -232,7 +237,7 @@ func iterativeSearch(
 		)
 	searcher := NewIterativeSearcher(
 		terminator,
-		innerSearcher,
+		cachedSearcher,
 	)
 	initialDeep := 0
 	initialBounds := moves.NewBounds()
