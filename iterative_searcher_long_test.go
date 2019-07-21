@@ -218,15 +218,16 @@ func iterativeSearch(
 		return moves.ScoredMove{}, err
 	}
 
-	cache := make(caches.FENHashingCache)
 	generator := models.MoveGenerator{}
 	evaluator :=
 		evaluators.MaterialEvaluator{}
 	innerSearcher := NewAlphaBetaSearcher(
 		generator,
-		nil,
+		nil, // terminator will be set below
 		evaluator,
 	)
+
+	cache := make(caches.FENHashingCache)
 	cachedSearcher :=
 		NewCachedSearcher(cache, innerSearcher)
 
@@ -239,12 +240,11 @@ func iterativeSearch(
 		terminator,
 		cachedSearcher,
 	)
-	initialDeep := 0
-	initialBounds := moves.NewBounds()
+
 	return searcher.SearchMove(
 		storage,
 		color,
-		initialDeep,
-		initialBounds,
+		0, // initial deep
+		moves.NewBounds(),
 	)
 }

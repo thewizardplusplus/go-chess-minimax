@@ -48,7 +48,6 @@ func cachedSearch(
 		return moves.ScoredMove{}, err
 	}
 
-	cache := make(caches.FENHashingCache)
 	generator := models.MoveGenerator{}
 	terminator :=
 		terminators.NewDeepTerminator(
@@ -56,21 +55,22 @@ func cachedSearch(
 		)
 	evaluator :=
 		evaluators.MaterialEvaluator{}
-	initialDeep := 0
-	initialBounds := moves.NewBounds()
 	innerSearcher := NewAlphaBetaSearcher(
 		generator,
 		terminator,
 		evaluator,
 	)
+
+	cache := make(caches.FENHashingCache)
 	searcher := NewCachedSearcher(
 		cache,
 		innerSearcher,
 	)
+
 	return searcher.SearchMove(
 		storage,
 		color,
-		initialDeep,
-		initialBounds,
+		0, // initial deep
+		moves.NewBounds(),
 	)
 }
