@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	duration = 500 * time.Millisecond
+	duration = 1000 * time.Millisecond
 )
 
 func TestIterativeSearcher(
@@ -223,7 +223,9 @@ func iterativeSearch(
 		evaluators.MaterialEvaluator{}
 	innerSearcher := NewAlphaBetaSearcher(
 		generator,
-		nil, // terminator will be set below
+		// terminator will be set automatically
+		// by the iterative searcher
+		nil,
 		evaluator,
 	)
 
