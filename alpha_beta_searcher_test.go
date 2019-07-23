@@ -54,7 +54,7 @@ func (storage MockPieceStorage) CheckMove(
 
 func (
 	storage MockPieceStorage,
-) ToFEN() string {
+) String() string {
 	panic("not implemented")
 }
 

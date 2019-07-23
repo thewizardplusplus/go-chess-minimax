@@ -10,7 +10,7 @@ import (
 )
 
 type MockPieceStorage struct {
-	toFEN func() string
+	stringer func() string
 }
 
 func (
@@ -45,12 +45,12 @@ func (storage MockPieceStorage) CheckMove(
 
 func (
 	storage MockPieceStorage,
-) ToFEN() string {
-	if storage.toFEN == nil {
+) String() string {
+	if storage.stringer == nil {
 		panic("not implemented")
 	}
 
-	return storage.toFEN()
+	return storage.stringer()
 }
 
 func TestFENHashingCacheGet(
@@ -112,7 +112,7 @@ func TestFENHashingCacheGet(
 			},
 			args: args{
 				storage: MockPieceStorage{
-					toFEN: func() string {
+					stringer: func() string {
 						return "fen #1"
 					},
 				},
@@ -219,7 +219,7 @@ func TestFENHashingCacheGet(
 			},
 			args: args{
 				storage: MockPieceStorage{
-					toFEN: func() string {
+					stringer: func() string {
 						return "fen #1"
 					},
 				},
@@ -326,7 +326,7 @@ func TestFENHashingCacheGet(
 			},
 			args: args{
 				storage: MockPieceStorage{
-					toFEN: func() string {
+					stringer: func() string {
 						return "fen #0"
 					},
 				},
@@ -418,7 +418,7 @@ func TestFENHashingCacheGet(
 			},
 			args: args{
 				storage: MockPieceStorage{
-					toFEN: func() string {
+					stringer: func() string {
 						return "fen #1"
 					},
 				},
@@ -551,7 +551,7 @@ func TestFENHashingCacheSet(
 			},
 			args: args{
 				storage: MockPieceStorage{
-					toFEN: func() string {
+					stringer: func() string {
 						return "fen #3"
 					},
 				},
@@ -676,7 +676,7 @@ func TestFENHashingCacheSet(
 			},
 			args: args{
 				storage: MockPieceStorage{
-					toFEN: func() string {
+					stringer: func() string {
 						return "fen #2"
 					},
 				},
@@ -782,7 +782,7 @@ func TestFENHashingCacheSet(
 			},
 			args: args{
 				storage: MockPieceStorage{
-					toFEN: func() string {
+					stringer: func() string {
 						return "fen #1"
 					},
 				},

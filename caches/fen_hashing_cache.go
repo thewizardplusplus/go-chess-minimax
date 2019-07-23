@@ -19,7 +19,7 @@ func (cache FENHashingCache) Get(
 	storage models.PieceStorage,
 	color models.Color,
 ) (data moves.FailedMove, ok bool) {
-	fen := storage.ToFEN()
+	fen := storage.String()
 	data, ok = cache[FENHashKey{fen, color}]
 	return data, ok
 }
@@ -30,6 +30,6 @@ func (cache FENHashingCache) Set(
 	color models.Color,
 	data moves.FailedMove,
 ) {
-	fen := storage.ToFEN()
+	fen := storage.String()
 	cache[FENHashKey{fen, color}] = data
 }

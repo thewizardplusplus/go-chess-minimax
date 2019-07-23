@@ -44,7 +44,7 @@ func (storage MockPieceStorage) CheckMove(
 
 func (
 	storage MockPieceStorage,
-) ToFEN() string {
+) String() string {
 	panic("not implemented")
 }
 
@@ -79,6 +79,10 @@ func (piece MockPiece) CheckMove(
 	move models.Move,
 	storage models.PieceStorage,
 ) bool {
+	panic("not implemented")
+}
+
+func (piece MockPiece) String() string {
 	panic("not implemented")
 }
 
