@@ -62,8 +62,8 @@ func TestNewCachedSearcher(
 
 	var cache MockCache
 	searcher := NewCachedSearcher(
-		cache,
 		innerSearcher,
+		cache,
 	)
 
 	_, ok := searcher.

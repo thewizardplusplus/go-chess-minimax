@@ -23,6 +23,7 @@ type MoveSearcher interface {
 	SetTerminator(
 		terminator terminators.SearchTerminator,
 	)
+
 	SearchMove(
 		storage models.PieceStorage,
 		color models.Color,

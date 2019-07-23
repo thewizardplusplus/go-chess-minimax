@@ -200,8 +200,8 @@ func cachedSearch(
 			evaluator,
 		)
 	searcher := minimax.NewCachedSearcher(
-		cache,
 		innerSearcher,
+		cache,
 	)
 	return searcher.SearchMove(
 		storage,

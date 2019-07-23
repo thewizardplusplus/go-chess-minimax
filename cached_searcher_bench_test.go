@@ -63,8 +63,8 @@ func cachedSearch(
 
 	cache := make(caches.FENHashingCache)
 	searcher := NewCachedSearcher(
-		cache,
 		innerSearcher,
+		cache,
 	)
 
 	return searcher.SearchMove(
