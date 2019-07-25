@@ -27,8 +27,8 @@ func TestNewIterativeSearcher(
 
 	var terminator MockSearchTerminator
 	searcher := NewIterativeSearcher(
-		terminator,
 		innerSearcher,
+		terminator,
 	)
 
 	_, ok := searcher.

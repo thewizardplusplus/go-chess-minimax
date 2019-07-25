@@ -271,23 +271,9 @@ func markGame(loserSide Side, err error) {
 
 func main() {
 	start := time.Now()
-	storage, err := models.ParseBoard(
+	storage, err := models.ParseDefaultBoard(
 		boardInFEN,
-		func(fen rune) (models.Piece, error) {
-			return pieces.ParsePiece(
-				fen,
-				func(
-					kind models.Kind,
-					color models.Color,
-				) models.Piece {
-					return pieces.NewPiece(
-						kind,
-						color,
-						models.Position{},
-					)
-				},
-			)
-		},
+		pieces.ParseDefaultPiece,
 	)
 	if err != nil {
 		log.Fatal(err)
