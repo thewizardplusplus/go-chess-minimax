@@ -46,7 +46,21 @@ func alphaBetaSearch(
 ) (moves.ScoredMove, error) {
 	storage, err := models.ParseBoard(
 		boardInFEN,
-		pieces.NewPiece,
+		func(fen rune) (models.Piece, error) {
+			return pieces.ParsePiece(
+				fen,
+				func(
+					kind models.Kind,
+					color models.Color,
+				) models.Piece {
+					return pieces.NewPiece(
+						kind,
+						color,
+						models.Position{},
+					)
+				},
+			)
+		},
 	)
 	if err != nil {
 		return moves.ScoredMove{}, err
