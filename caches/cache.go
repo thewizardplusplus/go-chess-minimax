@@ -10,10 +10,10 @@ type Cache interface {
 	Get(
 		storage models.PieceStorage,
 		color models.Color,
-	) (data moves.FailedMove, ok bool)
+	) (move moves.FailedMove, ok bool)
 	Set(
 		storage models.PieceStorage,
 		color models.Color,
-		data moves.FailedMove,
+		move moves.FailedMove,
 	)
 }

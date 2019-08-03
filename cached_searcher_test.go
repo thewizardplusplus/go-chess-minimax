@@ -14,18 +14,18 @@ type MockCache struct {
 	get func(
 		storage models.PieceStorage,
 		color models.Color,
-	) (data moves.FailedMove, ok bool)
+	) (move moves.FailedMove, ok bool)
 	set func(
 		storage models.PieceStorage,
 		color models.Color,
-		data moves.FailedMove,
+		move moves.FailedMove,
 	)
 }
 
 func (cache MockCache) Get(
 	storage models.PieceStorage,
 	color models.Color,
-) (data moves.FailedMove, ok bool) {
+) (move moves.FailedMove, ok bool) {
 	if cache.get == nil {
 		panic("not implemented")
 	}
@@ -36,13 +36,13 @@ func (cache MockCache) Get(
 func (cache MockCache) Set(
 	storage models.PieceStorage,
 	color models.Color,
-	data moves.FailedMove,
+	move moves.FailedMove,
 ) {
 	if cache.set == nil {
 		panic("not implemented")
 	}
 
-	cache.set(storage, color, data)
+	cache.set(storage, color, move)
 }
 
 func TestNewCachedSearcher(

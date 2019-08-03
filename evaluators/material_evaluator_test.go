@@ -42,12 +42,6 @@ func (storage MockPieceStorage) CheckMove(
 	panic("not implemented")
 }
 
-func (
-	storage MockPieceStorage,
-) String() string {
-	panic("not implemented")
-}
-
 type MockPiece struct {
 	kind  models.Kind
 	color models.Color
@@ -79,10 +73,6 @@ func (piece MockPiece) CheckMove(
 	move models.Move,
 	storage models.PieceStorage,
 ) bool {
-	panic("not implemented")
-}
-
-func (piece MockPiece) String() string {
 	panic("not implemented")
 }
 

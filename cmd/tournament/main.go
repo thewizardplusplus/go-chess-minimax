@@ -17,6 +17,7 @@ import (
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 	"github.com/thewizardplusplus/go-chess-models/pieces"
+	"github.com/thewizardplusplus/go-chess-models/uci"
 )
 
 // TaskInbox ...
@@ -187,7 +188,9 @@ func cachedSearch(
 	maxDeep int,
 	maxDuration time.Duration,
 ) (moves.ScoredMove, error) {
-	cache := make(caches.FENHashingCache)
+	cache := caches.NewStringHashingCache(
+		uci.EncodePieceStorage,
+	)
 	terminator := makeTerminator(
 		maxDeep,
 		maxDuration,
@@ -271,9 +274,10 @@ func markGame(loserSide Side, err error) {
 
 func main() {
 	start := time.Now()
-	storage, err := models.ParseDefaultBoard(
+	storage, err := uci.DecodePieceStorage(
 		boardInFEN,
-		pieces.ParseDefaultPiece,
+		pieces.NewPiece,
+		models.NewBoard,
 	)
 	if err != nil {
 		log.Fatal(err)

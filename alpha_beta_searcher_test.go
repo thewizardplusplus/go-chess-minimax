@@ -52,12 +52,6 @@ func (storage MockPieceStorage) CheckMove(
 	panic("not implemented")
 }
 
-func (
-	storage MockPieceStorage,
-) String() string {
-	panic("not implemented")
-}
-
 type MockMoveGenerator struct {
 	movesForColor func(
 		storage models.PieceStorage,

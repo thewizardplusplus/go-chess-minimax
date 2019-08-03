@@ -9,6 +9,7 @@ import (
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 	"github.com/thewizardplusplus/go-chess-models/pieces"
+	"github.com/thewizardplusplus/go-chess-models/uci"
 )
 
 func BenchmarkCachedSearcher_1Ply(
@@ -40,9 +41,10 @@ func cachedSearch(
 	color models.Color,
 	maximalDeep int,
 ) (moves.ScoredMove, error) {
-	storage, err := models.ParseDefaultBoard(
+	storage, err := uci.DecodePieceStorage(
 		boardInFEN,
-		pieces.ParseDefaultPiece,
+		pieces.NewPiece,
+		models.NewBoard,
 	)
 	if err != nil {
 		return moves.ScoredMove{}, err
@@ -61,7 +63,9 @@ func cachedSearch(
 		evaluator,
 	)
 
-	cache := make(caches.FENHashingCache)
+	cache := caches.NewStringHashingCache(
+		uci.EncodePieceStorage,
+	)
 	searcher := NewCachedSearcher(
 		innerSearcher,
 		cache,

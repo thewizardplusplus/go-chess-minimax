@@ -13,6 +13,7 @@ import (
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 	"github.com/thewizardplusplus/go-chess-models/pieces"
+	"github.com/thewizardplusplus/go-chess-models/uci"
 )
 
 const (
@@ -210,9 +211,10 @@ func iterativeSearch(
 	color models.Color,
 	maximalDuration time.Duration,
 ) (moves.ScoredMove, error) {
-	storage, err := models.ParseDefaultBoard(
+	storage, err := uci.DecodePieceStorage(
 		boardInFEN,
-		pieces.ParseDefaultPiece,
+		pieces.NewPiece,
+		models.NewBoard,
 	)
 	if err != nil {
 		return moves.ScoredMove{}, err
@@ -229,7 +231,9 @@ func iterativeSearch(
 		evaluator,
 	)
 
-	cache := make(caches.FENHashingCache)
+	cache := caches.NewStringHashingCache(
+		uci.EncodePieceStorage,
+	)
 	cachedSearcher :=
 		NewCachedSearcher(innerSearcher, cache)
 
