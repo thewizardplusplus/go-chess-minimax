@@ -100,8 +100,8 @@ func game(
 	)
 	wrappedCache := NewCacheWrapper(cache)
 
-	ply := 1
-	for i := 0; i < maxMoveCount; i++ {
+	var ply int
+	for ; ply < maxMoveCount*2; ply++ {
 		move, err := cachedSearch(
 			storage,
 			color,
@@ -122,29 +122,6 @@ func game(
 
 		storage = storage.ApplyMove(move.Move)
 		color = color.Negative()
-		ply++
-
-		move, err = cachedSearch(
-			storage,
-			color,
-			maxDeep,
-			wrappedCache,
-		)
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf(
-			"ply: %d, count: %d/%d, time: %s\n",
-			ply,
-			wrappedCache.getCount,
-			wrappedCache.setCount,
-			time.Since(start),
-		)
-
-		storage = storage.ApplyMove(move.Move)
-		color = color.Negative()
-		ply++
 	}
 
 	return nil
@@ -158,14 +135,13 @@ func main() {
 		maxMoveCount int
 	}
 
-loop:
 	for _, data := range []data{
 		data{
 			name: "usual chess",
 			fen: "rnbqkbnr/pppppppp/8/8" +
 				"/8/8/PPPPPPPP/RNBQKBNR",
 			maxDeep:      4,
-			maxMoveCount: 6,
+			maxMoveCount: 5,
 		},
 		data{
 			name: "minichess",
@@ -188,7 +164,7 @@ loop:
 		)
 		if err != nil {
 			fmt.Printf("error: %s\n", err)
-			continue loop
+			continue
 		}
 
 		err = game(
@@ -199,7 +175,7 @@ loop:
 		)
 		if err != nil {
 			fmt.Printf("error: %s\n", err)
-			continue loop
+			continue
 		}
 
 		fmt.Println()
