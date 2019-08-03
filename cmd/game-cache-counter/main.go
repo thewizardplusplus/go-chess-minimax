@@ -100,7 +100,8 @@ func game(
 	)
 	wrappedCache := NewCacheWrapper(cache)
 
-	for ply := 0; ply < maxMoveCount; ply++ {
+	ply := 1
+	for i := 0; i < maxMoveCount; i++ {
 		move, err := cachedSearch(
 			storage,
 			color,
@@ -121,6 +122,7 @@ func game(
 
 		storage = storage.ApplyMove(move.Move)
 		color = color.Negative()
+		ply++
 
 		move, err = cachedSearch(
 			storage,
@@ -142,6 +144,7 @@ func game(
 
 		storage = storage.ApplyMove(move.Move)
 		color = color.Negative()
+		ply++
 	}
 
 	return nil
@@ -162,14 +165,14 @@ loop:
 			fen: "rnbqkbnr/pppppppp/8/8" +
 				"/8/8/PPPPPPPP/RNBQKBNR",
 			maxDeep:      4,
-			maxMoveCount: 5,
+			maxMoveCount: 6,
 		},
 		data{
 			name: "minichess",
 			fen: "rnbqk/ppppp/5" +
 				"/PPPPP/RNBQK",
 			maxDeep:      4,
-			maxMoveCount: 5,
+			maxMoveCount: 6,
 		},
 	} {
 		fmt.Printf(
