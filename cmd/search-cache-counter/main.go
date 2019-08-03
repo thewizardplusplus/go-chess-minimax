@@ -58,20 +58,11 @@ func (cache *CacheWrapper) Set(
 }
 
 func cachedSearch(
-	fen string,
+	storage models.PieceStorage,
 	color models.Color,
 	maxDeep int,
 	cache caches.Cache,
 ) (moves.ScoredMove, error) {
-	storage, err := uci.DecodePieceStorage(
-		fen,
-		pieces.NewPiece,
-		models.NewBoard,
-	)
-	if err != nil {
-		return moves.ScoredMove{}, err
-	}
-
 	generator := models.MoveGenerator{}
 	terminator :=
 		terminators.NewDeepTerminator(maxDeep)
@@ -104,6 +95,7 @@ func main() {
 		maxDeep int
 	}
 
+loop:
 	for _, data := range []data{
 		data{
 			name: "usual chess",
@@ -123,6 +115,16 @@ func main() {
 			data.fen,
 		)
 
+		storage, err := uci.DecodePieceStorage(
+			data.fen,
+			pieces.NewPiece,
+			models.NewBoard,
+		)
+		if err != nil {
+			fmt.Printf("error: %s\n", err)
+			continue loop
+		}
+
 		deep := 1
 		for ; deep < data.maxDeep; deep++ {
 			start := time.Now()
@@ -133,20 +135,16 @@ func main() {
 			wrappedCache := NewCacheWrapper(cache)
 
 			_, err := cachedSearch(
-				data.fen,
+				storage,
 				models.White,
 				deep,
 				wrappedCache,
 			)
 			if err != nil {
 				fmt.Printf("error: %s\n", err)
-				break
+				continue loop
 			}
 
-			// it's maximum in the tournament
-			if deep == 4 {
-				fmt.Println(strings.Repeat("-", 40))
-			}
 			fmt.Printf(
 				"deep: %d, "+
 					"count: %d/%d, "+
@@ -156,6 +154,10 @@ func main() {
 				wrappedCache.setCount,
 				time.Since(start),
 			)
+			// it's maximum in the tournament
+			if deep == 4 {
+				fmt.Println(strings.Repeat("-", 40))
+			}
 		}
 	}
 }
