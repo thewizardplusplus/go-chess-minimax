@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	minimax "github.com/thewizardplusplus/go-chess-minimax"
@@ -106,8 +105,7 @@ func game(
 			storage,
 			color,
 			maxDeep,
-			maxDuration,
-			cache,
+			wrappedCache,
 		)
 		if err != nil {
 			return err
@@ -128,8 +126,7 @@ func game(
 			storage,
 			color,
 			maxDeep,
-			maxDuration,
-			cache,
+			wrappedCache,
 		)
 		if err != nil {
 			return err
@@ -191,7 +188,7 @@ loop:
 			continue loop
 		}
 
-		err := game(
+		err = game(
 			storage,
 			models.White,
 			data.maxDeep,
