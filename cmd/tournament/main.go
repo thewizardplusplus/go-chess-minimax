@@ -221,8 +221,8 @@ func game(
 	maxDuration time.Duration,
 	maxMoveCount int,
 ) (Side, error) {
-	for i := 0; i < maxMoveCount; i++ {
-		if i%5 == 0 {
+	for ply := 0; ply < maxMoveCount; ply++ {
+		if ply%5 == 0 {
 			fmt.Print(".")
 		}
 

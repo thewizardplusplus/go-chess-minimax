@@ -159,5 +159,7 @@ loop:
 				fmt.Println(strings.Repeat("-", 40))
 			}
 		}
+
+		fmt.Println()
 	}
 }
