@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	minimax "github.com/thewizardplusplus/go-chess-minimax"
@@ -88,31 +87,75 @@ func cachedSearch(
 	)
 }
 
-func main() {
-	type data struct {
-		name    string
-		fen     string
-		maxDeep int
+func game(
+	storage models.PieceStorage,
+	color models.Color,
+	maxDeep int,
+	maxMoveCount int,
+) error {
+	start := time.Now()
+
+	var ply int
+	for ; ply < maxMoveCount*2; ply++ {
+		cache := caches.NewStringHashingCache(
+			uci.EncodePieceStorage,
+		)
+		wrappedCache := NewCacheWrapper(cache)
+
+		move, err := cachedSearch(
+			storage,
+			color,
+			maxDeep,
+			wrappedCache,
+		)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf(
+			"ply: %d, count: %d/%d, time: %s\n",
+			ply,
+			wrappedCache.getCount,
+			wrappedCache.setCount,
+			time.Since(start),
+		)
+
+		storage = storage.ApplyMove(move.Move)
+		color = color.Negative()
 	}
 
-loop:
+	return nil
+}
+
+func main() {
+	type data struct {
+		name         string
+		fen          string
+		maxDeep      int
+		maxMoveCount int
+	}
+
 	for _, data := range []data{
 		data{
 			name: "usual chess/initial position",
 			fen: "rnbqkbnr/pppppppp/8/8" +
 				"/8/8/PPPPPPPP/RNBQKBNR",
-			maxDeep: 6,
+			maxDeep:      4,
+			maxMoveCount: 5,
 		},
 		data{
 			name: "usual chess/kiwipete position",
 			fen: "r3k2r/p1ppqpb1/bn2pnp1/3PN3" +
 				"/1p2P3/2N2Q1p/PPPBBPPP/R3K2R",
-			maxDeep: 4,
+			maxDeep:      3,
+			maxMoveCount: 5,
 		},
 		data{
-			name:    "minichess",
-			fen:     "rnbqk/ppppp/5/PPPPP/RNBQK",
-			maxDeep: 7,
+			name: "minichess",
+			fen: "rnbqk/ppppp/5" +
+				"/PPPPP/RNBQK",
+			maxDeep:      4,
+			maxMoveCount: 6,
 		},
 	} {
 		fmt.Printf(
@@ -128,42 +171,18 @@ loop:
 		)
 		if err != nil {
 			fmt.Printf("error: %s\n", err)
-			continue loop
+			continue
 		}
 
-		deep := 1
-		for ; deep < data.maxDeep; deep++ {
-			start := time.Now()
-
-			cache := caches.NewStringHashingCache(
-				uci.EncodePieceStorage,
-			)
-			wrappedCache := NewCacheWrapper(cache)
-
-			_, err := cachedSearch(
-				storage,
-				models.White,
-				deep,
-				wrappedCache,
-			)
-			if err != nil {
-				fmt.Printf("error: %s\n", err)
-				continue loop
-			}
-
-			fmt.Printf(
-				"deep: %d, "+
-					"count: %d/%d, "+
-					"time: %s\n",
-				deep,
-				wrappedCache.getCount,
-				wrappedCache.setCount,
-				time.Since(start),
-			)
-			// it's maximum in the tournament
-			if deep == 4 {
-				fmt.Println(strings.Repeat("-", 40))
-			}
+		err = game(
+			storage,
+			models.White,
+			data.maxDeep,
+			data.maxMoveCount,
+		)
+		if err != nil {
+			fmt.Printf("error: %s\n", err)
+			continue
 		}
 
 		fmt.Println()
