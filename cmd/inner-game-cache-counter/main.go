@@ -137,17 +137,10 @@ func main() {
 
 	for _, data := range []data{
 		data{
-			name: "usual chess/initial position",
+			name: "usual chess",
 			fen: "rnbqkbnr/pppppppp/8/8" +
 				"/8/8/PPPPPPPP/RNBQKBNR",
 			maxDeep:      4,
-			maxMoveCount: 5,
-		},
-		data{
-			name: "usual chess/kiwipete position",
-			fen: "r3k2r/p1ppqpb1/bn2pnp1/3PN3" +
-				"/1p2P3/2N2Q1p/PPPBBPPP/R3K2R",
-			maxDeep:      3,
 			maxMoveCount: 5,
 		},
 		data{
