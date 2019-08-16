@@ -232,6 +232,7 @@ func iterativeSearch(
 	)
 
 	cache := caches.NewStringHashingCache(
+		1e6,
 		uci.EncodePieceStorage,
 	)
 	cachedSearcher :=

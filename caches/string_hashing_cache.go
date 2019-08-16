@@ -58,7 +58,7 @@ func (cache StringHashingCache) Get(
 		return moves.FailedMove{}, false
 	}
 
-	return element.Value.(bucket), true
+	return element.Value.(bucket).move, true
 }
 
 // Set ...

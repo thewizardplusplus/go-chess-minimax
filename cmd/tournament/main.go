@@ -183,14 +183,12 @@ func alphaBetaSearch(
 }
 
 func cachedSearch(
+	cache caches.Cache,
 	storage models.PieceStorage,
 	color models.Color,
 	maxDeep int,
 	maxDuration time.Duration,
 ) (moves.ScoredMove, error) {
-	cache := caches.NewStringHashingCache(
-		uci.EncodePieceStorage,
-	)
 	terminator := makeTerminator(
 		maxDeep,
 		maxDuration,
@@ -221,6 +219,11 @@ func game(
 	maxDuration time.Duration,
 	maxMoveCount int,
 ) (Side, error) {
+	cache := caches.NewStringHashingCache(
+		1e6,
+		uci.EncodePieceStorage,
+	)
+
 	for i := 0; i < maxMoveCount; i++ {
 		if i%5 == 0 {
 			fmt.Print(".")
@@ -240,6 +243,7 @@ func game(
 		color = color.Negative()
 
 		move, err = cachedSearch(
+			cache,
 			storage,
 			color,
 			maxDeep,

@@ -15,28 +15,56 @@ import (
 func BenchmarkCachedSearcher_1Ply(
 	benchmark *testing.B,
 ) {
+	cache := caches.NewStringHashingCache(
+		1e6,
+		uci.EncodePieceStorage,
+	)
 	for i := 0; i < benchmark.N; i++ {
-		cachedSearch(initial, models.White, 1)
+		cachedSearch(
+			cache,
+			initial,
+			models.White,
+			1,
+		)
 	}
 }
 
 func BenchmarkCachedSearcher_2Ply(
 	benchmark *testing.B,
 ) {
+	cache := caches.NewStringHashingCache(
+		1e6,
+		uci.EncodePieceStorage,
+	)
 	for i := 0; i < benchmark.N; i++ {
-		cachedSearch(initial, models.White, 2)
+		cachedSearch(
+			cache,
+			initial,
+			models.White,
+			2,
+		)
 	}
 }
 
 func BenchmarkCachedSearcher_3Ply(
 	benchmark *testing.B,
 ) {
+	cache := caches.NewStringHashingCache(
+		1e6,
+		uci.EncodePieceStorage,
+	)
 	for i := 0; i < benchmark.N; i++ {
-		cachedSearch(initial, models.White, 3)
+		cachedSearch(
+			cache,
+			initial,
+			models.White,
+			3,
+		)
 	}
 }
 
 func cachedSearch(
+	cache caches.Cache,
 	boardInFEN string,
 	color models.Color,
 	maximalDeep int,
@@ -63,9 +91,6 @@ func cachedSearch(
 		evaluator,
 	)
 
-	cache := caches.NewStringHashingCache(
-		uci.EncodePieceStorage,
-	)
 	searcher := NewCachedSearcher(
 		innerSearcher,
 		cache,
