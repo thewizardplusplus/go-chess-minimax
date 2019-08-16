@@ -1,6 +1,8 @@
 package caches
 
 import (
+	"container/list"
+
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
@@ -15,20 +17,34 @@ type key struct {
 	color   models.Color
 }
 
-type moveGroup map[key]moves.FailedMove
+type bucket struct {
+	key  key
+	move moves.FailedMove
+}
+
+type bucketGroup map[key]*list.Element
 
 // StringHashingCache ...
+//
+// It implements an LRU cache.
 type StringHashingCache struct {
-	moves    moveGroup
-	stringer Stringer
+	buckets     bucketGroup
+	queue       *list.List
+	maximalSize int
+	stringer    Stringer
 }
 
 // NewStringHashingCache ...
 func NewStringHashingCache(
+	maximalSize int,
 	stringer Stringer,
 ) StringHashingCache {
-	moves := make(moveGroup)
-	return StringHashingCache{moves, stringer}
+	return StringHashingCache{
+		buckets:     make(bucketGroup),
+		queue:       list.New(),
+		maximalSize: maximalSize,
+		stringer:    stringer,
+	}
 }
 
 // Get ...
@@ -37,8 +53,12 @@ func (cache StringHashingCache) Get(
 	color models.Color,
 ) (move moves.FailedMove, ok bool) {
 	key := cache.makeKey(storage, color)
-	move, ok = cache.moves[key]
-	return move, ok
+	element, ok := cache.getElement(key)
+	if !ok {
+		return moves.FailedMove{}, false
+	}
+
+	return element.Value.(bucket), true
 }
 
 // Set ...
@@ -48,7 +68,24 @@ func (cache StringHashingCache) Set(
 	move moves.FailedMove,
 ) {
 	key := cache.makeKey(storage, color)
-	cache.moves[key] = move
+	element, ok := cache.getElement(key)
+	if ok {
+		element.Value = bucket{key, move}
+		return
+	}
+
+	if cache.queue.Len() > cache.maximalSize {
+		element := cache.queue.Back()
+		if element != nil {
+			bucket := cache.queue.
+				Remove(element).(bucket)
+			delete(cache.buckets, bucket.key)
+		}
+	}
+
+	bucket := bucket{key, move}
+	element = cache.queue.PushFront(bucket)
+	cache.buckets[key] = element
 }
 
 func (cache StringHashingCache) makeKey(
@@ -57,4 +94,15 @@ func (cache StringHashingCache) makeKey(
 ) key {
 	text := cache.stringer(storage)
 	return key{text, color}
+}
+
+func (cache StringHashingCache) getElement(
+	key key,
+) (element *list.Element, ok bool) {
+	element, ok = cache.buckets[key]
+	if ok {
+		cache.queue.MoveToFront(element)
+	}
+
+	return element, ok
 }
