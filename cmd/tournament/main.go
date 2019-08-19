@@ -220,7 +220,7 @@ func game(
   maxMoveCount int,
 ) (Side, error) {
   cache := caches.NewStringHashingCache(
-    1e3,
+    1e6,
     uci.EncodePieceStorage,
   )
 

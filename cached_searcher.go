@@ -49,7 +49,9 @@ func (searcher CachedSearcher) SearchMove(
 	move, err := searcher.MoveSearcher.
 		SearchMove(storage, color, deep, bounds)
 	data = moves.FailedMove{move, err}
-	searcher.cache.Set(storage, color, data)
+	if !data.Move.Move.IsZero() {
+		searcher.cache.Set(storage, color, data)
+	}
 
 	return move, err
 }
