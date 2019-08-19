@@ -1,6 +1,7 @@
 package caches
 
 import (
+	"container/list"
 	"reflect"
 	"testing"
 
@@ -62,5 +63,124 @@ func TestStringHashingCacheMakeKey(
 	want := key{"key", models.White}
 	if !reflect.DeepEqual(got, want) {
 		test.Fail()
+	}
+}
+
+func TestStringHashingCacheGetElement(
+	test *testing.T,
+) {
+	type fields struct {
+		buckets     bucketGroup
+		queue       *list.List
+		wantElement *list.Element
+	}
+	type args struct {
+		key key
+	}
+	type data struct {
+		fields    fields
+		args      args
+		wantQueue *list.List
+		wantOk    bool
+	}
+
+	for _, data := range []data{
+		data{
+			fields: func() fields {
+				buckets := make(bucketGroup)
+				queue := list.New()
+				keyOne :=
+					key{"key #1", models.White}
+				buckets[keyOne] =
+					queue.PushBack(keyOne)
+				keyTwo :=
+					key{"key #2", models.Black}
+				buckets[keyTwo] =
+					queue.PushBack(keyTwo)
+
+				return fields{
+					buckets:     buckets,
+					queue:       queue,
+					wantElement: buckets[keyTwo],
+				}
+			}(),
+			args: args{
+				key: key{"key #2", models.Black},
+			},
+			wantQueue: func() *list.List {
+				keyOne :=
+					key{"key #1", models.White}
+				keyTwo :=
+					key{"key #2", models.Black}
+
+				queue := list.New()
+				queue.PushBack(keyTwo)
+				queue.PushBack(keyOne)
+
+				return queue
+			}(),
+			wantOk: true,
+		},
+		data{
+			fields: func() fields {
+				buckets := make(bucketGroup)
+				queue := list.New()
+				keyOne :=
+					key{"key #1", models.White}
+				buckets[keyOne] =
+					queue.PushBack(keyOne)
+				keyTwo :=
+					key{"key #2", models.Black}
+				buckets[keyTwo] =
+					queue.PushBack(keyTwo)
+
+				return fields{
+					buckets:     buckets,
+					queue:       queue,
+					wantElement: nil,
+				}
+			}(),
+			args: args{
+				key: key{"key #3", models.White},
+			},
+			wantQueue: func() *list.List {
+				keyOne :=
+					key{"key #1", models.White}
+				keyTwo :=
+					key{"key #2", models.Black}
+
+				queue := list.New()
+				queue.PushBack(keyOne)
+				queue.PushBack(keyTwo)
+
+				return queue
+			}(),
+			wantOk: false,
+		},
+	} {
+		cache := StringHashingCache{
+			buckets: data.fields.buckets,
+			queue:   data.fields.queue,
+		}
+		gotElement, gotOk :=
+			cache.getElement(data.args.key)
+
+		if !reflect.DeepEqual(
+			data.fields.queue,
+			data.wantQueue,
+		) {
+			test.Fail()
+		}
+
+		if !reflect.DeepEqual(
+			gotElement,
+			data.fields.wantElement,
+		) {
+			test.Fail()
+		}
+
+		if gotOk != data.wantOk {
+			test.Fail()
+		}
 	}
 }
