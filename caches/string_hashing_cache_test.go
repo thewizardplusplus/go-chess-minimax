@@ -2,9 +2,11 @@ package caches
 
 import (
 	"container/list"
+	"errors"
 	"reflect"
 	"testing"
 
+	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
@@ -38,6 +40,315 @@ func (storage MockPieceStorage) CheckMove(
 	move models.Move,
 ) error {
 	panic("not implemented")
+}
+
+func TestStringHashingCacheGet(
+	test *testing.T,
+) {
+	type fields struct {
+		buckets  bucketGroup
+		queue    *list.List
+		stringer Stringer
+	}
+	type args struct {
+		storage models.PieceStorage
+		color   models.Color
+	}
+	type data struct {
+		fields    fields
+		args      args
+		wantQueue *list.List
+		wantMove  moves.FailedMove
+		wantOk    bool
+	}
+
+	for _, data := range []data{
+		data{
+			fields: func() fields {
+				keyOne :=
+					key{"key #1", models.White}
+				keyTwo :=
+					key{"key #2", models.Black}
+
+				moveOne := moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 1.2,
+					},
+					Error: errors.New("dummy #1"),
+				}
+				moveTwo := moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #2"),
+				}
+
+				buckets := make(bucketGroup)
+				queue := list.New()
+				buckets[keyOne] = queue.PushBack(
+					bucket{keyOne, moveOne},
+				)
+				buckets[keyTwo] = queue.PushBack(
+					bucket{keyTwo, moveTwo},
+				)
+
+				return fields{
+					buckets: buckets,
+					queue:   queue,
+					stringer: func(
+						storage models.PieceStorage,
+					) string {
+						_, ok :=
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+
+						return "key #2"
+					},
+				}
+			}(),
+			args: args{
+				storage: MockPieceStorage{},
+				color:   models.Black,
+			},
+			wantQueue: func() *list.List {
+				keyOne :=
+					key{"key #1", models.White}
+				keyTwo :=
+					key{"key #2", models.Black}
+
+				moveOne := moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 1.2,
+					},
+					Error: errors.New("dummy #1"),
+				}
+				moveTwo := moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #2"),
+				}
+
+				queue := list.New()
+				queue.PushBack(
+					bucket{keyTwo, moveTwo},
+				)
+				queue.PushBack(
+					bucket{keyOne, moveOne},
+				)
+
+				return queue
+			}(),
+			wantMove: moves.FailedMove{
+				Move: moves.ScoredMove{
+					Move: models.Move{
+						Start: models.Position{
+							File: 5,
+							Rank: 6,
+						},
+						Finish: models.Position{
+							File: 7,
+							Rank: 8,
+						},
+					},
+					Score: 2.3,
+				},
+				Error: errors.New("dummy #2"),
+			},
+			wantOk: true,
+		},
+		data{
+			fields: func() fields {
+				keyOne :=
+					key{"key #1", models.White}
+				keyTwo :=
+					key{"key #2", models.Black}
+
+				moveOne := moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 1.2,
+					},
+					Error: errors.New("dummy #1"),
+				}
+				moveTwo := moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #2"),
+				}
+
+				buckets := make(bucketGroup)
+				queue := list.New()
+				buckets[keyOne] = queue.PushBack(
+					bucket{keyOne, moveOne},
+				)
+				buckets[keyTwo] = queue.PushBack(
+					bucket{keyTwo, moveTwo},
+				)
+
+				return fields{
+					buckets: buckets,
+					queue:   queue,
+					stringer: func(
+						storage models.PieceStorage,
+					) string {
+						_, ok :=
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+
+						return "key #3"
+					},
+				}
+			}(),
+			args: args{
+				storage: MockPieceStorage{},
+				color:   models.White,
+			},
+			wantQueue: func() *list.List {
+				keyOne :=
+					key{"key #1", models.White}
+				keyTwo :=
+					key{"key #2", models.Black}
+
+				moveOne := moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 1.2,
+					},
+					Error: errors.New("dummy #1"),
+				}
+				moveTwo := moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #2"),
+				}
+
+				queue := list.New()
+				queue.PushBack(
+					bucket{keyOne, moveOne},
+				)
+				queue.PushBack(
+					bucket{keyTwo, moveTwo},
+				)
+
+				return queue
+			}(),
+			wantMove: moves.FailedMove{},
+			wantOk:   false,
+		},
+	} {
+		cache := StringHashingCache{
+			buckets:  data.fields.buckets,
+			queue:    data.fields.queue,
+			stringer: data.fields.stringer,
+		}
+		gotMove, gotOk := cache.Get(
+			data.args.storage,
+			data.args.color,
+		)
+
+		if !reflect.DeepEqual(
+			data.fields.queue,
+			data.wantQueue,
+		) {
+			test.Fail()
+		}
+
+		if !reflect.DeepEqual(
+			gotMove,
+			data.wantMove,
+		) {
+			test.Fail()
+		}
+
+		if gotOk != data.wantOk {
+			test.Fail()
+		}
+	}
 }
 
 func TestStringHashingCacheMakeKey(
@@ -87,16 +398,15 @@ func TestStringHashingCacheGetElement(
 	for _, data := range []data{
 		data{
 			fields: func() fields {
-				buckets := make(bucketGroup)
-				queue := list.New()
 				keyOne :=
 					key{"key #1", models.White}
-				buckets[keyOne] =
-					queue.PushBack(keyOne)
 				keyTwo :=
 					key{"key #2", models.Black}
-				buckets[keyTwo] =
-					queue.PushBack(keyTwo)
+
+				buckets := make(bucketGroup)
+				queue := list.New()
+				buckets[keyOne] = queue.PushBack(1)
+				buckets[keyTwo] = queue.PushBack(2)
 
 				return fields{
 					buckets:     buckets,
@@ -108,14 +418,9 @@ func TestStringHashingCacheGetElement(
 				key: key{"key #2", models.Black},
 			},
 			wantQueue: func() *list.List {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
-
 				queue := list.New()
-				queue.PushBack(keyTwo)
-				queue.PushBack(keyOne)
+				queue.PushBack(2)
+				queue.PushBack(1)
 
 				return queue
 			}(),
@@ -123,16 +428,15 @@ func TestStringHashingCacheGetElement(
 		},
 		data{
 			fields: func() fields {
-				buckets := make(bucketGroup)
-				queue := list.New()
 				keyOne :=
 					key{"key #1", models.White}
-				buckets[keyOne] =
-					queue.PushBack(keyOne)
 				keyTwo :=
 					key{"key #2", models.Black}
-				buckets[keyTwo] =
-					queue.PushBack(keyTwo)
+
+				buckets := make(bucketGroup)
+				queue := list.New()
+				buckets[keyOne] = queue.PushBack(1)
+				buckets[keyTwo] = queue.PushBack(2)
 
 				return fields{
 					buckets:     buckets,
@@ -144,14 +448,9 @@ func TestStringHashingCacheGetElement(
 				key: key{"key #3", models.White},
 			},
 			wantQueue: func() *list.List {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
-
 				queue := list.New()
-				queue.PushBack(keyOne)
-				queue.PushBack(keyTwo)
+				queue.PushBack(1)
+				queue.PushBack(2)
 
 				return queue
 			}(),
