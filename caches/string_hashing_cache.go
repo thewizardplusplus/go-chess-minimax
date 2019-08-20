@@ -74,7 +74,8 @@ func (cache StringHashingCache) Set(
 		return
 	}
 
-	if cache.queue.Len() > cache.maximalSize {
+	if cache.queue.Len() >=
+		cache.maximalSize {
 		element := cache.queue.Back()
 		if element != nil {
 			bucket := cache.queue.
