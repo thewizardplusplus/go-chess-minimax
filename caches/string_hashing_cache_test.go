@@ -8,6 +8,7 @@ import (
 
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
+	"github.com/thewizardplusplus/go-chess-models/uci"
 )
 
 type MockPieceStorage struct{}
@@ -40,6 +41,38 @@ func (storage MockPieceStorage) CheckMove(
 	move models.Move,
 ) error {
 	panic("not implemented")
+}
+
+func TestNewStringHashingCache(
+	test *testing.T,
+) {
+	maximalSize := int(1e6)
+	cache := NewStringHashingCache(
+		maximalSize,
+		uci.EncodePieceStorage,
+	)
+
+	if cache.buckets == nil {
+		test.Fail()
+	}
+
+	if cache.queue == nil {
+		test.Fail()
+	}
+
+	if cache.maximalSize != maximalSize {
+		test.Fail()
+	}
+
+	gotStringer := reflect.
+		ValueOf(cache.stringer).
+		Pointer()
+	wantStringer := reflect.
+		ValueOf(uci.EncodePieceStorage).
+		Pointer()
+	if gotStringer != wantStringer {
+		test.Fail()
+	}
 }
 
 func TestStringHashingCacheGet(
