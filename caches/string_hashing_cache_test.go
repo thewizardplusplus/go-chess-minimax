@@ -706,6 +706,146 @@ func TestStringHashingCacheSet(
 				}
 			}(),
 		},
+		data{
+			fields: func() fields {
+				keyOne :=
+					key{"key #1", models.White}
+				keyTwo :=
+					key{"key #2", models.Black}
+
+				moveOne := moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 1.2,
+					},
+					Error: errors.New("dummy #1"),
+				}
+				moveTwo := moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 5,
+								Rank: 6,
+							},
+							Finish: models.Position{
+								File: 7,
+								Rank: 8,
+							},
+						},
+						Score: 2.3,
+					},
+					Error: errors.New("dummy #2"),
+				}
+
+				buckets := make(bucketGroup)
+				queue := list.New()
+				buckets[keyOne] = queue.PushBack(
+					bucket{keyOne, moveOne},
+				)
+				buckets[keyTwo] = queue.PushBack(
+					bucket{keyTwo, moveTwo},
+				)
+
+				return fields{
+					buckets:     buckets,
+					queue:       queue,
+					maximalSize: 10,
+					stringer: func(
+						storage models.PieceStorage,
+					) string {
+						_, ok :=
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+
+						return "key #2"
+					},
+				}
+			}(),
+			args: args{
+				storage: MockPieceStorage{},
+				color:   models.Black,
+				move: moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 9,
+								Rank: 10,
+							},
+							Finish: models.Position{
+								File: 11,
+								Rank: 12,
+							},
+						},
+						Score: 4.2,
+					},
+					Error: errors.New("dummy #3"),
+				},
+			},
+			wantFields: func() fields {
+				keyOne :=
+					key{"key #1", models.White}
+				keyTwo :=
+					key{"key #2", models.Black}
+
+				moveOne := moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 1,
+								Rank: 2,
+							},
+							Finish: models.Position{
+								File: 3,
+								Rank: 4,
+							},
+						},
+						Score: 1.2,
+					},
+					Error: errors.New("dummy #1"),
+				}
+				moveTwo := moves.FailedMove{
+					Move: moves.ScoredMove{
+						Move: models.Move{
+							Start: models.Position{
+								File: 9,
+								Rank: 10,
+							},
+							Finish: models.Position{
+								File: 11,
+								Rank: 12,
+							},
+						},
+						Score: 4.2,
+					},
+					Error: errors.New("dummy #3"),
+				}
+
+				buckets := make(bucketGroup)
+				queue := list.New()
+				buckets[keyTwo] = queue.PushBack(
+					bucket{keyTwo, moveTwo},
+				)
+				buckets[keyOne] = queue.PushBack(
+					bucket{keyOne, moveOne},
+				)
+
+				return fields{
+					buckets: buckets,
+					queue:   queue,
+				}
+			}(),
+		},
 	} {
 		cache := StringHashingCache{
 			buckets:     data.fields.buckets,

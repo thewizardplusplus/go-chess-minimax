@@ -68,25 +68,24 @@ func (cache StringHashingCache) Set(
 	move moves.FailedMove,
 ) {
 	key := cache.makeKey(storage, color)
+	newBucket := bucket{key, move}
 	element, ok := cache.getElement(key)
 	if ok {
-		element.Value = bucket{key, move}
+		element.Value = newBucket
 		return
 	}
 
-	if cache.queue.Len() >=
+	element = cache.queue.PushFront(newBucket)
+	cache.buckets[key] = element
+	if cache.queue.Len() <=
 		cache.maximalSize {
-		element := cache.queue.Back()
-		if element != nil {
-			bucket := cache.queue.
-				Remove(element).(bucket)
-			delete(cache.buckets, bucket.key)
-		}
+		return
 	}
 
-	bucket := bucket{key, move}
-	element = cache.queue.PushFront(bucket)
-	cache.buckets[key] = element
+	element = cache.queue.Back()
+	oldBucket := cache.queue.
+		Remove(element).(bucket)
+	delete(cache.buckets, oldBucket.key)
 }
 
 func (cache StringHashingCache) makeKey(
