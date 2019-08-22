@@ -13,10 +13,6 @@ type IterativeSearcher struct {
 	terminator terminators.SearchTerminator
 }
 
-const (
-	startDeep = 1
-)
-
 // NewIterativeSearcher ...
 func NewIterativeSearcher(
 	innerSearcher MoveSearcher,
@@ -45,7 +41,7 @@ func (searcher IterativeSearcher) SearchMove(
 	bounds moves.Bounds,
 ) (moves.ScoredMove, error) {
 	var lastMove moves.FailedMove
-	for deep := startDeep; ; deep++ {
+	for deep := 1; ; deep++ {
 		searcher.MoveSearcher.SetTerminator(
 			terminators.NewGroupTerminator(
 				searcher.terminator,
@@ -60,15 +56,15 @@ func (searcher IterativeSearcher) SearchMove(
 				deep,
 				bounds,
 			)
-		isTimeout := searcher.terminator.
+		isTerminated := searcher.terminator.
 			IsSearchTerminate(deep)
-		if !isTimeout || deep == startDeep {
+		if deep == 1 || !isTerminated {
 			lastMove = moves.FailedMove{move, err}
 		}
 		// check at the loop end,
 		// because there should be
 		// at least one iteration
-		if isTimeout {
+		if isTerminated {
 			break
 		}
 	}

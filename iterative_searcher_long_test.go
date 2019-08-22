@@ -201,12 +201,62 @@ func TestIterativeSearcher(
 			gotErr,
 			data.wantErr,
 		) {
+			test.Logf(
+				"#%d:\ngot:  %v\nwant: %v",
+				index,
+				gotErr,
+				data.wantErr,
+			)
+
 			test.Fail()
 		}
 	}
 }
 
 func iterativeSearch(
+	boardInFEN string,
+	color models.Color,
+	maximalDuration time.Duration,
+) (moves.ScoredMove, error) {
+	storage, err := uci.DecodePieceStorage(
+		boardInFEN,
+		pieces.NewPiece,
+		models.NewBoard,
+	)
+	if err != nil {
+		return moves.ScoredMove{}, err
+	}
+
+	generator := models.MoveGenerator{}
+	evaluator :=
+		evaluators.MaterialEvaluator{}
+	innerSearcher := NewAlphaBetaSearcher(
+		generator,
+		// terminator will be set automatically
+		// by the iterative searcher
+		nil,
+		evaluator,
+	)
+
+	terminator :=
+		terminators.NewTimeTerminator(
+			time.Now,
+			maximalDuration,
+		)
+	searcher := NewIterativeSearcher(
+		innerSearcher,
+		terminator,
+	)
+
+	return searcher.SearchMove(
+		storage,
+		color,
+		0, // initial deep
+		moves.NewBounds(),
+	)
+}
+
+func cachedIterativeSearch(
 	boardInFEN string,
 	color models.Color,
 	maximalDuration time.Duration,

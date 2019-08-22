@@ -123,7 +123,7 @@ func TestIterativeSearcherSearchMove(
 					isSearchTerminate: func(
 						deep int,
 					) bool {
-						return deep == startDeep
+						return deep == 1
 					},
 				},
 			},
@@ -133,19 +133,19 @@ func TestIterativeSearcherSearchMove(
 				deep:    2,
 				bounds:  moves.Bounds{-2e6, 3e6},
 			},
-			wantDeep: startDeep + 1,
+			wantDeep: 2,
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start: models.Position{
-						File: startDeep + 1,
-						Rank: startDeep + 2,
+						File: 2,
+						Rank: 3,
 					},
 					Finish: models.Position{
-						File: startDeep + 3,
-						Rank: startDeep + 4,
+						File: 4,
+						Rank: 5,
 					},
 				},
-				Score: float64(startDeep + 5),
+				Score: float64(6),
 			},
 			wantErr: true,
 		},
@@ -204,7 +204,7 @@ func TestIterativeSearcherSearchMove(
 					isSearchTerminate: func(
 						deep int,
 					) bool {
-						return deep == startDeep+4
+						return deep == 5
 					},
 				},
 			},
@@ -214,24 +214,24 @@ func TestIterativeSearcherSearchMove(
 				deep:    2,
 				bounds:  moves.Bounds{-2e6, 3e6},
 			},
-			wantDeep: startDeep + 5,
+			wantDeep: 6,
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start: models.Position{
-						File: startDeep + 4,
-						Rank: startDeep + 5,
+						File: 5,
+						Rank: 6,
 					},
 					Finish: models.Position{
-						File: startDeep + 6,
-						Rank: startDeep + 7,
+						File: 7,
+						Rank: 8,
 					},
 				},
-				Score: float64(startDeep + 8),
+				Score: float64(9),
 			},
 			wantErr: true,
 		},
 	} {
-		testDeep = startDeep
+		testDeep = 1
 
 		searcher := IterativeSearcher{
 			MoveSearcher: data.fields.searcher,
