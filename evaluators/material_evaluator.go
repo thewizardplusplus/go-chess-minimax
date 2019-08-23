@@ -7,19 +7,6 @@ import (
 // MaterialEvaluator ...
 type MaterialEvaluator struct{}
 
-var (
-	// are based on an evaluation function
-	// of Claude Shannon
-	pieceWeights = map[models.Kind]float64{
-		models.King:   200,
-		models.Queen:  9,
-		models.Rook:   5,
-		models.Bishop: 3,
-		models.Knight: 3,
-		models.Pawn:   1,
-	}
-)
-
 // EvaluateBoard ...
 func (
 	evaluator MaterialEvaluator,
@@ -29,12 +16,36 @@ func (
 ) float64 {
 	var score float64
 	for _, piece := range storage.Pieces() {
-		weight := pieceWeights[piece.Kind()]
+		pieceWeight := pieceWeight(piece)
 		colorSign := colorSign(piece, color)
-		score += weight * colorSign
+		score += pieceWeight * colorSign
 	}
 
 	return score
+}
+
+// are based on an evaluation function
+// of Claude Shannon
+func pieceWeight(
+	piece models.Piece,
+) float64 {
+	var pieceWeight float64
+	switch piece.Kind() {
+	case models.King:
+		pieceWeight = 200
+	case models.Queen:
+		pieceWeight = 9
+	case models.Rook:
+		pieceWeight = 5
+	case models.Bishop:
+		pieceWeight = 3
+	case models.Knight:
+		pieceWeight = 3
+	case models.Pawn:
+		pieceWeight = 1
+	}
+
+	return pieceWeight
 }
 
 func colorSign(
