@@ -210,6 +210,41 @@ func TestMaterialEvaluatorEvaluateBoard(
 	}
 }
 
+func TestPieceWeight(test *testing.T) {
+	type args struct {
+		piece models.Piece
+	}
+	type data struct {
+		args args
+		want float64
+	}
+
+	for _, data := range []data{
+		data{
+			args: args{
+				piece: MockPiece{
+					kind: models.Queen,
+				},
+			},
+			want: 9,
+		},
+		data{
+			args: args{
+				piece: MockPiece{
+					kind: models.Rook,
+				},
+			},
+			want: 5,
+		},
+	} {
+		got := pieceWeight(data.args.piece)
+
+		if got != data.want {
+			test.Fail()
+		}
+	}
+}
+
 func TestColorSign(test *testing.T) {
 	type args struct {
 		piece models.Piece
