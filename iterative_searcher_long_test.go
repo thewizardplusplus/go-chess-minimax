@@ -163,6 +163,15 @@ func TestIterativeSearcher(
 			wantErr: nil,
 		},
 	} {
+		// increase the limit,
+		// because the iterative searcher
+		// discards a result
+		// of the last iteration,
+		// if it's not the only one
+		if data.args.maximalDeep > 1 {
+			data.args.maximalDeep++
+		}
+
 		gotMove, gotErr := iterativeSearch(
 			data.args.boardInFEN,
 			data.args.color,
