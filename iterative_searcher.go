@@ -55,7 +55,10 @@ func (searcher IterativeSearcher) SearchMove(
 		isTerminated := searcher.terminator.
 			IsSearchTerminate(deep)
 		if deep == initialDeep || !isTerminated {
-			lastMove = moves.FailedMove{move, err}
+			lastMove = moves.FailedMove{
+				Move:  move,
+				Error: err,
+			}
 		}
 		// check at the loop end,
 		// because there should be
