@@ -93,7 +93,7 @@ func TestIterativeSearcherSearchMove(
 						if color != models.White {
 							test.Fail()
 						}
-						if deep != testDeep {
+						if deep != 0 {
 							test.Fail()
 						}
 						if !reflect.DeepEqual(
@@ -106,15 +106,15 @@ func TestIterativeSearcherSearchMove(
 						move := moves.ScoredMove{
 							Move: models.Move{
 								Start: models.Position{
-									File: deep + 1,
-									Rank: deep + 2,
+									File: testDeep + 1,
+									Rank: testDeep + 2,
 								},
 								Finish: models.Position{
-									File: deep + 3,
-									Rank: deep + 4,
+									File: testDeep + 3,
+									Rank: testDeep + 4,
 								},
 							},
-							Score: float64(deep + 5),
+							Score: float64(testDeep + 5),
 						}
 						return move, errors.New("dummy")
 					},
@@ -174,7 +174,7 @@ func TestIterativeSearcherSearchMove(
 						if color != models.White {
 							test.Fail()
 						}
-						if deep != testDeep {
+						if deep != 0 {
 							test.Fail()
 						}
 						if !reflect.DeepEqual(
@@ -187,15 +187,15 @@ func TestIterativeSearcherSearchMove(
 						move := moves.ScoredMove{
 							Move: models.Move{
 								Start: models.Position{
-									File: deep + 1,
-									Rank: deep + 2,
+									File: testDeep + 1,
+									Rank: testDeep + 2,
 								},
 								Finish: models.Position{
-									File: deep + 3,
-									Rank: deep + 4,
+									File: testDeep + 3,
+									Rank: testDeep + 4,
 								},
 							},
-							Score: float64(deep + 5),
+							Score: float64(testDeep + 5),
 						}
 						return move, errors.New("dummy")
 					},

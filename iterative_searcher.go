@@ -28,7 +28,7 @@ func NewIterativeSearcher(
 	// for passed one
 	// in order to recursive calls
 	// will be iterative too
-	innerSearcher.SetSearcher(searcher)
+	//innerSearcher.SetSearcher(searcher)
 
 	return searcher
 }
@@ -53,7 +53,7 @@ func (searcher IterativeSearcher) SearchMove(
 			searcher.MoveSearcher.SearchMove(
 				storage,
 				color,
-				deep,
+				0,
 				bounds,
 			)
 		isTerminated := searcher.terminator.
