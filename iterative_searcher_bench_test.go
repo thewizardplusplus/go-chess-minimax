@@ -3,6 +3,7 @@ package chessminimax
 import (
 	"testing"
 
+	"github.com/thewizardplusplus/go-chess-minimax/caches"
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
@@ -14,28 +15,56 @@ import (
 func BenchmarkIterativeSearcher_1Ply(
 	benchmark *testing.B,
 ) {
+	cache := caches.NewStringHashingCache(
+		1e6,
+		uci.EncodePieceStorage,
+	)
 	for i := 0; i < benchmark.N; i++ {
-		iterativeSearch(initial, models.White, 1)
+		iterativeSearch(
+			cache,
+			initial,
+			models.White,
+			1,
+		)
 	}
 }
 
 func BenchmarkIterativeSearcher_2Ply(
 	benchmark *testing.B,
 ) {
+	cache := caches.NewStringHashingCache(
+		1e6,
+		uci.EncodePieceStorage,
+	)
 	for i := 0; i < benchmark.N; i++ {
-		iterativeSearch(initial, models.White, 2)
+		iterativeSearch(
+			cache,
+			initial,
+			models.White,
+			2,
+		)
 	}
 }
 
 func BenchmarkIterativeSearcher_3Ply(
 	benchmark *testing.B,
 ) {
+	cache := caches.NewStringHashingCache(
+		1e6,
+		uci.EncodePieceStorage,
+	)
 	for i := 0; i < benchmark.N; i++ {
-		iterativeSearch(initial, models.White, 3)
+		iterativeSearch(
+			cache,
+			initial,
+			models.White,
+			3,
+		)
 	}
 }
 
 func iterativeSearch(
+	cache caches.Cache,
 	boardInFEN string,
 	color models.Color,
 	maximalDeep int,
@@ -60,12 +89,17 @@ func iterativeSearch(
 		evaluator,
 	)
 
+	cachedSearcher := NewCachedSearcher(
+		innerSearcher,
+		cache,
+	)
+
 	terminator :=
 		terminators.NewDeepTerminator(
 			maximalDeep,
 		)
 	searcher := NewIterativeSearcher(
-		innerSearcher,
+		cachedSearcher,
 		terminator,
 	)
 

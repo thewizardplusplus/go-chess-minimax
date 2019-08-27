@@ -13,18 +13,7 @@ import (
 func TestNewIterativeSearcher(
 	test *testing.T,
 ) {
-	innerSearcher := MockMoveSearcher{
-		setSearcher: func(
-			innerSearcher MoveSearcher,
-		) {
-			mock, ok :=
-				innerSearcher.(*IterativeSearcher)
-			if !ok || mock == nil {
-				test.Fail()
-			}
-		},
-	}
-
+	var innerSearcher MockMoveSearcher
 	var terminator MockSearchTerminator
 	searcher := NewIterativeSearcher(
 		innerSearcher,

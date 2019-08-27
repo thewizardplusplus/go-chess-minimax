@@ -6,8 +6,10 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/thewizardplusplus/go-chess-minimax/caches"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
+	"github.com/thewizardplusplus/go-chess-models/uci"
 )
 
 func TestIterativeSearcher(
@@ -163,6 +165,11 @@ func TestIterativeSearcher(
 			wantErr: nil,
 		},
 	} {
+		cache := caches.NewStringHashingCache(
+			1e6,
+			uci.EncodePieceStorage,
+		)
+
 		// increase the limit,
 		// because the iterative searcher
 		// discards a result
@@ -173,6 +180,7 @@ func TestIterativeSearcher(
 		}
 
 		gotMove, gotErr := iterativeSearch(
+			cache,
 			data.args.boardInFEN,
 			data.args.color,
 			data.args.maximalDeep,
