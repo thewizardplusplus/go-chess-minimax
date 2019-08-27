@@ -22,19 +22,11 @@ func NewIterativeSearcher(
 	innerSearcher MoveSearcher,
 	terminator terminators.SearchTerminator,
 ) *IterativeSearcher {
-	searcher := &IterativeSearcher{
+	return &IterativeSearcher{
 		MoveSearcher: innerSearcher,
 
 		terminator: terminator,
 	}
-
-	// set itself as an inner searcher
-	// for passed one
-	// in order to recursive calls
-	// will be iterative too
-	//innerSearcher.SetSearcher(searcher)
-
-	return searcher
 }
 
 // SearchMove ...
