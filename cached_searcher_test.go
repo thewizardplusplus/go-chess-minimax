@@ -134,6 +134,7 @@ func TestCachedSearcherSearchMove(
 								},
 								Score: 2.3,
 							},
+							Deep:  3,
 							Error: errors.New("dummy"),
 						}
 						return data, true

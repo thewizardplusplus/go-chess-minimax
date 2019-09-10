@@ -89,17 +89,14 @@ func iterativeSearch(
 		evaluator,
 	)
 
-	cachedSearcher := NewCachedSearcher(
-		innerSearcher,
-		cache,
-	)
+	NewCachedSearcher(innerSearcher, cache)
 
 	terminator :=
 		terminators.NewDeepTerminator(
 			maximalDeep,
 		)
 	searcher := NewIterativeSearcher(
-		cachedSearcher,
+		innerSearcher,
 		terminator,
 	)
 

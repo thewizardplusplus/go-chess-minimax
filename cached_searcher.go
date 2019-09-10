@@ -42,7 +42,7 @@ func (searcher CachedSearcher) SearchMove(
 ) (moves.ScoredMove, error) {
 	data, ok := searcher.cache.
 		Get(storage, color)
-	if ok {
+	if ok /* && data.Deep >= deep*/ {
 		return data.Move, data.Error
 	}
 
