@@ -42,14 +42,14 @@ func (searcher CachedSearcher) SearchMove(
 ) (moves.ScoredMove, error) {
 	data, ok := searcher.cache.
 		Get(storage, color)
-	if ok /* && data.Deep >= deep*/ {
+	if ok {
 		return data.Move, data.Error
 	}
 
 	move, err := searcher.MoveSearcher.
 		SearchMove(storage, color, deep, bounds)
 	if !move.Move.IsZero() {
-		data := moves.FailedMove{move, deep, err}
+		data := moves.FailedMove{move, err}
 		searcher.cache.Set(storage, color, data)
 	}
 

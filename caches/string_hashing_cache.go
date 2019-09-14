@@ -70,9 +70,7 @@ func (cache StringHashingCache) Set(
 	key := cache.makeKey(storage, color)
 	newBucket := bucket{key, move}
 	element, ok := cache.getElement(key)
-	if ok { /* &&
-		   element.Value.(bucket).move.Deep <
-		     move.Deep {*/
+	if ok {
 		element.Value = newBucket
 		return
 	}

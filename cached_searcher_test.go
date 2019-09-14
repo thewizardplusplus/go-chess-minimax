@@ -134,7 +134,6 @@ func TestCachedSearcherSearchMove(
 								},
 								Score: 2.3,
 							},
-							Deep:  3,
 							Error: errors.New("dummy"),
 						}
 						return data, true
@@ -253,7 +252,6 @@ func TestCachedSearcherSearchMove(
 									},
 									Score: 4.2,
 								},
-								Deep:  2,
 								Error: errors.New("dummy"),
 							}
 						if !reflect.DeepEqual(

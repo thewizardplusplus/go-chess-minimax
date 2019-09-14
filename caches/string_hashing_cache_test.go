@@ -789,7 +789,6 @@ func TestStringHashingCacheSet(
 						},
 						Score: 4.2,
 					},
-					Deep:  2,
 					Error: errors.New("dummy #3"),
 				},
 			},
@@ -829,7 +828,6 @@ func TestStringHashingCacheSet(
 						},
 						Score: 4.2,
 					},
-					Deep:  2,
 					Error: errors.New("dummy #3"),
 				}
 
