@@ -28,8 +28,8 @@ type Side int
 
 // ...
 const (
-	AlphaBeta Side = iota
-	Cached
+	Cached Side = iota
+	Iterative
 )
 
 // Score ...
@@ -67,8 +67,8 @@ func (score Score) Elo(
 // Scores ...
 type Scores struct {
 	gameCount int64
-	alphaBeta Score
 	cached    Score
+	iterative Score
 }
 
 // AddGame ...
@@ -81,14 +81,14 @@ func (scores *Scores) AddGame(
 	switch err {
 	case minimax.ErrCheckmate:
 		switch loserSide {
-		case AlphaBeta:
-			scores.cached.Win()
 		case Cached:
-			scores.alphaBeta.Win()
+			scores.iterative.Win()
+		case Iterative:
+			scores.cached.Win()
 		}
 	case minimax.ErrDraw:
-		scores.alphaBeta.Draw()
 		scores.cached.Draw()
+		scores.iterative.Draw()
 	}
 }
 
@@ -96,13 +96,13 @@ func (scores *Scores) AddGame(
 func (scores Scores) String() string {
 	return fmt.Sprintf(
 		"Games: %d "+
-			"Alpha-Beta: %.1f "+
-			"Cached: %.1f\n"+
-			"Cached Elo Delta: %.2f",
+			"Cached: %.1f "+
+			"Iterative: %.1f\n"+
+			"Iterative Elo Delta: %.2f",
 		scores.gameCount,
-		scores.alphaBeta.Score(),
 		scores.cached.Score(),
-		scores.cached.Elo(scores.gameCount),
+		scores.iterative.Score(),
+		scores.iterative.Elo(scores.gameCount),
 	)
 }
 
@@ -158,30 +158,6 @@ func makeTerminator(
 	)
 }
 
-func alphaBetaSearch(
-	storage models.PieceStorage,
-	color models.Color,
-	maxDeep int,
-	maxDuration time.Duration,
-) (moves.ScoredMove, error) {
-	terminator := makeTerminator(
-		maxDeep,
-		maxDuration,
-	)
-	bounds := moves.NewBounds()
-	searcher := minimax.NewAlphaBetaSearcher(
-		generator,
-		terminator,
-		evaluator,
-	)
-	return searcher.SearchMove(
-		storage,
-		color,
-		0,
-		bounds,
-	)
-}
-
 func cachedSearch(
 	cache caches.Cache,
 	storage models.PieceStorage,
@@ -212,6 +188,44 @@ func cachedSearch(
 	)
 }
 
+func iterativeSearch(
+	cache caches.Cache,
+	storage models.PieceStorage,
+	color models.Color,
+	maximalDeep int,
+	maxDuration time.Duration,
+) (moves.ScoredMove, error) {
+	innerSearcher :=
+		minimax.NewAlphaBetaSearcher(
+			generator,
+			// terminator will be set automatically
+			// by the iterative searcher
+			nil,
+			evaluator,
+		)
+
+	minimax.NewCachedSearcher(
+		innerSearcher,
+		cache,
+	)
+
+	terminator := makeTerminator(
+		maxDeep,
+		maxDuration,
+	)
+	searcher := minimax.NewIterativeSearcher(
+		innerSearcher,
+		terminator,
+	)
+
+	return searcher.SearchMove(
+		storage,
+		color,
+		0,
+		moves.NewBounds(),
+	)
+}
+
 func game(
 	storage models.PieceStorage,
 	color models.Color,
@@ -219,7 +233,11 @@ func game(
 	maxDuration time.Duration,
 	maxMoveCount int,
 ) (Side, error) {
-	cache := caches.NewStringHashingCache(
+	cacheOne := caches.NewStringHashingCache(
+		1e6,
+		uci.EncodePieceStorage,
+	)
+	cacheTwo := caches.NewStringHashingCache(
 		1e6,
 		uci.EncodePieceStorage,
 	)
@@ -229,21 +247,22 @@ func game(
 			fmt.Print(".")
 		}
 
-		move, err := alphaBetaSearch(
+		move, err := cachedSearch(
+			cacheOne,
 			storage,
 			color,
 			maxDeep,
 			maxDuration,
 		)
 		if err != nil {
-			return AlphaBeta, err
+			return Cached, err
 		}
 
 		storage = storage.ApplyMove(move.Move)
 		color = color.Negative()
 
-		move, err = cachedSearch(
-			cache,
+		move, err = iterativeSearch(
+			cacheTwo,
 			storage,
 			color,
 			maxDeep,
@@ -264,10 +283,10 @@ func markGame(loserSide Side, err error) {
 	switch err {
 	case minimax.ErrCheckmate:
 		switch loserSide {
-		case AlphaBeta:
-			fmt.Print("C")
 		case Cached:
-			fmt.Print("A")
+			fmt.Print("I")
+		case Iterative:
+			fmt.Print("C")
 		}
 	case minimax.ErrDraw:
 		fmt.Print("D")
