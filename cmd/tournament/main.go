@@ -198,7 +198,8 @@ func iterativeSearch(
 	innerSearcher :=
 		minimax.NewAlphaBetaSearcher(
 			generator,
-			// terminator will be set automatically
+			// terminator will be set
+			// automatically
 			// by the iterative searcher
 			nil,
 			evaluator,
