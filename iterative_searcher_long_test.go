@@ -26,7 +26,7 @@ func TestIterativeSearcher(
 		wantErr  error
 	}
 
-	for index, data := range []data{
+	for _, data := range []data{
 		// king capture
 		data{
 			args: args{
@@ -156,26 +156,12 @@ func TestIterativeSearcher(
 			gotMove,
 			data.wantMove,
 		) {
-			test.Logf(
-				"#%d:\ngot:  %v\nwant: %v",
-				index,
-				gotMove,
-				data.wantMove,
-			)
-
 			test.Fail()
 		}
 		if !reflect.DeepEqual(
 			gotErr,
 			data.wantErr,
 		) {
-			test.Logf(
-				"#%d:\ngot:  %v\nwant: %v",
-				index,
-				gotErr,
-				data.wantErr,
-			)
-
 			test.Fail()
 		}
 	}
