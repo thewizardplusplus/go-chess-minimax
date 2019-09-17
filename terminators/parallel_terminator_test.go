@@ -44,3 +44,15 @@ func TestParallelTerminatorIsSearchTerminate(
 		}
 	}
 }
+
+func TestParallelTerminatorTerminate(
+	test *testing.T,
+) {
+	var terminator ParallelTerminator
+	terminator.Terminate()
+
+	flag := terminator.terminationFlag
+	if flag != 1 {
+		test.Fail()
+	}
+}
