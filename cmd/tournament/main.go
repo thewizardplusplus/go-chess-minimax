@@ -193,7 +193,7 @@ func iterativeSearch(
 	cache caches.Cache,
 	storage models.PieceStorage,
 	color models.Color,
-	maxDeep int,
+	maximalDeep int,
 	maxDuration time.Duration,
 ) (moves.ScoredMove, error) {
 	innerSearcher :=
