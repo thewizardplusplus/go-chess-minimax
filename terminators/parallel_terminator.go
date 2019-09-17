@@ -9,10 +9,10 @@ type ParallelTerminator struct {
 	terminationFlag uint64
 }
 
-// IsSearchTerminate ...
+// IsSearchTerminated ...
 func (
 	terminator *ParallelTerminator,
-) IsSearchTerminate(deep int) bool {
+) IsSearchTerminated(deep int) bool {
 	return terminator.terminationFlag != 0
 }
 

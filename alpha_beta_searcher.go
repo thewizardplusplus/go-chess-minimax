@@ -87,7 +87,7 @@ func (
 	}
 
 	ok := searcher.terminator.
-		IsSearchTerminate(deep)
+		IsSearchTerminated(deep)
 	if ok {
 		score := searcher.evaluator.
 			EvaluateBoard(storage, color)

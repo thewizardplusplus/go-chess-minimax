@@ -12,7 +12,7 @@ func TestNewDeepTerminator(test *testing.T) {
 	}
 }
 
-func TestDeepTerminatorIsSearchTerminate(
+func TestDeepTerminatorIsSearchTerminated(
 	test *testing.T,
 ) {
 	type fields struct {
@@ -47,7 +47,7 @@ func TestDeepTerminatorIsSearchTerminate(
 		terminator := DeepTerminator{
 			maximalDeep: data.fields.maximalDeep,
 		}
-		got := terminator.IsSearchTerminate(
+		got := terminator.IsSearchTerminated(
 			data.args.deep,
 		)
 

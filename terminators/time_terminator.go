@@ -26,10 +26,10 @@ func NewTimeTerminator(
 	}
 }
 
-// IsSearchTerminate ...
+// IsSearchTerminated ...
 func (
 	terminator TimeTerminator,
-) IsSearchTerminate(deep int) bool {
+) IsSearchTerminated(deep int) bool {
 	currentTime := terminator.clock()
 	duration := currentTime.
 		Sub(terminator.startTime)

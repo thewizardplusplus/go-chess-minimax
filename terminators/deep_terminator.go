@@ -12,9 +12,9 @@ func NewDeepTerminator(
 	return DeepTerminator{maximalDeep}
 }
 
-// IsSearchTerminate ...
+// IsSearchTerminated ...
 func (
 	terminator DeepTerminator,
-) IsSearchTerminate(deep int) bool {
+) IsSearchTerminated(deep int) bool {
 	return deep >= terminator.maximalDeep
 }

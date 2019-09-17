@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestParallelTerminatorIsSearchTerminate(
+func TestParallelTerminatorIsSearchTerminated(
 	test *testing.T,
 ) {
 	type fields struct {
@@ -35,7 +35,7 @@ func TestParallelTerminatorIsSearchTerminate(
 			terminationFlag: data.fields.
 				terminationFlag,
 		}
-		got := terminator.IsSearchTerminate(
+		got := terminator.IsSearchTerminated(
 			data.args.deep,
 		)
 

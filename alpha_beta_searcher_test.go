@@ -81,7 +81,7 @@ type MockSearchTerminator struct {
 
 func (
 	terminator MockSearchTerminator,
-) IsSearchTerminate(deep int) bool {
+) IsSearchTerminated(deep int) bool {
 	if terminator.isSearchTerminate == nil {
 		panic("not implemented")
 	}

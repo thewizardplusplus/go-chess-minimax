@@ -12,13 +12,13 @@ func NewGroupTerminator(
 	return GroupTerminator{terminators}
 }
 
-// IsSearchTerminate ...
+// IsSearchTerminated ...
 func (
 	group GroupTerminator,
-) IsSearchTerminate(deep int) bool {
+) IsSearchTerminated(deep int) bool {
 	terminators := group.terminators
 	for _, terminator := range terminators {
-		if terminator.IsSearchTerminate(deep) {
+		if terminator.IsSearchTerminated(deep) {
 			return true
 		}
 	}

@@ -53,7 +53,7 @@ func (searcher IterativeSearcher) SearchMove(
 				bounds,
 			)
 		isTerminated := searcher.terminator.
-			IsSearchTerminate(deep)
+			IsSearchTerminated(deep)
 		if deep == initialDeep || !isTerminated {
 			lastMove = moves.FailedMove{
 				Move:  move,

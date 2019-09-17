@@ -11,7 +11,7 @@ type MockSearchTerminator struct {
 
 func (
 	terminator MockSearchTerminator,
-) IsSearchTerminate(deep int) bool {
+) IsSearchTerminated(deep int) bool {
 	if terminator.isSearchTerminate == nil {
 		panic("not implemented")
 	}
@@ -55,7 +55,7 @@ func TestNewGroupTerminator(
 	}
 }
 
-func TestGroupTerminatorIsSearchTerminate(
+func TestGroupTerminatorIsSearchTerminated(
 	test *testing.T,
 ) {
 	type fields struct {
@@ -130,7 +130,7 @@ func TestGroupTerminatorIsSearchTerminate(
 		group := GroupTerminator{
 			terminators: data.fields.terminators,
 		}
-		got := group.IsSearchTerminate(
+		got := group.IsSearchTerminated(
 			data.args.deep,
 		)
 
