@@ -169,22 +169,23 @@ func cachedSearch(
 		maxDeep,
 		maxDuration,
 	)
-	bounds := moves.NewBounds()
 	innerSearcher :=
 		minimax.NewAlphaBetaSearcher(
 			generator,
 			terminator,
 			evaluator,
 		)
+
 	searcher := minimax.NewCachedSearcher(
 		innerSearcher,
 		cache,
 	)
+
 	return searcher.SearchMove(
 		storage,
 		color,
 		0,
-		bounds,
+		moves.NewBounds(),
 	)
 }
 
@@ -205,6 +206,8 @@ func iterativeSearch(
 			evaluator,
 		)
 
+	// make and bind a cached searcher
+	// to inner one
 	minimax.NewCachedSearcher(
 		innerSearcher,
 		cache,
@@ -270,7 +273,7 @@ func game(
 			maxDuration,
 		)
 		if err != nil {
-			return Cached, err
+			return Iterative, err
 		}
 
 		storage = storage.ApplyMove(move.Move)

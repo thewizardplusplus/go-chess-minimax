@@ -14,6 +14,8 @@ type CachedSearcher struct {
 }
 
 // NewCachedSearcher ...
+//
+// It binds itself to the passed searcher.
 func NewCachedSearcher(
 	innerSearcher MoveSearcher,
 	cache caches.Cache,

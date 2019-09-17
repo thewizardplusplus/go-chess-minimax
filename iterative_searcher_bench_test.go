@@ -89,6 +89,8 @@ func iterativeSearch(
 		evaluator,
 	)
 
+	// make and bind a cached searcher
+	// to inner one
 	NewCachedSearcher(innerSearcher, cache)
 
 	terminator :=
