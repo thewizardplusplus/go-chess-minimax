@@ -47,5 +47,28 @@ func (searcher ParallelSearcher) SearchMove(
 	deep int,
 	bounds moves.Bounds,
 ) (moves.ScoredMove, error) {
-	return moves.ScoredMove{}, nil
+	buffer := make(
+		chan moves.FailedMove,
+		searcher.concurrency,
+	)
+	terminator :=
+		new(terminators.ParallelTerminator)
+	for i := 0; i < searcher.concurrency; i++ {
+		go func() {
+			defer terminator.Terminate()
+
+			searcher :=
+				searcher.factory(terminator)
+			move, err := searcher.SearchMove(
+				storage,
+				color,
+				deep,
+				bounds,
+			)
+			buffer <- moves.FailedMove{move, err}
+		}()
+	}
+
+	move := <-buffer
+	return move.Move, move.Error
 }
