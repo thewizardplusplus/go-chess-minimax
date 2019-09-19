@@ -28,8 +28,8 @@ type Side int
 
 // ...
 const (
-	Cached Side = iota
-	Iterative
+	Iterative Side = iota
+	Parallel
 )
 
 // Score ...
@@ -67,8 +67,8 @@ func (score Score) Elo(
 // Scores ...
 type Scores struct {
 	gameCount int64
-	cached    Score
 	iterative Score
+	parallel  Score
 }
 
 // AddGame ...
@@ -81,14 +81,14 @@ func (scores *Scores) AddGame(
 	switch err {
 	case minimax.ErrCheckmate:
 		switch loserSide {
-		case Cached:
-			scores.iterative.Win()
 		case Iterative:
-			scores.cached.Win()
+			scores.parallel.Win()
+		case Parallel:
+			scores.iterative.Win()
 		}
 	case minimax.ErrDraw:
-		scores.cached.Draw()
 		scores.iterative.Draw()
+		scores.parallel.Draw()
 	}
 }
 
@@ -96,13 +96,13 @@ func (scores *Scores) AddGame(
 func (scores Scores) String() string {
 	return fmt.Sprintf(
 		"Games: %d "+
-			"Cached: %.1f "+
-			"Iterative: %.1f\n"+
-			"Iterative Elo Delta: %.2f",
+			"Iterative: %.1f "+
+			"Parallel: %.1f\n"+
+			"Parallel Elo Delta: %.2f",
 		scores.gameCount,
-		scores.cached.Score(),
 		scores.iterative.Score(),
-		scores.iterative.Elo(scores.gameCount),
+		scores.parallel.Score(),
+		scores.parallel.Elo(scores.gameCount),
 	)
 }
 
@@ -158,42 +158,11 @@ func makeTerminator(
 	)
 }
 
-func cachedSearch(
-	cache caches.Cache,
-	storage models.PieceStorage,
-	color models.Color,
-	maxDeep int,
-	maxDuration time.Duration,
-) (moves.ScoredMove, error) {
-	terminator := makeTerminator(
-		maxDeep,
-		maxDuration,
-	)
-	innerSearcher :=
-		minimax.NewAlphaBetaSearcher(
-			generator,
-			terminator,
-			evaluator,
-		)
-
-	searcher := minimax.NewCachedSearcher(
-		innerSearcher,
-		cache,
-	)
-
-	return searcher.SearchMove(
-		storage,
-		color,
-		0,
-		moves.NewBounds(),
-	)
-}
-
 func iterativeSearch(
 	cache caches.Cache,
 	storage models.PieceStorage,
 	color models.Color,
-	maximalDeep int,
+	maxDeep int,
 	maxDuration time.Duration,
 ) (moves.ScoredMove, error) {
 	innerSearcher :=
@@ -230,6 +199,60 @@ func iterativeSearch(
 	)
 }
 
+func parallelSearch(
+	cache caches.Cache,
+	storage models.PieceStorage,
+	color models.Color,
+	maxDeep int,
+	maxDuration time.Duration,
+) (moves.ScoredMove, error) {
+	baseTerminator := makeTerminator(
+		maxDeep,
+		maxDuration,
+	)
+
+	searcher := minimax.NewParallelSearcher(
+		runtime.NumCPU(),
+		func(
+			parallelTerminator terminators.SearchTerminator,
+		) minimax.MoveSearcher {
+			innerSearcher :=
+				minimax.NewAlphaBetaSearcher(
+					generator,
+					// terminator will be set
+					// automatically
+					// by the Parallel searcher
+					nil,
+					evaluator,
+				)
+
+			// make and bind a cached searcher
+			// to inner one
+			minimax.NewCachedSearcher(
+				innerSearcher,
+				cache,
+			)
+
+			terminator :=
+				terminators.NewGroupTerminator(
+					baseTerminator,
+					parallelTerminator,
+				)
+			return minimax.NewIterativeSearcher(
+				innerSearcher,
+				terminator,
+			)
+		},
+	)
+
+	return searcher.SearchMove(
+		storage,
+		color,
+		0, // initial deep
+		moves.NewBounds(),
+	)
+}
+
 func game(
 	storage models.PieceStorage,
 	color models.Color,
@@ -245,13 +268,15 @@ func game(
 		1e6,
 		uci.EncodePieceStorage,
 	)
+	parallelCacheTwo :=
+		caches.NewParallelCache(cacheTwo)
 
 	for i := 0; i < maxMoveCount; i++ {
 		if i%5 == 0 {
 			fmt.Print(".")
 		}
 
-		move, err := cachedSearch(
+		move, err := iterativeSearch(
 			cacheOne,
 			storage,
 			color,
@@ -259,21 +284,21 @@ func game(
 			maxDuration,
 		)
 		if err != nil {
-			return Cached, err
+			return Iterative, err
 		}
 
 		storage = storage.ApplyMove(move.Move)
 		color = color.Negative()
 
-		move, err = iterativeSearch(
-			cacheTwo,
+		move, err = parallelSearch(
+			parallelCacheTwo,
 			storage,
 			color,
 			maxDeep,
 			maxDuration,
 		)
 		if err != nil {
-			return Iterative, err
+			return Parallel, err
 		}
 
 		storage = storage.ApplyMove(move.Move)
@@ -287,10 +312,10 @@ func markGame(loserSide Side, err error) {
 	switch err {
 	case minimax.ErrCheckmate:
 		switch loserSide {
-		case Cached:
-			fmt.Print("I")
 		case Iterative:
-			fmt.Print("C")
+			fmt.Print("P")
+		case Parallel:
+			fmt.Print("I")
 		}
 	case minimax.ErrDraw:
 		fmt.Print("D")
