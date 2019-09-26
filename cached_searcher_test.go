@@ -52,9 +52,9 @@ func TestNewCachedSearcher(
 		setSearcher: func(
 			innerSearcher MoveSearcher,
 		) {
-			mock, ok :=
-				innerSearcher.(*CachedSearcher)
-			if !ok || mock == nil {
+			_, ok :=
+				innerSearcher.(CachedSearcher)
+			if !ok {
 				test.Fail()
 			}
 		},

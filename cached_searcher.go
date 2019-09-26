@@ -19,8 +19,8 @@ type CachedSearcher struct {
 func NewCachedSearcher(
 	innerSearcher MoveSearcher,
 	cache caches.Cache,
-) *CachedSearcher {
-	searcher := &CachedSearcher{
+) CachedSearcher {
+	searcher := CachedSearcher{
 		MoveSearcher: innerSearcher,
 
 		cache: cache,
