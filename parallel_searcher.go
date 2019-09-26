@@ -21,20 +21,28 @@ type ParallelSearcher struct {
 func NewParallelSearcher(
 	concurrency int,
 	factory MoveSearcherFactory,
-) *ParallelSearcher {
-	return &ParallelSearcher{
+) ParallelSearcher {
+	return ParallelSearcher{
 		concurrency: concurrency,
 		factory:     factory,
 	}
 }
 
 // SetSearcher ...
+//
+// It does nothing and is required
+// only for correspondence
+// to the MoveSearcher interface.
 func (ParallelSearcher) SetSearcher(
 	innerSearcher MoveSearcher,
 ) {
 }
 
 // SetTerminator ...
+//
+// It does nothing and is required
+// only for correspondence
+// to the MoveSearcher interface.
 func (ParallelSearcher) SetTerminator(
 	terminator terminators.SearchTerminator,
 ) {
