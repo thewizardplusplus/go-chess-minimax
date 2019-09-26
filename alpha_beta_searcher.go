@@ -34,7 +34,7 @@ type MoveSearcher interface {
 
 // AlphaBetaSearcher ...
 type AlphaBetaSearcher struct {
-	BaseSearcher
+	*BaseSearcher
 
 	generator MoveGenerator
 	evaluator evaluators.BoardEvaluator
@@ -51,18 +51,22 @@ func NewAlphaBetaSearcher(
 	generator MoveGenerator,
 	terminator terminators.SearchTerminator,
 	evaluator evaluators.BoardEvaluator,
-) *AlphaBetaSearcher {
+) AlphaBetaSearcher {
 	// instance must be created in a heap
 	// so that it's possible to add
 	// a reference to itself inside
-	searcher := &AlphaBetaSearcher{
+	searcher := AlphaBetaSearcher{
+		BaseSearcher: &BaseSearcher{
+			terminator: terminator,
+		},
+
 		generator: generator,
 		evaluator: evaluator,
 	}
+
 	// use a reference to itself
 	// for a recursion
-	searcher.searcher = searcher
-	searcher.terminator = terminator
+	searcher.SetSearcher(searcher)
 
 	return searcher
 }
