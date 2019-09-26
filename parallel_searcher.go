@@ -55,8 +55,6 @@ func (searcher ParallelSearcher) SearchMove(
 		new(terminators.ParallelTerminator)
 	for i := 0; i < searcher.concurrency; i++ {
 		go func() {
-			defer terminator.Terminate()
-
 			searcher :=
 				searcher.factory(terminator)
 			move, err := searcher.SearchMove(
@@ -70,5 +68,7 @@ func (searcher ParallelSearcher) SearchMove(
 	}
 
 	move := <-buffer
+	terminator.Terminate()
+
 	return move.Move, move.Error
 }

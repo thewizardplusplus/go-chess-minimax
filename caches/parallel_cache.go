@@ -23,7 +23,7 @@ func NewParallelCache(
 }
 
 // Get ...
-func (cache ParallelCache) Get(
+func (cache *ParallelCache) Get(
 	storage models.PieceStorage,
 	color models.Color,
 ) (move moves.FailedMove, ok bool) {
@@ -37,7 +37,7 @@ func (cache ParallelCache) Get(
 }
 
 // Set ...
-func (cache ParallelCache) Set(
+func (cache *ParallelCache) Set(
 	storage models.PieceStorage,
 	color models.Color,
 	move moves.FailedMove,

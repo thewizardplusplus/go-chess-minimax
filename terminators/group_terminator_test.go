@@ -6,17 +6,17 @@ import (
 )
 
 type MockSearchTerminator struct {
-	isSearchTerminate func(deep int) bool
+	isSearchTerminated func(deep int) bool
 }
 
 func (
 	terminator MockSearchTerminator,
 ) IsSearchTerminated(deep int) bool {
-	if terminator.isSearchTerminate == nil {
+	if terminator.isSearchTerminated == nil {
 		panic("not implemented")
 	}
 
-	return terminator.isSearchTerminate(deep)
+	return terminator.isSearchTerminated(deep)
 }
 
 func TestNewGroupTerminator(
@@ -80,7 +80,7 @@ func TestGroupTerminatorIsSearchTerminated(
 			fields: fields{
 				terminators: []SearchTerminator{
 					MockSearchTerminator{
-						isSearchTerminate: func(
+						isSearchTerminated: func(
 							deep int,
 						) bool {
 							if deep != 5 {
@@ -91,7 +91,7 @@ func TestGroupTerminatorIsSearchTerminated(
 						},
 					},
 					MockSearchTerminator{
-						isSearchTerminate: func(
+						isSearchTerminated: func(
 							deep int,
 						) bool {
 							if deep != 5 {
@@ -110,7 +110,7 @@ func TestGroupTerminatorIsSearchTerminated(
 			fields: fields{
 				terminators: []SearchTerminator{
 					MockSearchTerminator{
-						isSearchTerminate: func(
+						isSearchTerminated: func(
 							deep int,
 						) bool {
 							if deep != 5 {

@@ -60,7 +60,9 @@ func TestIterativeSearcherSearchMove(
 		data{
 			fields: fields{
 				searcher: MockMoveSearcher{
-					setTerminator: func(terminator terminators.SearchTerminator) {
+					setTerminator: func(
+						terminator terminators.SearchTerminator,
+					) {
 						_, ok := terminator.(terminators.GroupTerminator)
 						if !ok {
 							test.Fail()
@@ -109,7 +111,7 @@ func TestIterativeSearcherSearchMove(
 					},
 				},
 				terminator: MockSearchTerminator{
-					isSearchTerminate: func(
+					isSearchTerminated: func(
 						deep int,
 					) bool {
 						return deep == 1
@@ -141,7 +143,9 @@ func TestIterativeSearcherSearchMove(
 		data{
 			fields: fields{
 				searcher: MockMoveSearcher{
-					setTerminator: func(terminator terminators.SearchTerminator) {
+					setTerminator: func(
+						terminator terminators.SearchTerminator,
+					) {
 						_, ok := terminator.(terminators.GroupTerminator)
 						if !ok {
 							test.Fail()
@@ -190,7 +194,7 @@ func TestIterativeSearcherSearchMove(
 					},
 				},
 				terminator: MockSearchTerminator{
-					isSearchTerminate: func(
+					isSearchTerminated: func(
 						deep int,
 					) bool {
 						return deep == 5
