@@ -9,7 +9,7 @@ func TestBaseSearcherSetSearcher(
 	test *testing.T,
 ) {
 	var innerSearcher MockMoveSearcher
-	var searcher baseSearcher
+	var searcher BaseSearcher
 	searcher.SetSearcher(innerSearcher)
 
 	if !reflect.DeepEqual(
@@ -24,7 +24,7 @@ func TestBaseSearcherSetTerminator(
 	test *testing.T,
 ) {
 	var terminator MockSearchTerminator
-	var searcher baseSearcher
+	var searcher BaseSearcher
 	searcher.SetTerminator(terminator)
 
 	if !reflect.DeepEqual(

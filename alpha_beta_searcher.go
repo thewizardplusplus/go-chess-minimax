@@ -34,7 +34,7 @@ type MoveSearcher interface {
 
 // AlphaBetaSearcher ...
 type AlphaBetaSearcher struct {
-	baseSearcher
+	BaseSearcher
 
 	generator MoveGenerator
 	evaluator evaluators.BoardEvaluator
