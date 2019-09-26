@@ -21,8 +21,8 @@ const (
 func NewIterativeSearcher(
 	innerSearcher MoveSearcher,
 	terminator terminators.SearchTerminator,
-) *IterativeSearcher {
-	return &IterativeSearcher{
+) IterativeSearcher {
+	return IterativeSearcher{
 		MoveSearcher: innerSearcher,
 
 		terminator: terminator,
