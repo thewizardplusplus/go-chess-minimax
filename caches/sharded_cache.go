@@ -1,6 +1,10 @@
 package caches
 
 import (
+	"hash/fnv"
+	"io"
+	"strconv"
+
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
@@ -10,13 +14,15 @@ type CacheFactory func() Cache
 
 // ShardedCache ...
 type ShardedCache struct {
-	shards []Cache
+	shards   []Cache
+	stringer Stringer
 }
 
 // NewShardedCache ...
 func NewShardedCache(
 	concurrency int,
 	factory CacheFactory,
+	stringer Stringer,
 ) *ShardedCache {
 	var shards []Cache
 	for i := 0; i < concurrency; i++ {
@@ -25,7 +31,8 @@ func NewShardedCache(
 	}
 
 	return &ShardedCache{
-		shards: shards,
+		shards:   shards,
+		stringer: stringer,
 	}
 }
 
@@ -59,5 +66,14 @@ func (cache *ShardedCache) makeKey(
 	storage models.PieceStorage,
 	color models.Color,
 ) int {
-	return 0
+	text := cache.stringer(storage)
+	text += " " + strconv.Itoa(int(color))
+
+	hasher := fnv.New32()
+	io.WriteString(hasher, text)
+
+	hash := int(hasher.Sum32())
+	hash %= len(cache.shards)
+
+	return hash
 }

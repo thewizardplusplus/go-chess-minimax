@@ -4,6 +4,7 @@ package chessminimax
 
 import (
 	"reflect"
+	"runtime"
 	"testing"
 
 	"github.com/thewizardplusplus/go-chess-minimax/caches"
@@ -129,12 +130,20 @@ func TestParallelSearcher(test *testing.T) {
 			wantErr: nil,
 		},
 	} {
-		cache := caches.NewStringHashingCache(
-			1e6,
+		shardedCache := caches.NewShardedCache(
+			runtime.NumCPU(),
+			func() caches.Cache {
+				cache :=
+					caches.NewStringHashingCache(
+						1e6,
+						uci.EncodePieceStorage,
+					)
+				return caches.NewParallelCache(
+					cache,
+				)
+			},
 			uci.EncodePieceStorage,
 		)
-		parallelCache :=
-			caches.NewParallelCache(cache)
 
 		// increase the limit,
 		// because the iterative searcher
@@ -146,7 +155,7 @@ func TestParallelSearcher(test *testing.T) {
 		}
 
 		gotMove, gotErr := parallelSearch(
-			parallelCache,
+			shardedCache,
 			data.args.boardInFEN,
 			data.args.color,
 			data.args.maximalDeep,
