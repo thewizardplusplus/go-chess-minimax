@@ -23,21 +23,21 @@ func NewShardedCache(
 	concurrency int,
 	factory CacheFactory,
 	stringer Stringer,
-) *ShardedCache {
+) ShardedCache {
 	var shards []Cache
 	for i := 0; i < concurrency; i++ {
 		shard := factory()
 		shards = append(shards, shard)
 	}
 
-	return &ShardedCache{
+	return ShardedCache{
 		shards:   shards,
 		stringer: stringer,
 	}
 }
 
 // Get ...
-func (cache *ShardedCache) Get(
+func (cache ShardedCache) Get(
 	storage models.PieceStorage,
 	color models.Color,
 ) (move moves.FailedMove, ok bool) {
@@ -49,7 +49,7 @@ func (cache *ShardedCache) Get(
 }
 
 // Set ...
-func (cache *ShardedCache) Set(
+func (cache ShardedCache) Set(
 	storage models.PieceStorage,
 	color models.Color,
 	move moves.FailedMove,
@@ -62,7 +62,7 @@ func (cache *ShardedCache) Set(
 	)
 }
 
-func (cache *ShardedCache) makeKey(
+func (cache ShardedCache) makeKey(
 	storage models.PieceStorage,
 	color models.Color,
 ) int {
@@ -72,8 +72,8 @@ func (cache *ShardedCache) makeKey(
 	hasher := fnv.New32()
 	io.WriteString(hasher, text)
 
-	hash := int(hasher.Sum32())
-	hash %= len(cache.shards)
+	hash := hasher.Sum32()
+	hash %= uint32(len(cache.shards))
 
-	return hash
+	return int(hash)
 }

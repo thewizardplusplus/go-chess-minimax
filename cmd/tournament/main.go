@@ -264,12 +264,20 @@ func game(
 		1e6,
 		uci.EncodePieceStorage,
 	)
-	cacheTwo := caches.NewStringHashingCache(
-		1e6,
+	cacheTwo := caches.NewShardedCache(
+		runtime.NumCPU(),
+		func() caches.Cache {
+			cache :=
+				caches.NewStringHashingCache(
+					1e6/runtime.NumCPU(),
+					uci.EncodePieceStorage,
+				)
+			return caches.NewParallelCache(
+				cache,
+			)
+		},
 		uci.EncodePieceStorage,
 	)
-	parallelCacheTwo :=
-		caches.NewParallelCache(cacheTwo)
 
 	for i := 0; i < maxMoveCount; i++ {
 		if i%5 == 0 {
@@ -291,7 +299,7 @@ func game(
 		color = color.Negative()
 
 		move, err = parallelSearch(
-			parallelCacheTwo,
+			cacheTwo,
 			storage,
 			color,
 			maxDeep,

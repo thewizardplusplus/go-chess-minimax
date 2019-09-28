@@ -20,7 +20,7 @@ func BenchmarkParallelSearcher_1Ply(
 		runtime.NumCPU(),
 		func() caches.Cache {
 			cache := caches.NewStringHashingCache(
-				1e6,
+				1e6/runtime.NumCPU(),
 				uci.EncodePieceStorage,
 			)
 			return caches.NewParallelCache(cache)
@@ -44,7 +44,7 @@ func BenchmarkParallelSearcher_2Ply(
 		runtime.NumCPU(),
 		func() caches.Cache {
 			cache := caches.NewStringHashingCache(
-				1e6,
+				1e6/runtime.NumCPU(),
 				uci.EncodePieceStorage,
 			)
 			return caches.NewParallelCache(cache)
@@ -68,7 +68,7 @@ func BenchmarkParallelSearcher_3Ply(
 		runtime.NumCPU(),
 		func() caches.Cache {
 			cache := caches.NewStringHashingCache(
-				1e6,
+				1e6/runtime.NumCPU(),
 				uci.EncodePieceStorage,
 			)
 			return caches.NewParallelCache(cache)
