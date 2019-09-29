@@ -10,7 +10,7 @@ import (
 // ParallelCache ...
 type ParallelCache struct {
 	innerCache Cache
-	locker     sync.RWMutex
+	locker     sync.Mutex
 }
 
 // NewParallelCache ...
@@ -27,8 +27,8 @@ func (cache *ParallelCache) Get(
 	storage models.PieceStorage,
 	color models.Color,
 ) (move moves.FailedMove, ok bool) {
-	cache.locker.RLock()
-	defer cache.locker.RUnlock()
+	cache.locker.Lock()
+	defer cache.locker.Unlock()
 
 	return cache.innerCache.Get(
 		storage,
