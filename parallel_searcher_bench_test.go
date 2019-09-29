@@ -16,20 +16,15 @@ import (
 func BenchmarkParallelSearcher_1Ply(
 	benchmark *testing.B,
 ) {
-	shardedCache := caches.NewShardedCache(
-		runtime.NumCPU(),
-		func() caches.Cache {
-			cache := caches.NewStringHashingCache(
-				1e6/runtime.NumCPU(),
-				uci.EncodePieceStorage,
-			)
-			return caches.NewParallelCache(cache)
-		},
+	cache := caches.NewStringHashingCache(
+		1e6,
 		uci.EncodePieceStorage,
 	)
+	parallelCache :=
+		caches.NewParallelCache(cache)
 	for i := 0; i < benchmark.N; i++ {
 		parallelSearch(
-			shardedCache,
+			parallelCache,
 			initial,
 			models.White,
 			1,
@@ -40,20 +35,15 @@ func BenchmarkParallelSearcher_1Ply(
 func BenchmarkParallelSearcher_2Ply(
 	benchmark *testing.B,
 ) {
-	shardedCache := caches.NewShardedCache(
-		runtime.NumCPU(),
-		func() caches.Cache {
-			cache := caches.NewStringHashingCache(
-				1e6/runtime.NumCPU(),
-				uci.EncodePieceStorage,
-			)
-			return caches.NewParallelCache(cache)
-		},
+	cache := caches.NewStringHashingCache(
+		1e6,
 		uci.EncodePieceStorage,
 	)
+	parallelCache :=
+		caches.NewParallelCache(cache)
 	for i := 0; i < benchmark.N; i++ {
 		parallelSearch(
-			shardedCache,
+			parallelCache,
 			initial,
 			models.White,
 			2,
@@ -64,20 +54,15 @@ func BenchmarkParallelSearcher_2Ply(
 func BenchmarkParallelSearcher_3Ply(
 	benchmark *testing.B,
 ) {
-	shardedCache := caches.NewShardedCache(
-		runtime.NumCPU(),
-		func() caches.Cache {
-			cache := caches.NewStringHashingCache(
-				1e6/runtime.NumCPU(),
-				uci.EncodePieceStorage,
-			)
-			return caches.NewParallelCache(cache)
-		},
+	cache := caches.NewStringHashingCache(
+		1e6,
 		uci.EncodePieceStorage,
 	)
+	parallelCache :=
+		caches.NewParallelCache(cache)
 	for i := 0; i < benchmark.N; i++ {
 		parallelSearch(
-			shardedCache,
+			parallelCache,
 			initial,
 			models.White,
 			3,

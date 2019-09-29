@@ -4,7 +4,6 @@ package chessminimax
 
 import (
 	"reflect"
-	"runtime"
 	"testing"
 
 	"github.com/thewizardplusplus/go-chess-minimax/caches"
@@ -25,7 +24,7 @@ func TestParallelSearcher(test *testing.T) {
 		wantErr  error
 	}
 
-	for index, data := range []data{
+	for _, data := range []data{
 		// king capture
 		data{
 			args: args{
@@ -130,20 +129,12 @@ func TestParallelSearcher(test *testing.T) {
 			wantErr: nil,
 		},
 	} {
-		shardedCache := caches.NewShardedCache(
-			runtime.NumCPU(),
-			func() caches.Cache {
-				cache :=
-					caches.NewStringHashingCache(
-						1e6/runtime.NumCPU(),
-						uci.EncodePieceStorage,
-					)
-				return caches.NewParallelCache(
-					cache,
-				)
-			},
+		cache := caches.NewStringHashingCache(
+			1e6,
 			uci.EncodePieceStorage,
 		)
+		parallelCache :=
+			caches.NewParallelCache(cache)
 
 		// increase the limit,
 		// because the iterative searcher
@@ -155,7 +146,7 @@ func TestParallelSearcher(test *testing.T) {
 		}
 
 		gotMove, gotErr := parallelSearch(
-			shardedCache,
+			parallelCache,
 			data.args.boardInFEN,
 			data.args.color,
 			data.args.maximalDeep,
@@ -165,26 +156,12 @@ func TestParallelSearcher(test *testing.T) {
 			gotMove,
 			data.wantMove,
 		) {
-			test.Logf(
-				"#%d:\ngot:  %v\nwant: %v",
-				index,
-				gotMove,
-				data.wantMove,
-			)
-
 			test.Fail()
 		}
 		if !reflect.DeepEqual(
 			gotErr,
 			data.wantErr,
 		) {
-			test.Logf(
-				"#%d:\ngot:  %v\nwant: %v",
-				index,
-				gotErr,
-				data.wantErr,
-			)
-
 			test.Fail()
 		}
 	}
