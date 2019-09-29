@@ -41,8 +41,8 @@ func (cache ShardedCache) Get(
 	storage models.PieceStorage,
 	color models.Color,
 ) (move moves.FailedMove, ok bool) {
-	key := cache.makeKey(storage, color)
-	return cache.shards[key].Get(
+	index := cache.makeIndex(storage, color)
+	return cache.shards[index].Get(
 		storage,
 		color,
 	)
@@ -54,15 +54,15 @@ func (cache ShardedCache) Set(
 	color models.Color,
 	move moves.FailedMove,
 ) {
-	key := cache.makeKey(storage, color)
-	cache.shards[key].Set(
+	index := cache.makeIndex(storage, color)
+	cache.shards[index].Set(
 		storage,
 		color,
 		move,
 	)
 }
 
-func (cache ShardedCache) makeKey(
+func (cache ShardedCache) makeIndex(
 	storage models.PieceStorage,
 	color models.Color,
 ) int {
