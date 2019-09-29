@@ -13,7 +13,8 @@ type ParallelTerminator struct {
 func (
 	terminator *ParallelTerminator,
 ) IsSearchTerminated(deep int) bool {
-	return terminator.terminationFlag != 0
+	flag := &terminator.terminationFlag
+	return atomic.LoadUint64(flag) != 0
 }
 
 // Terminate ...
