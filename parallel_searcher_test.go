@@ -3,7 +3,9 @@ package chessminimax
 import (
 	"errors"
 	"reflect"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
@@ -50,12 +52,15 @@ func TestParallelSearcherSearchMove(
 		bounds  moves.Bounds
 	}
 	type data struct {
-		fields   fields
-		args     args
-		wantMove moves.ScoredMove
-		wantErr  bool
+		fields           fields
+		args             args
+		wantMove         moves.ScoredMove
+		wantErr          bool
+		wantFactoryCount uint64
 	}
 
+	var factoryCount uint64
+	var searcherIndex uint64
 	for _, data := range []data{
 		data{
 			fields: fields{
@@ -63,6 +68,8 @@ func TestParallelSearcherSearchMove(
 				factory: func(
 					terminator terminators.SearchTerminator,
 				) MoveSearcher {
+					atomic.AddUint64(&factoryCount, 1)
+
 					_, ok := terminator.(*terminators.ParallelTerminator)
 					if !ok {
 						test.Fail()
@@ -75,6 +82,11 @@ func TestParallelSearcherSearchMove(
 							deep int,
 							bounds moves.Bounds,
 						) (moves.ScoredMove, error) {
+							index := atomic.AddUint64(
+								&searcherIndex,
+								1,
+							)
+
 							_, ok :=
 								storage.(MockPieceStorage)
 							if !ok {
@@ -93,15 +105,21 @@ func TestParallelSearcherSearchMove(
 								test.Fail()
 							}
 
+							time.Sleep(
+								100 *
+									time.Duration(index) *
+									time.Nanosecond,
+							)
+
 							move := moves.ScoredMove{
 								Move: models.Move{
 									Start: models.Position{
-										File: 1,
-										Rank: 2,
+										File: 1 + int(index),
+										Rank: 2 + int(index),
 									},
 									Finish: models.Position{
-										File: 3,
-										Rank: 4,
+										File: 3 + int(index),
+										Rank: 4 + int(index),
 									},
 								},
 								Score: 2.3,
@@ -121,19 +139,23 @@ func TestParallelSearcherSearchMove(
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
 					Start: models.Position{
-						File: 1,
-						Rank: 2,
+						File: 2,
+						Rank: 3,
 					},
 					Finish: models.Position{
-						File: 3,
-						Rank: 4,
+						File: 4,
+						Rank: 5,
 					},
 				},
 				Score: 2.3,
 			},
-			wantErr: true,
+			wantErr:          true,
+			wantFactoryCount: 10,
 		},
 	} {
+		atomic.StoreUint64(&factoryCount, 0)
+		atomic.StoreUint64(&searcherIndex, 0)
+
 		searcher := ParallelSearcher{
 			concurrency: data.fields.concurrency,
 			factory:     data.fields.factory,
@@ -145,6 +167,8 @@ func TestParallelSearcherSearchMove(
 			data.args.deep,
 			data.args.bounds,
 		)
+		gotFactoryCount :=
+			atomic.LoadUint64(&factoryCount)
 
 		if !reflect.DeepEqual(
 			gotMove,
@@ -155,6 +179,11 @@ func TestParallelSearcherSearchMove(
 
 		hasErr := gotErr != nil
 		if hasErr != data.wantErr {
+			test.Fail()
+		}
+
+		if gotFactoryCount !=
+			data.wantFactoryCount {
 			test.Fail()
 		}
 	}
