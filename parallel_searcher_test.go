@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
-	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
@@ -16,9 +15,7 @@ func TestNewParallelSearcher(
 	test *testing.T,
 ) {
 	var terminator MockSearchTerminator
-	factory := func(
-		terminator terminators.SearchTerminator,
-	) MoveSearcher {
+	factory := func() MoveSearcher {
 		panic("not implemented")
 	}
 	searcher := NewParallelSearcher(
@@ -87,15 +84,8 @@ func TestParallelSearcherSearchMove(
 		data{
 			fields: fields{
 				concurrency: 10,
-				factory: func(
-					terminator terminators.SearchTerminator,
-				) MoveSearcher {
+				factory: func() MoveSearcher {
 					atomic.AddUint64(&factoryCount, 1)
-
-					_, ok := terminator.(*terminators.ParallelTerminator)
-					if !ok {
-						test.Fail()
-					}
 
 					return MockMoveSearcher{
 						searchMove: func(

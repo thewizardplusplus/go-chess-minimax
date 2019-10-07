@@ -86,7 +86,7 @@ func parallelSearch(
 	}
 
 	generator := models.MoveGenerator{}
-	baseTerminator :=
+	terminator :=
 		terminators.NewDeepTerminator(
 			maximalDeep,
 		)
@@ -94,32 +94,31 @@ func parallelSearch(
 		evaluators.MaterialEvaluator{}
 
 	searcher := NewParallelSearcher(
-		baseTerminator,
+		terminator,
 		runtime.NumCPU(),
-		func(
-			parallelTerminator terminators.SearchTerminator,
-		) MoveSearcher {
+		func() MoveSearcher {
 			innerSearcher := NewAlphaBetaSearcher(
 				generator,
 				// terminator will be set
 				// automatically
-				// by the Parallel searcher
+				// by the iterative searcher
 				nil,
 				evaluator,
 			)
 
 			// make and bind a cached searcher
 			// to inner one
-			NewCachedSearcher(innerSearcher, cache)
+			NewCachedSearcher(
+				innerSearcher,
+				cache,
+			)
 
-			terminator :=
-				terminators.NewGroupTerminator(
-					baseTerminator,
-					parallelTerminator,
-				)
 			return NewIterativeSearcher(
 				innerSearcher,
-				terminator,
+				// terminator will be set
+				// automatically
+				// by the parallel searcher
+				nil,
 			)
 		},
 	)

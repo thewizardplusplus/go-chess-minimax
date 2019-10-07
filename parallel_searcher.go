@@ -7,9 +7,7 @@ import (
 )
 
 // MoveSearcherFactory ...
-type MoveSearcherFactory func(
-	terminator terminators.SearchTerminator,
-) MoveSearcher
+type MoveSearcherFactory func() MoveSearcher
 
 // ParallelSearcher ...
 type ParallelSearcher struct {
@@ -57,16 +55,22 @@ func (searcher ParallelSearcher) SearchMove(
 	deep int,
 	bounds moves.Bounds,
 ) (moves.ScoredMove, error) {
+	parallelTerminator :=
+		new(terminators.ParallelTerminator)
+	terminator :=
+		terminators.NewGroupTerminator(
+			searcher.terminator,
+			parallelTerminator,
+		)
 	buffer := make(
 		chan moves.FailedMove,
 		searcher.concurrency,
 	)
-	terminator :=
-		new(terminators.ParallelTerminator)
 	for i := 0; i < searcher.concurrency; i++ {
 		go func() {
-			searcher :=
-				searcher.factory(terminator)
+			searcher := searcher.factory()
+			searcher.SetTerminator(terminator)
+
 			move, err := searcher.SearchMove(
 				storage,
 				color,
@@ -78,7 +82,7 @@ func (searcher ParallelSearcher) SearchMove(
 	}
 
 	move := <-buffer
-	terminator.Terminate()
+	parallelTerminator.Terminate()
 
 	return move.Move, move.Error
 }

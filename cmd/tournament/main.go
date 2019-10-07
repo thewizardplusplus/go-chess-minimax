@@ -206,23 +206,20 @@ func parallelSearch(
 	maxDeep int,
 	maxDuration time.Duration,
 ) (moves.ScoredMove, error) {
-	baseTerminator := makeTerminator(
+	terminator := makeTerminator(
 		maxDeep,
 		maxDuration,
 	)
-
 	searcher := minimax.NewParallelSearcher(
-		baseTerminator,
+		terminator,
 		runtime.NumCPU(),
-		func(
-			parallelTerminator terminators.SearchTerminator,
-		) minimax.MoveSearcher {
+		func() minimax.MoveSearcher {
 			innerSearcher :=
 				minimax.NewAlphaBetaSearcher(
 					generator,
 					// terminator will be set
 					// automatically
-					// by the Parallel searcher
+					// by the iterative searcher
 					nil,
 					evaluator,
 				)
@@ -234,14 +231,12 @@ func parallelSearch(
 				cache,
 			)
 
-			terminator :=
-				terminators.NewGroupTerminator(
-					baseTerminator,
-					parallelTerminator,
-				)
 			return minimax.NewIterativeSearcher(
 				innerSearcher,
-				terminator,
+				// terminator will be set
+				// automatically
+				// by the parallel searcher
+				nil,
 			)
 		},
 	)
