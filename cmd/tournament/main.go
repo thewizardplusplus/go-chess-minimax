@@ -212,6 +212,7 @@ func parallelSearch(
 	)
 
 	searcher := minimax.NewParallelSearcher(
+		baseTerminator,
 		runtime.NumCPU(),
 		func(
 			parallelTerminator terminators.SearchTerminator,

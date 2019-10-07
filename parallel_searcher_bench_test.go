@@ -94,6 +94,7 @@ func parallelSearch(
 		evaluators.MaterialEvaluator{}
 
 	searcher := NewParallelSearcher(
+		baseTerminator,
 		runtime.NumCPU(),
 		func(
 			parallelTerminator terminators.SearchTerminator,

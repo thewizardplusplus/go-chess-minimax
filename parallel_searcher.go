@@ -13,19 +13,28 @@ type MoveSearcherFactory func(
 
 // ParallelSearcher ...
 type ParallelSearcher struct {
+	*TerminatorSetter
+
 	concurrency int
 	factory     MoveSearcherFactory
 }
 
 // NewParallelSearcher ...
 func NewParallelSearcher(
+	terminator terminators.SearchTerminator,
 	concurrency int,
 	factory MoveSearcherFactory,
 ) ParallelSearcher {
-	return ParallelSearcher{
+	searcher := ParallelSearcher{
+		TerminatorSetter: new(TerminatorSetter),
+
 		concurrency: concurrency,
 		factory:     factory,
 	}
+
+	searcher.SetTerminator(terminator)
+
+	return searcher
 }
 
 // SetSearcher ...
@@ -39,16 +48,6 @@ func (ParallelSearcher) SetSearcher(
 	innerSearcher MoveSearcher,
 ) {
 	panic("not supported")
-}
-
-// SetTerminator ...
-//
-// It does nothing and is required
-// only for correspondence
-// to the MoveSearcher interface.
-func (ParallelSearcher) SetTerminator(
-	terminator terminators.SearchTerminator,
-) {
 }
 
 // SearchMove ...

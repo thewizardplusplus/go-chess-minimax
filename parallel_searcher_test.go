@@ -15,13 +15,17 @@ import (
 func TestNewParallelSearcher(
 	test *testing.T,
 ) {
+	var terminator MockSearchTerminator
 	factory := func(
 		terminator terminators.SearchTerminator,
 	) MoveSearcher {
 		panic("not implemented")
 	}
-	searcher :=
-		NewParallelSearcher(10, factory)
+	searcher := NewParallelSearcher(
+		terminator,
+		10,
+		factory,
+	)
 
 	if searcher.concurrency != 10 {
 		test.Fail()
