@@ -20,9 +20,10 @@ func TestNewIterativeSearcher(
 		terminator,
 	)
 
-	_, ok := searcher.
-		MoveSearcher.(MockMoveSearcher)
-	if !ok {
+	if !reflect.DeepEqual(
+		searcher.searcher,
+		innerSearcher,
+	) {
 		test.Fail()
 	}
 
@@ -227,9 +228,12 @@ func TestIterativeSearcherSearchMove(
 		testDeep = 1
 
 		searcher := IterativeSearcher{
-			MoveSearcher: data.fields.searcher,
-
-			terminator: data.fields.terminator,
+			SearcherSetter: &SearcherSetter{
+				searcher: data.fields.searcher,
+			},
+			TerminatorSetter: &TerminatorSetter{
+				terminator: data.fields.terminator,
+			},
 		}
 
 		gotMove, gotErr := searcher.SearchMove(

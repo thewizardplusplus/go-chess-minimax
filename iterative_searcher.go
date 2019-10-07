@@ -8,9 +8,8 @@ import (
 
 // IterativeSearcher ...
 type IterativeSearcher struct {
-	MoveSearcher
-
-	terminator terminators.SearchTerminator
+	*SearcherSetter
+	*TerminatorSetter
 }
 
 const (
@@ -22,11 +21,15 @@ func NewIterativeSearcher(
 	innerSearcher MoveSearcher,
 	terminator terminators.SearchTerminator,
 ) IterativeSearcher {
-	return IterativeSearcher{
-		MoveSearcher: innerSearcher,
-
-		terminator: terminator,
+	searcher := IterativeSearcher{
+		SearcherSetter:   new(SearcherSetter),
+		TerminatorSetter: new(TerminatorSetter),
 	}
+
+	searcher.SetSearcher(innerSearcher)
+	searcher.SetTerminator(terminator)
+
+	return searcher
 }
 
 // SearchMove ...
@@ -38,7 +41,7 @@ func (searcher IterativeSearcher) SearchMove(
 ) (moves.ScoredMove, error) {
 	var lastMove moves.FailedMove
 	for deep := initialDeep; ; deep++ {
-		searcher.MoveSearcher.SetTerminator(
+		searcher.searcher.SetTerminator(
 			terminators.NewGroupTerminator(
 				searcher.terminator,
 				terminators.NewDeepTerminator(deep),
@@ -46,7 +49,7 @@ func (searcher IterativeSearcher) SearchMove(
 		)
 
 		move, err :=
-			searcher.MoveSearcher.SearchMove(
+			searcher.searcher.SearchMove(
 				storage,
 				color,
 				0,
