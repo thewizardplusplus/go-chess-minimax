@@ -1815,8 +1815,10 @@ func TestAlphaBetaSearcherSearchMove(
 		},
 	} {
 		searcher := AlphaBetaSearcher{
-			BaseSearcher: &BaseSearcher{
-				searcher:   data.fields.searcher,
+			SearcherSetter: &SearcherSetter{
+				searcher: data.fields.searcher,
+			},
+			TerminatorSetter: &TerminatorSetter{
 				terminator: data.fields.terminator,
 			},
 
