@@ -3,12 +3,13 @@ package chessminimax
 import (
 	"github.com/thewizardplusplus/go-chess-minimax/caches"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
+	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
 // CachedSearcher ...
 type CachedSearcher struct {
-	MoveSearcher
+	*SearcherSetter
 
 	cache caches.Cache
 }
@@ -21,7 +22,7 @@ func NewCachedSearcher(
 	cache caches.Cache,
 ) CachedSearcher {
 	searcher := CachedSearcher{
-		MoveSearcher: innerSearcher,
+		SearcherSetter: new(SearcherSetter),
 
 		cache: cache,
 	}
@@ -31,8 +32,16 @@ func NewCachedSearcher(
 	// in order to recursive calls
 	// will be cached too
 	innerSearcher.SetSearcher(searcher)
+	searcher.SetSearcher(innerSearcher)
 
 	return searcher
+}
+
+// SetTerminator ...
+func (searcher CachedSearcher) SetTerminator(
+	terminator terminators.SearchTerminator,
+) {
+	searcher.searcher.SetTerminator(terminator)
 }
 
 // SearchMove ...
@@ -48,7 +57,7 @@ func (searcher CachedSearcher) SearchMove(
 		return data.Move, data.Error
 	}
 
-	move, err := searcher.MoveSearcher.
+	move, err := searcher.searcher.
 		SearchMove(storage, color, deep, bounds)
 	if !move.Move.IsZero() {
 		data := moves.FailedMove{move, err}
