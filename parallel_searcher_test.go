@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
+	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
@@ -60,6 +61,7 @@ func TestParallelSearcherSearchMove(
 	test *testing.T,
 ) {
 	type fields struct {
+		terminator  terminators.SearchTerminator
 		concurrency int
 		factory     MoveSearcherFactory
 	}
@@ -83,11 +85,20 @@ func TestParallelSearcherSearchMove(
 	for _, data := range []data{
 		data{
 			fields: fields{
+				terminator:  MockSearchTerminator{},
 				concurrency: 10,
 				factory: func() MoveSearcher {
 					atomic.AddUint64(&factoryCount, 1)
 
 					return MockMoveSearcher{
+						setTerminator: func(
+							terminator terminators.SearchTerminator,
+						) {
+							_, ok := terminator.(terminators.GroupTerminator)
+							if !ok {
+								test.Fail()
+							}
+						},
 						searchMove: func(
 							storage models.PieceStorage,
 							color models.Color,
@@ -159,6 +170,10 @@ func TestParallelSearcherSearchMove(
 		atomic.StoreUint64(&searcherCount, 0)
 
 		searcher := ParallelSearcher{
+			TerminatorSetter: &TerminatorSetter{
+				terminator: data.fields.terminator,
+			},
+
 			concurrency: data.fields.concurrency,
 			factory:     data.fields.factory,
 		}
