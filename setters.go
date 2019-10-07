@@ -23,3 +23,29 @@ func (searcher *BaseSearcher) SetTerminator(
 ) {
 	searcher.terminator = terminator
 }
+
+// SearcherSetter ...
+type SearcherSetter struct {
+	searcher MoveSearcher
+}
+
+// SetSearcher ...
+func (setter *SearcherSetter) SetSearcher(
+	searcher MoveSearcher,
+) {
+	setter.searcher = searcher
+}
+
+// TerminatorSetter ...
+type TerminatorSetter struct {
+	terminator terminators.SearchTerminator
+}
+
+// SetTerminator ...
+func (
+	setter *TerminatorSetter,
+) SetTerminator(
+	terminator terminators.SearchTerminator,
+) {
+	setter.terminator = terminator
+}
