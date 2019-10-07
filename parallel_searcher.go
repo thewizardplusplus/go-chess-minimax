@@ -33,9 +33,12 @@ func NewParallelSearcher(
 // It does nothing and is required
 // only for correspondence
 // to the MoveSearcher interface.
+//
+// It always panics.
 func (ParallelSearcher) SetSearcher(
 	innerSearcher MoveSearcher,
 ) {
+	panic("not supported")
 }
 
 // SetTerminator ...

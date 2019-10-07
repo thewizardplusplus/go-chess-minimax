@@ -38,6 +38,23 @@ func TestNewParallelSearcher(
 	}
 }
 
+func TestParallelSearcherSetSearcher(
+	test *testing.T,
+) {
+	var err interface{}
+	func() {
+		defer func() { err = recover() }()
+
+		var innerSearcher MockMoveSearcher
+		var searcher ParallelSearcher
+		searcher.SetSearcher(innerSearcher)
+	}()
+
+	if err != "not supported" {
+		test.Fail()
+	}
+}
+
 func TestParallelSearcherSearchMove(
 	test *testing.T,
 ) {
