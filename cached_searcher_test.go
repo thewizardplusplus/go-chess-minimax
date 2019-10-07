@@ -7,6 +7,7 @@ import (
 
 	"github.com/thewizardplusplus/go-chess-minimax/caches"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
+	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
@@ -78,6 +79,29 @@ func TestNewCachedSearcher(
 	) {
 		test.Fail()
 	}
+}
+
+func TestCachedSearcherSetTerminator(
+	test *testing.T,
+) {
+	var terminator MockSearchTerminator
+	searcher := CachedSearcher{
+		SearcherSetter: &SearcherSetter{
+			searcher: MockMoveSearcher{
+				setTerminator: func(
+					innerTerminator terminators.SearchTerminator,
+				) {
+					if !reflect.DeepEqual(
+						innerTerminator,
+						terminator,
+					) {
+						test.Fail()
+					}
+				},
+			},
+		},
+	}
+	searcher.SetTerminator(terminator)
 }
 
 func TestCachedSearcherSearchMove(
