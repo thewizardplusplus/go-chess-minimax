@@ -77,6 +77,7 @@ func (searcher ParallelSearcher) SearchMove(
 				deep,
 				bounds,
 			)
+
 			buffer <- moves.FailedMove{move, err}
 		}()
 	}
