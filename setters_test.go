@@ -3,7 +3,85 @@ package chessminimax
 import (
 	"reflect"
 	"testing"
+
+	moves "github.com/thewizardplusplus/go-chess-minimax/models"
+	"github.com/thewizardplusplus/go-chess-minimax/terminators"
+	models "github.com/thewizardplusplus/go-chess-models"
 )
+
+type MockMoveSearcher struct {
+	setSearcher func(
+		innerSearcher MoveSearcher,
+	)
+	setTerminator func(
+		terminator terminators.SearchTerminator,
+	)
+	searchMove func(
+		storage models.PieceStorage,
+		color models.Color,
+		deep int,
+		bounds moves.Bounds,
+	) (moves.ScoredMove, error)
+}
+
+func (
+	searcher MockMoveSearcher,
+) SetSearcher(
+	innerSearcher MoveSearcher,
+) {
+	if searcher.setSearcher == nil {
+		panic("not implemented")
+	}
+
+	searcher.setSearcher(innerSearcher)
+}
+
+func (
+	searcher MockMoveSearcher,
+) SetTerminator(
+	terminator terminators.SearchTerminator,
+) {
+	if searcher.setTerminator == nil {
+		panic("not implemented")
+	}
+
+	searcher.setTerminator(terminator)
+}
+
+func (
+	searcher MockMoveSearcher,
+) SearchMove(
+	storage models.PieceStorage,
+	color models.Color,
+	deep int,
+	bounds moves.Bounds,
+) (moves.ScoredMove, error) {
+	if searcher.searchMove == nil {
+		panic("not implemented")
+	}
+
+	return searcher.searchMove(
+		storage,
+		color,
+		deep,
+		bounds,
+	)
+}
+
+type MockSearchTerminator struct {
+	isSearchTerminated func(deep int) bool
+}
+
+func (
+	terminator MockSearchTerminator,
+) IsSearchTerminated(deep int) bool {
+	if terminator.isSearchTerminated == nil {
+		panic("not implemented")
+	}
+
+	return terminator.
+		isSearchTerminated(deep)
+}
 
 func TestSearcherSetterSetSearcher(
 	test *testing.T,
