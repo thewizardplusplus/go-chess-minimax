@@ -7,7 +7,7 @@ import (
 
 // SearcherAdapter ...
 type SearcherAdapter struct {
-	MoveSearcher MoveSearcher
+	MoveSearcher
 }
 
 // SearchMove ...
@@ -23,7 +23,7 @@ func (adapter SearcherAdapter) SearchMove(
 			moves.NewBounds(),
 		)
 	if err != nil {
-		return models.Move{}, err
+		return models.Move{}, err // don't wrap
 	}
 
 	return move.Move, nil
