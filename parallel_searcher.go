@@ -55,12 +55,12 @@ func (searcher ParallelSearcher) SearchMove(
 	deep int,
 	bounds moves.Bounds,
 ) (moves.ScoredMove, error) {
-	parallelTerminator :=
-		new(terminators.ParallelTerminator)
+	manualTerminator :=
+		new(terminators.ManualTerminator)
 	terminator :=
 		terminators.NewGroupTerminator(
 			searcher.terminator,
-			parallelTerminator,
+			manualTerminator,
 		)
 	buffer := make(
 		chan moves.FailedMove,
@@ -83,7 +83,7 @@ func (searcher ParallelSearcher) SearchMove(
 	}
 
 	move := <-buffer
-	parallelTerminator.Terminate()
+	manualTerminator.Terminate()
 
 	return move.Move, move.Error
 }
