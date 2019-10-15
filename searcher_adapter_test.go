@@ -142,6 +142,57 @@ func TestSearcherAdapterSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 			},
+			wantMove: models.Move{
+				Start: models.Position{
+					File: 1,
+					Rank: 2,
+				},
+				Finish: models.Position{
+					File: 3,
+					Rank: 4,
+				},
+			},
+			wantErr: true,
+		},
+		data{
+			fields: fields{
+				moveSearcher: MockMoveSearcher{
+					searchMove: func(
+						storage models.PieceStorage,
+						color models.Color,
+						deep int,
+						bounds moves.Bounds,
+					) (moves.ScoredMove, error) {
+						_, ok :=
+							storage.(MockPieceStorage)
+						if !ok {
+							test.Fail()
+						}
+						if color != models.White {
+							test.Fail()
+						}
+						if deep != 0 {
+							test.Fail()
+						}
+						if !reflect.DeepEqual(
+							bounds,
+							moves.Bounds{
+								Alpha: math.Inf(-1),
+								Beta:  math.Inf(+1),
+							},
+						) {
+							test.Fail()
+						}
+
+						var move moves.ScoredMove
+						return move, errors.New("dummy")
+					},
+				},
+			},
+			args: args{
+				storage: MockPieceStorage{},
+				color:   models.White,
+			},
 			wantMove: models.Move{},
 			wantErr:  true,
 		},

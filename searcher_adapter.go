@@ -22,9 +22,5 @@ func (adapter SearcherAdapter) SearchMove(
 			0, // initial deep
 			moves.NewBounds(),
 		)
-	if err != nil {
-		return models.Move{}, err // don't wrap
-	}
-
-	return move.Move, nil
+	return move.Move, err
 }
