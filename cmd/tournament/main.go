@@ -16,6 +16,7 @@ import (
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
+	"github.com/thewizardplusplus/go-chess-models/games"
 	"github.com/thewizardplusplus/go-chess-models/pieces"
 	"github.com/thewizardplusplus/go-chess-models/uci"
 )
@@ -79,14 +80,14 @@ func (scores *Scores) AddGame(
 	atomic.AddInt64(&scores.gameCount, 1)
 
 	switch err {
-	case minimax.ErrCheckmate:
+	case games.ErrCheckmate:
 		switch loserSide {
 		case Iterative:
 			scores.parallel.Win()
 		case Parallel:
 			scores.iterative.Win()
 		}
-	case minimax.ErrDraw:
+	case games.ErrDraw:
 		scores.iterative.Draw()
 		scores.parallel.Draw()
 	}
@@ -306,14 +307,14 @@ func game(
 
 func markGame(loserSide Side, err error) {
 	switch err {
-	case minimax.ErrCheckmate:
+	case games.ErrCheckmate:
 		switch loserSide {
 		case Iterative:
 			fmt.Print("P")
 		case Parallel:
 			fmt.Print("I")
 		}
-	case minimax.ErrDraw:
+	case games.ErrDraw:
 		fmt.Print("D")
 	case errTooLong:
 		fmt.Print("L")

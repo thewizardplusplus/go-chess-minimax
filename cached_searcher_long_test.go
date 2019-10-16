@@ -9,6 +9,7 @@ import (
 	"github.com/thewizardplusplus/go-chess-minimax/caches"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
+	"github.com/thewizardplusplus/go-chess-models/games"
 	"github.com/thewizardplusplus/go-chess-models/uci"
 )
 
@@ -53,7 +54,7 @@ func TestCachedSearcher(test *testing.T) {
 				maximalDeep: 1,
 			},
 			wantMove: moves.ScoredMove{},
-			wantErr:  ErrDraw,
+			wantErr:  games.ErrDraw,
 		},
 		// draw with checks on a first ply
 		data{
@@ -64,7 +65,7 @@ func TestCachedSearcher(test *testing.T) {
 				maximalDeep: 1,
 			},
 			wantMove: moves.ScoredMove{},
-			wantErr:  ErrDraw,
+			wantErr:  games.ErrDraw,
 		},
 		// draw with checks on a third ply
 		data{
@@ -94,7 +95,7 @@ func TestCachedSearcher(test *testing.T) {
 			wantMove: moves.ScoredMove{
 				Score: evaluateCheckmate(0),
 			},
-			wantErr: ErrCheckmate,
+			wantErr: games.ErrCheckmate,
 		},
 		// checkmate on a second ply
 		data{

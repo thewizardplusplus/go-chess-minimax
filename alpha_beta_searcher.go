@@ -1,12 +1,11 @@
 package chessminimax
 
 import (
-	"errors"
-
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
+	"github.com/thewizardplusplus/go-chess-models/games"
 )
 
 // MoveGenerator ...
@@ -25,12 +24,6 @@ type AlphaBetaSearcher struct {
 	generator MoveGenerator
 	evaluator evaluators.BoardEvaluator
 }
-
-// ...
-var (
-	ErrCheckmate = errors.New("checkmate")
-	ErrDraw      = errors.New("draw")
-)
 
 // NewAlphaBetaSearcher ...
 func NewAlphaBetaSearcher(
@@ -126,12 +119,12 @@ func (
 		if err != nil {
 			score := evaluateCheckmate(deep)
 			return moves.ScoredMove{Score: score},
-				ErrCheckmate
+				games.ErrCheckmate
 		}
 	}
 
 	// score of a draw is a null
-	return moves.ScoredMove{}, ErrDraw
+	return moves.ScoredMove{}, games.ErrDraw
 }
 
 // it evaluates a score of a checkmate

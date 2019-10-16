@@ -9,6 +9,7 @@ import (
 	"github.com/thewizardplusplus/go-chess-minimax/caches"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
+	"github.com/thewizardplusplus/go-chess-models/games"
 	"github.com/thewizardplusplus/go-chess-models/uci"
 )
 
@@ -55,7 +56,7 @@ func TestIterativeSearcher(
 				maximalDeep: 1,
 			},
 			wantMove: moves.ScoredMove{},
-			wantErr:  ErrDraw,
+			wantErr:  games.ErrDraw,
 		},
 		// draw with checks
 		data{
@@ -66,7 +67,7 @@ func TestIterativeSearcher(
 				maximalDeep: 1,
 			},
 			wantMove: moves.ScoredMove{},
-			wantErr:  ErrDraw,
+			wantErr:  games.ErrDraw,
 		},
 		// checkmate on a first ply
 		data{
@@ -79,7 +80,7 @@ func TestIterativeSearcher(
 			wantMove: moves.ScoredMove{
 				Score: evaluateCheckmate(0),
 			},
-			wantErr: ErrCheckmate,
+			wantErr: games.ErrCheckmate,
 		},
 		// checkmate on a second ply
 		data{
