@@ -8,7 +8,7 @@ import (
 
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
-	"github.com/thewizardplusplus/go-chess-models/uci"
+	"github.com/thewizardplusplus/go-chess-models/encoding/uci"
 )
 
 type MockPieceStorage struct{}

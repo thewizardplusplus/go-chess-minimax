@@ -9,8 +9,8 @@ import (
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
+	"github.com/thewizardplusplus/go-chess-models/encoding/uci"
 	"github.com/thewizardplusplus/go-chess-models/pieces"
-	"github.com/thewizardplusplus/go-chess-models/uci"
 )
 
 func BenchmarkParallelSearcher_1Ply(

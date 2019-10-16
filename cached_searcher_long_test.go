@@ -9,8 +9,8 @@ import (
 	"github.com/thewizardplusplus/go-chess-minimax/caches"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
+	"github.com/thewizardplusplus/go-chess-models/encoding/uci"
 	"github.com/thewizardplusplus/go-chess-models/games"
-	"github.com/thewizardplusplus/go-chess-models/uci"
 )
 
 func TestCachedSearcher(test *testing.T) {
