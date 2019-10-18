@@ -13,6 +13,10 @@ type MoveSearcher interface {
 		terminator terminators.SearchTerminator,
 	)
 
+	// It should return only following errors:
+	// * models.ErrKingCapture;
+	// * games.ErrCheckmate;
+	// * games.ErrDraw.
 	SearchMove(
 		storage models.PieceStorage,
 		color models.Color,
