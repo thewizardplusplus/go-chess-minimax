@@ -1,11 +1,18 @@
 package chessminimax
 
 import (
+	"errors"
+
 	"github.com/thewizardplusplus/go-chess-minimax/evaluators"
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
-	"github.com/thewizardplusplus/go-chess-models/games"
+)
+
+// ...
+var (
+	ErrCheckmate = errors.New("checkmate")
+	ErrDraw      = errors.New("draw")
 )
 
 // MoveGenerator ...
@@ -119,12 +126,12 @@ func (
 		if err != nil {
 			score := evaluateCheckmate(deep)
 			return moves.ScoredMove{Score: score},
-				games.ErrCheckmate
+				ErrCheckmate
 		}
 	}
 
 	// score of a draw is a null
-	return moves.ScoredMove{}, games.ErrDraw
+	return moves.ScoredMove{}, ErrDraw
 }
 
 // it evaluates a score of a checkmate

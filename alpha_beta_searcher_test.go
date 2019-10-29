@@ -8,7 +8,6 @@ import (
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	"github.com/thewizardplusplus/go-chess-minimax/terminators"
 	models "github.com/thewizardplusplus/go-chess-models"
-	"github.com/thewizardplusplus/go-chess-models/games"
 )
 
 type MockPieceStorage struct {
@@ -419,7 +418,7 @@ func TestAlphaBetaSearcherSearchMove(
 				bounds: moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{},
-			wantErr:  games.ErrDraw,
+			wantErr:  ErrDraw,
 		},
 		data{
 			fields: fields{
@@ -588,7 +587,7 @@ func TestAlphaBetaSearcherSearchMove(
 			wantMove: moves.ScoredMove{
 				Score: evaluateCheckmate(2),
 			},
-			wantErr: games.ErrCheckmate,
+			wantErr: ErrCheckmate,
 		},
 		data{
 			fields: fields{
@@ -1634,7 +1633,7 @@ func TestAlphaBetaSearcherSearchMove(
 							// move two -> checkmate
 							move.Score =
 								evaluateCheckmate(3)
-							err = games.ErrCheckmate
+							err = ErrCheckmate
 						}
 
 						return move, err
@@ -1738,7 +1737,7 @@ func TestAlphaBetaSearcherSearchMove(
 				bounds:  moves.Bounds{-2e6, 3e6},
 			},
 			wantMove: moves.ScoredMove{},
-			wantErr:  games.ErrDraw,
+			wantErr:  ErrDraw,
 		},
 	} {
 		searcher := AlphaBetaSearcher{

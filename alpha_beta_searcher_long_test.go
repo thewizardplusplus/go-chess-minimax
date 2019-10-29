@@ -8,7 +8,6 @@ import (
 
 	moves "github.com/thewizardplusplus/go-chess-minimax/models"
 	models "github.com/thewizardplusplus/go-chess-models"
-	"github.com/thewizardplusplus/go-chess-models/games"
 )
 
 func TestAlphaBetaSearcher(
@@ -54,7 +53,7 @@ func TestAlphaBetaSearcher(
 				maximalDeep: 1,
 			},
 			wantMove: moves.ScoredMove{},
-			wantErr:  games.ErrDraw,
+			wantErr:  ErrDraw,
 		},
 		// draw with checks on a first ply
 		data{
@@ -65,7 +64,7 @@ func TestAlphaBetaSearcher(
 				maximalDeep: 1,
 			},
 			wantMove: moves.ScoredMove{},
-			wantErr:  games.ErrDraw,
+			wantErr:  ErrDraw,
 		},
 		// draw with checks on a third ply
 		data{
@@ -95,7 +94,7 @@ func TestAlphaBetaSearcher(
 			wantMove: moves.ScoredMove{
 				Score: evaluateCheckmate(0),
 			},
-			wantErr: games.ErrCheckmate,
+			wantErr: ErrCheckmate,
 		},
 		// checkmate on a second ply
 		data{
