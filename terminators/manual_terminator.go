@@ -24,3 +24,10 @@ func (
 	flag := &terminator.terminationFlag
 	atomic.StoreUint64(flag, 1)
 }
+
+// SearchProgress ...
+func (
+	terminator ManualTerminator,
+) SearchProgress(deep int) float64 {
+	return 0
+}

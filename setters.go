@@ -15,8 +15,8 @@ type MoveSearcher interface {
 
 	// It should return only following errors:
 	// * models.ErrKingCapture;
-	// * games.ErrCheckmate;
-	// * games.ErrDraw.
+	// * ErrCheckmate;
+	// * ErrDraw.
 	SearchMove(
 		storage models.PieceStorage,
 		color models.Color,

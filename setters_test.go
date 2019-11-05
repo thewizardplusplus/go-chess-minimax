@@ -70,6 +70,7 @@ func (
 
 type MockSearchTerminator struct {
 	isSearchTerminated func(deep int) bool
+	searchProgress     func(deep int) float64
 }
 
 func (
@@ -79,8 +80,17 @@ func (
 		panic("not implemented")
 	}
 
-	return terminator.
-		isSearchTerminated(deep)
+	return terminator.isSearchTerminated(deep)
+}
+
+func (
+	terminator MockSearchTerminator,
+) SearchProgress(deep int) float64 {
+	if terminator.searchProgress == nil {
+		panic("not implemented")
+	}
+
+	return terminator.searchProgress(deep)
 }
 
 func TestSearcherSetterSetSearcher(
