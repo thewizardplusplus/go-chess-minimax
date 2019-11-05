@@ -13,6 +13,8 @@ type MoveSearcher interface {
 		terminator terminators.SearchTerminator,
 	)
 
+	SearchProgress(deep int) float64
+
 	// It should return only following errors:
 	// * models.ErrKingCapture;
 	// * ErrCheckmate;
@@ -49,4 +51,12 @@ func (
 	terminator terminators.SearchTerminator,
 ) {
 	setter.terminator = terminator
+}
+
+// SearchProgress ...
+func (
+	setter *TerminatorSetter,
+) SearchProgress(deep int) float64 {
+	return setter.terminator.
+		SearchProgress(deep)
 }

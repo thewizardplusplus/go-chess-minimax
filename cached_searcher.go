@@ -44,6 +44,14 @@ func (searcher CachedSearcher) SetTerminator(
 	searcher.searcher.SetTerminator(terminator)
 }
 
+// SearchProgress ...
+func (
+	searcher CachedSearcher,
+) SearchProgress(deep int) float64 {
+	return searcher.searcher.
+		SearchProgress(deep)
+}
+
 // SearchMove ...
 func (searcher CachedSearcher) SearchMove(
 	storage models.PieceStorage,

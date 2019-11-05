@@ -16,7 +16,8 @@ type MockMoveSearcher struct {
 	setTerminator func(
 		terminator terminators.SearchTerminator,
 	)
-	searchMove func(
+	searchProgress func(deep int) float64
+	searchMove     func(
 		storage models.PieceStorage,
 		color models.Color,
 		deep int,
@@ -46,6 +47,16 @@ func (
 	}
 
 	searcher.setTerminator(terminator)
+}
+
+func (
+	searcher MockMoveSearcher,
+) SearchProgress(deep int) float64 {
+	if searcher.searchProgress == nil {
+		panic("not implemented")
+	}
+
+	return searcher.searchProgress(deep)
 }
 
 func (
