@@ -50,12 +50,14 @@ func TestScoredMoveIsUpdated(
 
 func TestScoredMoveUpdate(test *testing.T) {
 	type fields struct {
-		move  models.Move
-		score float64
+		move    models.Move
+		score   float64
+		quality float64
 	}
 	type args struct {
-		scoredMove ScoredMove
-		rawMove    models.Move
+		scoredMove  ScoredMove
+		rawMove     models.Move
+		moveQuality float64
 	}
 	type data struct {
 		fields   fields
@@ -76,7 +78,8 @@ func TestScoredMoveUpdate(test *testing.T) {
 						Rank: 4,
 					},
 				},
-				score: 4.2,
+				score:   4.2,
+				quality: 0.25,
 			},
 			args: args{
 				scoredMove: ScoredMove{Score: 2.3},
@@ -90,6 +93,7 @@ func TestScoredMoveUpdate(test *testing.T) {
 						Rank: 8,
 					},
 				},
+				moveQuality: 0.75,
 			},
 			wantMove: ScoredMove{
 				Move: models.Move{
@@ -102,7 +106,8 @@ func TestScoredMoveUpdate(test *testing.T) {
 						Rank: 4,
 					},
 				},
-				Score: 4.2,
+				Score:   4.2,
+				Quality: 0.25,
 			},
 		},
 		data{
@@ -117,7 +122,8 @@ func TestScoredMoveUpdate(test *testing.T) {
 						Rank: 4,
 					},
 				},
-				score: -4.2,
+				score:   -4.2,
+				quality: 0.25,
 			},
 			args: args{
 				scoredMove: ScoredMove{Score: 2.3},
@@ -131,6 +137,7 @@ func TestScoredMoveUpdate(test *testing.T) {
 						Rank: 8,
 					},
 				},
+				moveQuality: 0.75,
 			},
 			wantMove: ScoredMove{
 				Move: models.Move{
@@ -143,17 +150,20 @@ func TestScoredMoveUpdate(test *testing.T) {
 						Rank: 8,
 					},
 				},
-				Score: -2.3,
+				Score:   -2.3,
+				Quality: 0.75,
 			},
 		},
 	} {
 		move := ScoredMove{
-			Move:  data.fields.move,
-			Score: data.fields.score,
+			Move:    data.fields.move,
+			Score:   data.fields.score,
+			Quality: data.fields.quality,
 		}
 		move.Update(
 			data.args.scoredMove,
 			data.args.rawMove,
+			data.args.moveQuality,
 		)
 
 		if !reflect.DeepEqual(

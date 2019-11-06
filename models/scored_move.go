@@ -31,6 +31,7 @@ func (move ScoredMove) IsUpdated() bool {
 func (move *ScoredMove) Update(
 	scoredMove ScoredMove,
 	rawMove models.Move,
+	moveQuality float64,
 ) {
 	score := -scoredMove.Score
 	if move.Score >= score {
@@ -38,7 +39,8 @@ func (move *ScoredMove) Update(
 	}
 
 	*move = ScoredMove{
-		Move:  rawMove,
-		Score: score,
+		Move:    rawMove,
+		Score:   score,
+		Quality: moveQuality,
 	}
 }

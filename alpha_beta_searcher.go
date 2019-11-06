@@ -113,15 +113,17 @@ func (
 			moveQuality,
 		)
 		if !ok {
-			scoredMove.Quality = moveQuality
 			return scoredMove, nil
 		}
 
-		bestMove.Update(scoredMove, move)
+		bestMove.Update(
+			scoredMove,
+			move,
+			moveQuality,
+		)
 	}
 	// has a legal move
 	if bestMove.IsUpdated() {
-		bestMove.Quality = moveQuality
 		return bestMove, nil
 	}
 
