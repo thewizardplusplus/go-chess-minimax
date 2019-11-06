@@ -28,7 +28,7 @@ type Side int
 
 // ...
 const (
-	Iterative Side = iota
+	OldParallel Side = iota
 	Parallel
 )
 
@@ -66,9 +66,9 @@ func (score Score) Elo(
 
 // Scores ...
 type Scores struct {
-	gameCount int64
-	iterative Score
-	parallel  Score
+	gameCount   int64
+	oldParallel Score
+	parallel    Score
 }
 
 // AddGame ...
@@ -81,13 +81,13 @@ func (scores *Scores) AddGame(
 	switch err {
 	case minimax.ErrCheckmate:
 		switch loserSide {
-		case Iterative:
+		case OldParallel:
 			scores.parallel.Win()
 		case Parallel:
-			scores.iterative.Win()
+			scores.oldParallel.Win()
 		}
 	case minimax.ErrDraw:
-		scores.iterative.Draw()
+		scores.oldParallel.Draw()
 		scores.parallel.Draw()
 	}
 }
@@ -96,11 +96,11 @@ func (scores *Scores) AddGame(
 func (scores Scores) String() string {
 	return fmt.Sprintf(
 		"Games: %d "+
-			"Iterative: %.1f "+
+			"Old Parallel: %.1f "+
 			"Parallel: %.1f\n"+
 			"Parallel Elo Delta: %.2f",
 		scores.gameCount,
-		scores.iterative.Score(),
+		scores.oldParallel.Score(),
 		scores.parallel.Score(),
 		scores.parallel.Elo(scores.gameCount),
 	)
@@ -158,43 +158,52 @@ func makeTerminator(
 	)
 }
 
-func iterativeSearch(
+func oldParallelSearch(
 	cache caches.Cache,
 	storage models.PieceStorage,
 	color models.Color,
 	maxDeep int,
 	maxDuration time.Duration,
 ) (moves.ScoredMove, error) {
-	innerSearcher :=
-		minimax.NewAlphaBetaSearcher(
-			generator,
-			// terminator will be set
-			// automatically
-			// by the iterative searcher
-			nil,
-			evaluator,
-		)
-
-	// make and bind a cached searcher
-	// to inner one
-	minimax.NewCachedSearcher(
-		innerSearcher,
-		cache,
-	)
-
 	terminator := makeTerminator(
 		maxDeep,
 		maxDuration,
 	)
-	searcher := minimax.NewIterativeSearcher(
-		innerSearcher,
+	searcher := minimax.NewParallelSearcher(
 		terminator,
+		runtime.NumCPU(),
+		func() minimax.MoveSearcher {
+			innerSearcher :=
+				minimax.NewAlphaBetaSearcher(
+					generator,
+					// terminator will be set
+					// automatically
+					// by the iterative searcher
+					nil,
+					evaluator,
+				)
+
+			// make and bind a cached searcher
+			// to inner one
+			minimax.NewOldCachedSearcher(
+				innerSearcher,
+				cache,
+			)
+
+			return minimax.NewIterativeSearcher(
+				innerSearcher,
+				// terminator will be set
+				// automatically
+				// by the parallel searcher
+				nil,
+			)
+		},
 	)
 
 	return searcher.SearchMove(
 		storage,
 		color,
-		0,
+		0, // initial deep
 		moves.NewBounds(),
 	)
 }
@@ -256,23 +265,25 @@ func game(
 	maxDuration time.Duration,
 	maxMoveCount int,
 ) (Side, error) {
-	cacheOne := caches.NewStringHashingCache(
-		1e6,
-		uci.EncodePieceStorage,
+	cacheOne := caches.NewParallelCache(
+		caches.NewStringHashingCache(
+			1e6,
+			uci.EncodePieceStorage,
+		),
 	)
-	cacheTwo := caches.NewStringHashingCache(
-		1e6,
-		uci.EncodePieceStorage,
+	cacheTwo := caches.NewParallelCache(
+		caches.NewStringHashingCache(
+			1e6,
+			uci.EncodePieceStorage,
+		),
 	)
-	parallelCacheTwo :=
-		caches.NewParallelCache(cacheTwo)
 
 	for i := 0; i < maxMoveCount; i++ {
 		if i%5 == 0 {
 			fmt.Print(".")
 		}
 
-		move, err := iterativeSearch(
+		move, err := oldParallelSearch(
 			cacheOne,
 			storage,
 			color,
@@ -280,14 +291,14 @@ func game(
 			maxDuration,
 		)
 		if err != nil {
-			return Iterative, err
+			return OldParallel, err
 		}
 
 		storage = storage.ApplyMove(move.Move)
 		color = color.Negative()
 
 		move, err = parallelSearch(
-			parallelCacheTwo,
+			cacheTwo,
 			storage,
 			color,
 			maxDeep,
@@ -308,10 +319,10 @@ func markGame(loserSide Side, err error) {
 	switch err {
 	case minimax.ErrCheckmate:
 		switch loserSide {
-		case Iterative:
-			fmt.Print("P")
+		case OldParallel:
+			fmt.Print("N")
 		case Parallel:
-			fmt.Print("I")
+			fmt.Print("O")
 		}
 	case minimax.ErrDraw:
 		fmt.Print("D")
