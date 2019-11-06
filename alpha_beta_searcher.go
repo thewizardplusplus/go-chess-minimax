@@ -87,9 +87,8 @@ func (
 
 	var hasCheck bool
 	bestMove := moves.NewScoredMove()
-	moveQuality := 0.75
-	//moveQuality := 1 - searcher.searcher.
-	//  SearchProgress(deep)
+	moveQuality := 1 - searcher.terminator.
+		SearchProgress(deep)
 	for _, move := range moveGroup {
 		nextStorage := storage.ApplyMove(move)
 		nextColor := color.Negative()
