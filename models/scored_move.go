@@ -8,8 +8,9 @@ import (
 
 // ScoredMove ...
 type ScoredMove struct {
-	Move  models.Move
-	Score float64
+	Move    models.Move
+	Score   float64
+	Quality float64
 }
 
 var (
@@ -32,7 +33,12 @@ func (move *ScoredMove) Update(
 	rawMove models.Move,
 ) {
 	score := -scoredMove.Score
-	if move.Score < score {
-		*move = ScoredMove{rawMove, score}
+	if move.Score >= score {
+		return
+	}
+
+	*move = ScoredMove{
+		Move:  rawMove,
+		Score: score,
 	}
 }

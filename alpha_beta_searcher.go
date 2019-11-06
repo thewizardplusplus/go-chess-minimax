@@ -87,6 +87,9 @@ func (
 
 	var hasCheck bool
 	bestMove := moves.NewScoredMove()
+	moveQuality := 0.75
+	//moveQuality := 1 - searcher.searcher.
+	//  SearchProgress(deep)
 	for _, move := range moveGroup {
 		nextStorage := storage.ApplyMove(move)
 		nextColor := color.Negative()
@@ -104,9 +107,13 @@ func (
 			continue
 		}
 
-		scoredMove, ok :=
-			bounds.Update(scoredMove, move)
+		scoredMove, ok := bounds.Update(
+			scoredMove,
+			move,
+			moveQuality,
+		)
 		if !ok {
+			scoredMove.Quality = moveQuality
 			return scoredMove, nil
 		}
 
@@ -114,6 +121,7 @@ func (
 	}
 	// has a legal move
 	if bestMove.IsUpdated() {
+		bestMove.Quality = moveQuality
 		return bestMove, nil
 	}
 

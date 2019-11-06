@@ -32,8 +32,9 @@ func TestBoundsUpdate(test *testing.T) {
 		beta  float64
 	}
 	type args struct {
-		scoredMove ScoredMove
-		rawMove    models.Move
+		scoredMove  ScoredMove
+		rawMove     models.Move
+		moveQuality float64
 	}
 	type data struct {
 		fields     fields
@@ -52,12 +53,14 @@ func TestBoundsUpdate(test *testing.T) {
 						Start:  models.Position{1, 2},
 						Finish: models.Position{3, 4},
 					},
-					Score: 5,
+					Score:   5,
+					Quality: 0.25,
 				},
 				rawMove: models.Move{
 					Start:  models.Position{5, 6},
 					Finish: models.Position{7, 8},
 				},
+				moveQuality: 0.75,
 			},
 			wantBounds: Bounds{-2.3, 4.2},
 			wantMove: ScoredMove{
@@ -65,7 +68,8 @@ func TestBoundsUpdate(test *testing.T) {
 					Start:  models.Position{1, 2},
 					Finish: models.Position{3, 4},
 				},
-				Score: 5,
+				Score:   5,
+				Quality: 0.25,
 			},
 			wantOk: true,
 		},
@@ -77,12 +81,14 @@ func TestBoundsUpdate(test *testing.T) {
 						Start:  models.Position{1, 2},
 						Finish: models.Position{3, 4},
 					},
-					Score: 1.2,
+					Score:   1.2,
+					Quality: 0.25,
 				},
 				rawMove: models.Move{
 					Start:  models.Position{5, 6},
 					Finish: models.Position{7, 8},
 				},
+				moveQuality: 0.75,
 			},
 			wantBounds: Bounds{-1.2, 4.2},
 			wantMove: ScoredMove{
@@ -90,7 +96,8 @@ func TestBoundsUpdate(test *testing.T) {
 					Start:  models.Position{1, 2},
 					Finish: models.Position{3, 4},
 				},
-				Score: 1.2,
+				Score:   1.2,
+				Quality: 0.25,
 			},
 			wantOk: true,
 		},
@@ -102,12 +109,14 @@ func TestBoundsUpdate(test *testing.T) {
 						Start:  models.Position{1, 2},
 						Finish: models.Position{3, 4},
 					},
-					Score: -4.2,
+					Score:   -4.2,
+					Quality: 0.25,
 				},
 				rawMove: models.Move{
 					Start:  models.Position{5, 6},
 					Finish: models.Position{7, 8},
 				},
+				moveQuality: 0.75,
 			},
 			wantBounds: Bounds{4.2, 4.2},
 			wantMove: ScoredMove{
@@ -115,7 +124,8 @@ func TestBoundsUpdate(test *testing.T) {
 					Start:  models.Position{5, 6},
 					Finish: models.Position{7, 8},
 				},
-				Score: 4.2,
+				Score:   4.2,
+				Quality: 0.75,
 			},
 			wantOk: false,
 		},
@@ -127,12 +137,14 @@ func TestBoundsUpdate(test *testing.T) {
 						Start:  models.Position{1, 2},
 						Finish: models.Position{3, 4},
 					},
-					Score: -5,
+					Score:   -5,
+					Quality: 0.25,
 				},
 				rawMove: models.Move{
 					Start:  models.Position{5, 6},
 					Finish: models.Position{7, 8},
 				},
+				moveQuality: 0.75,
 			},
 			wantBounds: Bounds{5, 4.2},
 			wantMove: ScoredMove{
@@ -140,7 +152,8 @@ func TestBoundsUpdate(test *testing.T) {
 					Start:  models.Position{5, 6},
 					Finish: models.Position{7, 8},
 				},
-				Score: 5,
+				Score:   5,
+				Quality: 0.75,
 			},
 			wantOk: false,
 		},
@@ -152,6 +165,7 @@ func TestBoundsUpdate(test *testing.T) {
 		gotMove, gotOk := bounds.Update(
 			data.args.scoredMove,
 			data.args.rawMove,
+			data.args.moveQuality,
 		)
 
 		if !reflect.DeepEqual(

@@ -27,13 +27,19 @@ func (bounds Bounds) Next() Bounds {
 func (bounds *Bounds) Update(
 	scoredMove ScoredMove,
 	rawMove models.Move,
+	moveQuality float64,
 ) (newScoredMove ScoredMove, ok bool) {
 	score := -scoredMove.Score
 	if score > bounds.Alpha {
 		bounds.Alpha = score
 	}
 	if score >= bounds.Beta {
-		return ScoredMove{rawMove, score}, false
+		scoredMove := ScoredMove{
+			Move:    rawMove,
+			Score:   score,
+			Quality: moveQuality,
+		}
+		return scoredMove, false
 	}
 
 	return scoredMove, true

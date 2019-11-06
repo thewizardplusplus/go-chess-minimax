@@ -313,6 +313,15 @@ func TestAlphaBetaSearcherSearchMove(
 
 						return false
 					},
+					searchProgress: func(
+						deep int,
+					) float64 {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return 0.75
+					},
 				},
 				searcher: MockMoveSearcher{
 					searchMove: func(
@@ -480,6 +489,15 @@ func TestAlphaBetaSearcherSearchMove(
 
 						return false
 					},
+					searchProgress: func(
+						deep int,
+					) float64 {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return 0.75
+					},
 				},
 				searcher: MockMoveSearcher{
 					searchMove: func(
@@ -642,6 +660,15 @@ func TestAlphaBetaSearcherSearchMove(
 						}
 
 						return false
+					},
+					searchProgress: func(
+						deep int,
+					) float64 {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return 0.75
 					},
 				},
 				searcher: MockMoveSearcher{
@@ -830,6 +857,15 @@ func TestAlphaBetaSearcherSearchMove(
 
 						return false
 					},
+					searchProgress: func(
+						deep int,
+					) float64 {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return 0.75
+					},
 				},
 				searcher: MockMoveSearcher{
 					searchMove: func(
@@ -1016,6 +1052,15 @@ func TestAlphaBetaSearcherSearchMove(
 						}
 
 						return false
+					},
+					searchProgress: func(
+						deep int,
+					) float64 {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return 0.75
 					},
 				},
 				searcher: MockMoveSearcher{
@@ -1199,6 +1244,15 @@ func TestAlphaBetaSearcherSearchMove(
 
 						return false
 					},
+					searchProgress: func(
+						deep int,
+					) float64 {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return 0.75
+					},
 				},
 				searcher: MockMoveSearcher{
 					searchMove: func(
@@ -1380,6 +1434,15 @@ func TestAlphaBetaSearcherSearchMove(
 						}
 
 						return false
+					},
+					searchProgress: func(
+						deep int,
+					) float64 {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return 0.75
 					},
 				},
 				searcher: MockMoveSearcher{
@@ -1563,6 +1626,15 @@ func TestAlphaBetaSearcherSearchMove(
 
 						return false
 					},
+					searchProgress: func(
+						deep int,
+					) float64 {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return 0.75
+					},
 				},
 				searcher: MockMoveSearcher{
 					searchMove: func(
@@ -1727,6 +1799,15 @@ func TestAlphaBetaSearcherSearchMove(
 						}
 
 						return false
+					},
+					searchProgress: func(
+						deep int,
+					) float64 {
+						if deep != 2 {
+							test.Fail()
+						}
+
+						return 0.75
 					},
 				},
 			},
