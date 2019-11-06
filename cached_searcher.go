@@ -61,7 +61,9 @@ func (searcher CachedSearcher) SearchMove(
 ) (moves.ScoredMove, error) {
 	data, ok := searcher.cache.
 		Get(storage, color)
-	if ok {
+	moveQuality :=
+		evaluateQuality(searcher, deep)
+	if ok && data.Move.Quality >= moveQuality {
 		return data.Move, data.Error
 	}
 

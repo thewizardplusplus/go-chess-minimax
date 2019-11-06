@@ -87,8 +87,8 @@ func (
 
 	var hasCheck bool
 	bestMove := moves.NewScoredMove()
-	moveQuality := 1 - searcher.terminator.
-		SearchProgress(deep)
+	moveQuality :=
+		evaluateQuality(searcher, deep)
 	for _, move := range moveGroup {
 		nextStorage := storage.ApplyMove(move)
 		nextColor := color.Negative()
@@ -141,6 +141,13 @@ func (
 
 	// score of a draw is a null
 	return moves.ScoredMove{}, ErrDraw
+}
+
+func evaluateQuality(
+	searcher MoveSearcher,
+	deep int,
+) float64 {
+	return 1 - searcher.SearchProgress(deep)
 }
 
 // it evaluates a score of a checkmate
