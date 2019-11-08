@@ -57,7 +57,7 @@ func TestIterativeSearcher(
 			wantMove: moves.ScoredMove{},
 			wantErr:  ErrDraw,
 		},
-		// draw with checks
+		// draw with checks on a first ply
 		data{
 			args: args{
 				boardInFEN: "7K/8/8/8" +
@@ -67,6 +67,24 @@ func TestIterativeSearcher(
 			},
 			wantMove: moves.ScoredMove{},
 			wantErr:  ErrDraw,
+		},
+		// draw with checks on a third ply
+		data{
+			args: args{
+				boardInFEN: "7K/6P1/8/2q5" +
+					"/8/8/b7/kb2B3",
+				color:       models.White,
+				maximalDeep: 3,
+			},
+			wantMove: moves.ScoredMove{
+				Move: models.Move{
+					Start:  models.Position{4, 0},
+					Finish: models.Position{2, 2},
+				},
+				Score:   0,
+				Quality: 1,
+			},
+			wantErr: nil,
 		},
 		// checkmate on a first ply
 		data{
@@ -116,7 +134,7 @@ func TestIterativeSearcher(
 			},
 			wantErr: nil,
 		},
-		// single profitable move
+		// single profitable move on a first ply
 		data{
 			args: args{
 				boardInFEN:  "7K/8/7q/8/8/8/7Q/k7",
@@ -129,6 +147,24 @@ func TestIterativeSearcher(
 					Finish: models.Position{7, 5},
 				},
 				Score:   9,
+				Quality: 1,
+			},
+			wantErr: nil,
+		},
+		// single profitable move on a third ply
+		data{
+			args: args{
+				boardInFEN: "kn6/n6q/PP6/8" +
+					"/8/8/7P/7K",
+				color:       models.White,
+				maximalDeep: 3,
+			},
+			wantMove: moves.ScoredMove{
+				Move: models.Move{
+					Start:  models.Position{1, 5},
+					Finish: models.Position{1, 6},
+				},
+				Score:   -4,
 				Quality: 1,
 			},
 			wantErr: nil,
