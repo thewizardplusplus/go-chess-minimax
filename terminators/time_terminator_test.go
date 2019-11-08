@@ -105,6 +105,83 @@ func TestTimeTerminatorIsSearchTerminated(
 	}
 }
 
+func TestTimeTerminatorSearchProgress(
+	test *testing.T,
+) {
+	type fields struct {
+		clock           Clock
+		maximalDuration time.Duration
+		startTime       time.Time
+	}
+	type args struct {
+		deep int
+	}
+	type data struct {
+		fields fields
+		args   args
+		want   float64
+	}
+
+	for _, data := range []data{
+		data{
+			fields: fields{
+				clock:           clock,
+				maximalDuration: 100 * time.Second,
+				startTime:       clock(),
+			},
+			args: args{5},
+			want: 0,
+		},
+		data{
+			fields: fields{
+				clock:           clock,
+				maximalDuration: 100 * time.Second,
+				startTime: clock().Add(
+					-75 * time.Second,
+				),
+			},
+			args: args{5},
+			want: 0.75,
+		},
+		data{
+			fields: fields{
+				clock:           clock,
+				maximalDuration: 100 * time.Second,
+				startTime: clock().Add(
+					-100 * time.Second,
+				),
+			},
+			args: args{5},
+			want: 1,
+		},
+		data{
+			fields: fields{
+				clock:           clock,
+				maximalDuration: 100 * time.Second,
+				startTime: clock().Add(
+					-110 * time.Second,
+				),
+			},
+			args: args{5},
+			want: 1,
+		},
+	} {
+		terminator := TimeTerminator{
+			clock: data.fields.clock,
+			maximalDuration: data.fields.
+				maximalDuration,
+			startTime: data.fields.startTime,
+		}
+		got := terminator.SearchProgress(
+			data.args.deep,
+		)
+
+		if got != data.want {
+			test.Fail()
+		}
+	}
+}
+
 func clock() time.Time {
 	year, month, day := 2006, time.January, 2
 	hour, minute, second := 15, 4, 5
