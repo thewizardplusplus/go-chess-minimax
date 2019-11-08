@@ -23,6 +23,10 @@ func (
 func (
 	terminator DeepTerminator,
 ) SearchProgress(deep int) float64 {
+	if terminator.IsSearchTerminated(deep) {
+		return 1
+	}
+
 	return float64(deep) /
 		float64(terminator.maximalDeep)
 }

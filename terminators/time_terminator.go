@@ -38,6 +38,10 @@ func (
 func (
 	terminator TimeTerminator,
 ) SearchProgress(deep int) float64 {
+	if terminator.IsSearchTerminated(deep) {
+		return 1
+	}
+
 	return float64(terminator.elapsedTime()) /
 		float64(terminator.maximalDuration)
 }

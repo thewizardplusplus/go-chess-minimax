@@ -29,5 +29,9 @@ func (
 func (
 	terminator ManualTerminator,
 ) SearchProgress(deep int) float64 {
+	if terminator.IsSearchTerminated(deep) {
+		return 1
+	}
+
 	return 0
 }
