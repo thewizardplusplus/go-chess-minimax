@@ -104,6 +104,31 @@ func TestCachedSearcherSetTerminator(
 	searcher.SetTerminator(terminator)
 }
 
+func TestCachedSearcherSearchProgress(
+	test *testing.T,
+) {
+	searcher := CachedSearcher{
+		SearcherSetter: &SearcherSetter{
+			searcher: MockMoveSearcher{
+				searchProgress: func(
+					deep int,
+				) float64 {
+					if deep != 2 {
+						test.Fail()
+					}
+
+					return 0.75
+				},
+			},
+		},
+	}
+	got := searcher.SearchProgress(2)
+
+	if got != 0.75 {
+		test.Fail()
+	}
+}
+
 func TestCachedSearcherSearchMove(
 	test *testing.T,
 ) {
