@@ -56,3 +56,53 @@ func TestDeepTerminatorIsSearchTerminated(
 		}
 	}
 }
+
+func TestDeepTerminatorSearchProgress(
+	test *testing.T,
+) {
+	type fields struct {
+		maximalDeep int
+	}
+	type args struct {
+		deep int
+	}
+	type data struct {
+		fields fields
+		args   args
+		want   float64
+	}
+
+	for _, data := range []data{
+		data{
+			fields: fields{100},
+			args:   args{0},
+			want:   0,
+		},
+		data{
+			fields: fields{100},
+			args:   args{75},
+			want:   0.75,
+		},
+		data{
+			fields: fields{100},
+			args:   args{100},
+			want:   1,
+		},
+		data{
+			fields: fields{100},
+			args:   args{110},
+			want:   1,
+		},
+	} {
+		terminator := DeepTerminator{
+			maximalDeep: data.fields.maximalDeep,
+		}
+		got := terminator.SearchProgress(
+			data.args.deep,
+		)
+
+		if got != data.want {
+			test.Fail()
+		}
+	}
+}
