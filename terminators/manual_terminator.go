@@ -27,7 +27,7 @@ func (
 
 // SearchProgress ...
 func (
-	terminator ManualTerminator,
+	terminator *ManualTerminator,
 ) SearchProgress(deep int) float64 {
 	if terminator.IsSearchTerminated(deep) {
 		return 1
