@@ -45,112 +45,184 @@ func TestBoundsUpdate(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{-2.3, 4.2},
 			args: args{
 				scoredMove: ScoredMove{
 					Move: models.Move{
-						Start:  models.Position{1, 2},
-						Finish: models.Position{3, 4},
+						Start: models.Position{
+							File: 1,
+							Rank: 2,
+						},
+						Finish: models.Position{
+							File: 3,
+							Rank: 4,
+						},
 					},
 					Score:   5,
 					Quality: 0.25,
 				},
 				rawMove: models.Move{
-					Start:  models.Position{5, 6},
-					Finish: models.Position{7, 8},
+					Start: models.Position{
+						File: 5,
+						Rank: 6,
+					},
+					Finish: models.Position{
+						File: 7,
+						Rank: 8,
+					},
 				},
 				moveQuality: 0.75,
 			},
 			wantBounds: Bounds{-2.3, 4.2},
 			wantMove: ScoredMove{
 				Move: models.Move{
-					Start:  models.Position{1, 2},
-					Finish: models.Position{3, 4},
+					Start: models.Position{
+						File: 1,
+						Rank: 2,
+					},
+					Finish: models.Position{
+						File: 3,
+						Rank: 4,
+					},
 				},
 				Score:   5,
 				Quality: 0.25,
 			},
 			wantOk: true,
 		},
-		data{
+		{
 			fields: fields{-2.3, 4.2},
 			args: args{
 				scoredMove: ScoredMove{
 					Move: models.Move{
-						Start:  models.Position{1, 2},
-						Finish: models.Position{3, 4},
+						Start: models.Position{
+							File: 1,
+							Rank: 2,
+						},
+						Finish: models.Position{
+							File: 3,
+							Rank: 4,
+						},
 					},
 					Score:   1.2,
 					Quality: 0.25,
 				},
 				rawMove: models.Move{
-					Start:  models.Position{5, 6},
-					Finish: models.Position{7, 8},
+					Start: models.Position{
+						File: 5,
+						Rank: 6,
+					},
+					Finish: models.Position{
+						File: 7,
+						Rank: 8,
+					},
 				},
 				moveQuality: 0.75,
 			},
 			wantBounds: Bounds{-1.2, 4.2},
 			wantMove: ScoredMove{
 				Move: models.Move{
-					Start:  models.Position{1, 2},
-					Finish: models.Position{3, 4},
+					Start: models.Position{
+						File: 1,
+						Rank: 2,
+					},
+					Finish: models.Position{
+						File: 3,
+						Rank: 4,
+					},
 				},
 				Score:   1.2,
 				Quality: 0.25,
 			},
 			wantOk: true,
 		},
-		data{
+		{
 			fields: fields{-2.3, 4.2},
 			args: args{
 				scoredMove: ScoredMove{
 					Move: models.Move{
-						Start:  models.Position{1, 2},
-						Finish: models.Position{3, 4},
+						Start: models.Position{
+							File: 1,
+							Rank: 2,
+						},
+						Finish: models.Position{
+							File: 3,
+							Rank: 4,
+						},
 					},
 					Score:   -4.2,
 					Quality: 0.25,
 				},
 				rawMove: models.Move{
-					Start:  models.Position{5, 6},
-					Finish: models.Position{7, 8},
+					Start: models.Position{
+						File: 5,
+						Rank: 6,
+					},
+					Finish: models.Position{
+						File: 7,
+						Rank: 8,
+					},
 				},
 				moveQuality: 0.75,
 			},
 			wantBounds: Bounds{4.2, 4.2},
 			wantMove: ScoredMove{
 				Move: models.Move{
-					Start:  models.Position{5, 6},
-					Finish: models.Position{7, 8},
+					Start: models.Position{
+						File: 5,
+						Rank: 6,
+					},
+					Finish: models.Position{
+						File: 7,
+						Rank: 8,
+					},
 				},
 				Score:   4.2,
 				Quality: 0.75,
 			},
 			wantOk: false,
 		},
-		data{
+		{
 			fields: fields{-2.3, 4.2},
 			args: args{
 				scoredMove: ScoredMove{
 					Move: models.Move{
-						Start:  models.Position{1, 2},
-						Finish: models.Position{3, 4},
+						Start: models.Position{
+							File: 1,
+							Rank: 2,
+						},
+						Finish: models.Position{
+							File: 3,
+							Rank: 4,
+						},
 					},
 					Score:   -5,
 					Quality: 0.25,
 				},
 				rawMove: models.Move{
-					Start:  models.Position{5, 6},
-					Finish: models.Position{7, 8},
+					Start: models.Position{
+						File: 5,
+						Rank: 6,
+					},
+					Finish: models.Position{
+						File: 7,
+						Rank: 8,
+					},
 				},
 				moveQuality: 0.75,
 			},
 			wantBounds: Bounds{5, 4.2},
 			wantMove: ScoredMove{
 				Move: models.Move{
-					Start:  models.Position{5, 6},
-					Finish: models.Position{7, 8},
+					Start: models.Position{
+						File: 5,
+						Rank: 6,
+					},
+					Finish: models.Position{
+						File: 7,
+						Rank: 8,
+					},
 				},
 				Score:   5,
 				Quality: 0.75,
@@ -162,22 +234,13 @@ func TestBoundsUpdate(test *testing.T) {
 			Alpha: data.fields.alpha,
 			Beta:  data.fields.beta,
 		}
-		gotMove, gotOk := bounds.Update(
-			data.args.scoredMove,
-			data.args.rawMove,
-			data.args.moveQuality,
-		)
+		gotMove, gotOk :=
+			bounds.Update(data.args.scoredMove, data.args.rawMove, data.args.moveQuality)
 
-		if !reflect.DeepEqual(
-			bounds,
-			data.wantBounds,
-		) {
+		if !reflect.DeepEqual(bounds, data.wantBounds) {
 			test.Fail()
 		}
-		if !reflect.DeepEqual(
-			gotMove,
-			data.wantMove,
-		) {
+		if !reflect.DeepEqual(gotMove, data.wantMove) {
 			test.Fail()
 		}
 		if gotOk != data.wantOk {

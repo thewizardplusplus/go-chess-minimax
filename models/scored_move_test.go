@@ -16,9 +16,7 @@ func TestNewScoredMove(test *testing.T) {
 	}
 }
 
-func TestScoredMoveIsUpdated(
-	test *testing.T,
-) {
+func TestScoredMoveIsUpdated(test *testing.T) {
 	type fields struct {
 		score float64
 	}
@@ -28,11 +26,11 @@ func TestScoredMoveIsUpdated(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{initialScore},
 			want:   false,
 		},
-		data{
+		{
 			fields: fields{2.3},
 			want:   true,
 		},
@@ -66,7 +64,7 @@ func TestScoredMoveUpdate(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				move: models.Move{
 					Start: models.Position{
@@ -110,7 +108,7 @@ func TestScoredMoveUpdate(test *testing.T) {
 				Quality: 0.25,
 			},
 		},
-		data{
+		{
 			fields: fields{
 				move: models.Move{
 					Start: models.Position{
@@ -160,16 +158,9 @@ func TestScoredMoveUpdate(test *testing.T) {
 			Score:   data.fields.score,
 			Quality: data.fields.quality,
 		}
-		move.Update(
-			data.args.scoredMove,
-			data.args.rawMove,
-			data.args.moveQuality,
-		)
+		move.Update(data.args.scoredMove, data.args.rawMove, data.args.moveQuality)
 
-		if !reflect.DeepEqual(
-			move,
-			data.wantMove,
-		) {
+		if !reflect.DeepEqual(move, data.wantMove) {
 			test.Fail()
 		}
 	}

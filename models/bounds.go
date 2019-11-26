@@ -34,7 +34,7 @@ func (bounds *Bounds) Update(
 		bounds.Alpha = score
 	}
 	if score >= bounds.Beta {
-		scoredMove := ScoredMove{
+		scoredMove = ScoredMove{
 			Move:    rawMove,
 			Score:   score,
 			Quality: moveQuality,
