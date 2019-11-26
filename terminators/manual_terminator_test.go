@@ -4,9 +4,7 @@ import (
 	"testing"
 )
 
-func TestManualTerminatorIsSearchTerminated(
-	test *testing.T,
-) {
+func TestManualTerminatorIsSearchTerminated(test *testing.T) {
 	type fields struct {
 		terminationFlag uint64
 	}
@@ -20,24 +18,21 @@ func TestManualTerminatorIsSearchTerminated(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{0},
 			args:   args{5},
 			want:   false,
 		},
-		data{
+		{
 			fields: fields{1},
 			args:   args{5},
 			want:   true,
 		},
 	} {
 		terminator := ManualTerminator{
-			terminationFlag: data.fields.
-				terminationFlag,
+			terminationFlag: data.fields.terminationFlag,
 		}
-		got := terminator.IsSearchTerminated(
-			data.args.deep,
-		)
+		got := terminator.IsSearchTerminated(data.args.deep)
 
 		if got != data.want {
 			test.Fail()
@@ -45,9 +40,7 @@ func TestManualTerminatorIsSearchTerminated(
 	}
 }
 
-func TestManualTerminatorSearchProgress(
-	test *testing.T,
-) {
+func TestManualTerminatorSearchProgress(test *testing.T) {
 	type fields struct {
 		terminationFlag uint64
 	}
@@ -61,24 +54,21 @@ func TestManualTerminatorSearchProgress(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{0},
 			args:   args{5},
 			want:   0,
 		},
-		data{
+		{
 			fields: fields{1},
 			args:   args{5},
 			want:   1,
 		},
 	} {
 		terminator := ManualTerminator{
-			terminationFlag: data.fields.
-				terminationFlag,
+			terminationFlag: data.fields.terminationFlag,
 		}
-		got := terminator.SearchProgress(
-			data.args.deep,
-		)
+		got := terminator.SearchProgress(data.args.deep)
 
 		if got != data.want {
 			test.Fail()
@@ -86,9 +76,7 @@ func TestManualTerminatorSearchProgress(
 	}
 }
 
-func TestManualTerminatorTerminate(
-	test *testing.T,
-) {
+func TestManualTerminatorTerminate(test *testing.T) {
 	var terminator ManualTerminator
 	terminator.Terminate()
 

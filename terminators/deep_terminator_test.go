@@ -12,9 +12,7 @@ func TestNewDeepTerminator(test *testing.T) {
 	}
 }
 
-func TestDeepTerminatorIsSearchTerminated(
-	test *testing.T,
-) {
+func TestDeepTerminatorIsSearchTerminated(test *testing.T) {
 	type fields struct {
 		maximalDeep int
 	}
@@ -28,17 +26,17 @@ func TestDeepTerminatorIsSearchTerminated(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{5},
 			args:   args{4},
 			want:   false,
 		},
-		data{
+		{
 			fields: fields{5},
 			args:   args{5},
 			want:   true,
 		},
-		data{
+		{
 			fields: fields{5},
 			args:   args{6},
 			want:   true,
@@ -47,9 +45,7 @@ func TestDeepTerminatorIsSearchTerminated(
 		terminator := DeepTerminator{
 			maximalDeep: data.fields.maximalDeep,
 		}
-		got := terminator.IsSearchTerminated(
-			data.args.deep,
-		)
+		got := terminator.IsSearchTerminated(data.args.deep)
 
 		if got != data.want {
 			test.Fail()
@@ -57,9 +53,7 @@ func TestDeepTerminatorIsSearchTerminated(
 	}
 }
 
-func TestDeepTerminatorSearchProgress(
-	test *testing.T,
-) {
+func TestDeepTerminatorSearchProgress(test *testing.T) {
 	type fields struct {
 		maximalDeep int
 	}
@@ -73,22 +67,22 @@ func TestDeepTerminatorSearchProgress(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{100},
 			args:   args{0},
 			want:   0,
 		},
-		data{
+		{
 			fields: fields{100},
 			args:   args{75},
 			want:   0.75,
 		},
-		data{
+		{
 			fields: fields{100},
 			args:   args{100},
 			want:   1,
 		},
-		data{
+		{
 			fields: fields{100},
 			args:   args{110},
 			want:   1,
@@ -97,9 +91,7 @@ func TestDeepTerminatorSearchProgress(
 		terminator := DeepTerminator{
 			maximalDeep: data.fields.maximalDeep,
 		}
-		got := terminator.SearchProgress(
-			data.args.deep,
-		)
+		got := terminator.SearchProgress(data.args.deep)
 
 		if got != data.want {
 			test.Fail()

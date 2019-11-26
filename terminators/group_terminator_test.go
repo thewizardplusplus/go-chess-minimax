@@ -10,9 +10,7 @@ type MockSearchTerminator struct {
 	searchProgress     func(deep int) float64
 }
 
-func (
-	terminator MockSearchTerminator,
-) IsSearchTerminated(deep int) bool {
+func (terminator MockSearchTerminator) IsSearchTerminated(deep int) bool {
 	if terminator.isSearchTerminated == nil {
 		panic("not implemented")
 	}
@@ -20,9 +18,7 @@ func (
 	return terminator.isSearchTerminated(deep)
 }
 
-func (
-	terminator MockSearchTerminator,
-) SearchProgress(deep int) float64 {
+func (terminator MockSearchTerminator) SearchProgress(deep int) float64 {
 	if terminator.searchProgress == nil {
 		panic("not implemented")
 	}
@@ -30,9 +26,7 @@ func (
 	return terminator.searchProgress(deep)
 }
 
-func TestNewGroupTerminator(
-	test *testing.T,
-) {
+func TestNewGroupTerminator(test *testing.T) {
 	type args struct {
 		terminators []SearchTerminator
 	}
@@ -41,10 +35,10 @@ func TestNewGroupTerminator(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			args: args{nil},
 		},
-		data{
+		{
 			args: args{
 				terminators: []SearchTerminator{
 					MockSearchTerminator{},
@@ -53,22 +47,15 @@ func TestNewGroupTerminator(
 			},
 		},
 	} {
-		group := NewGroupTerminator(
-			data.args.terminators...,
-		)
+		group := NewGroupTerminator(data.args.terminators...)
 
-		if !reflect.DeepEqual(
-			group.terminators,
-			data.args.terminators,
-		) {
+		if !reflect.DeepEqual(group.terminators, data.args.terminators) {
 			test.Fail()
 		}
 	}
 }
 
-func TestGroupTerminatorIsSearchTerminated(
-	test *testing.T,
-) {
+func TestGroupTerminatorIsSearchTerminated(test *testing.T) {
 	type fields struct {
 		terminators []SearchTerminator
 	}
@@ -82,18 +69,16 @@ func TestGroupTerminatorIsSearchTerminated(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{nil},
 			args:   args{5},
 			want:   false,
 		},
-		data{
+		{
 			fields: fields{
 				terminators: []SearchTerminator{
 					MockSearchTerminator{
-						isSearchTerminated: func(
-							deep int,
-						) bool {
+						isSearchTerminated: func(deep int) bool {
 							if deep != 5 {
 								test.Fail()
 							}
@@ -102,9 +87,7 @@ func TestGroupTerminatorIsSearchTerminated(
 						},
 					},
 					MockSearchTerminator{
-						isSearchTerminated: func(
-							deep int,
-						) bool {
+						isSearchTerminated: func(deep int) bool {
 							if deep != 5 {
 								test.Fail()
 							}
@@ -117,13 +100,11 @@ func TestGroupTerminatorIsSearchTerminated(
 			args: args{5},
 			want: false,
 		},
-		data{
+		{
 			fields: fields{
 				terminators: []SearchTerminator{
 					MockSearchTerminator{
-						isSearchTerminated: func(
-							deep int,
-						) bool {
+						isSearchTerminated: func(deep int) bool {
 							if deep != 5 {
 								test.Fail()
 							}
@@ -141,9 +122,7 @@ func TestGroupTerminatorIsSearchTerminated(
 		group := GroupTerminator{
 			terminators: data.fields.terminators,
 		}
-		got := group.IsSearchTerminated(
-			data.args.deep,
-		)
+		got := group.IsSearchTerminated(data.args.deep)
 
 		if got != data.want {
 			test.Fail()
@@ -151,9 +130,7 @@ func TestGroupTerminatorIsSearchTerminated(
 	}
 }
 
-func TestGroupTerminatorSearchProgress(
-	test *testing.T,
-) {
+func TestGroupTerminatorSearchProgress(test *testing.T) {
 	type fields struct {
 		terminators []SearchTerminator
 	}
@@ -167,27 +144,23 @@ func TestGroupTerminatorSearchProgress(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{nil},
 			args:   args{5},
 			want:   0,
 		},
-		data{
+		{
 			fields: fields{
 				terminators: []SearchTerminator{
 					MockSearchTerminator{
-						isSearchTerminated: func(
-							deep int,
-						) bool {
+						isSearchTerminated: func(deep int) bool {
 							if deep != 5 {
 								test.Fail()
 							}
 
 							return false
 						},
-						searchProgress: func(
-							deep int,
-						) float64 {
+						searchProgress: func(deep int) float64 {
 							if deep != 5 {
 								test.Fail()
 							}
@@ -196,18 +169,14 @@ func TestGroupTerminatorSearchProgress(
 						},
 					},
 					MockSearchTerminator{
-						isSearchTerminated: func(
-							deep int,
-						) bool {
+						isSearchTerminated: func(deep int) bool {
 							if deep != 5 {
 								test.Fail()
 							}
 
 							return false
 						},
-						searchProgress: func(
-							deep int,
-						) float64 {
+						searchProgress: func(deep int) float64 {
 							if deep != 5 {
 								test.Fail()
 							}
@@ -216,18 +185,14 @@ func TestGroupTerminatorSearchProgress(
 						},
 					},
 					MockSearchTerminator{
-						isSearchTerminated: func(
-							deep int,
-						) bool {
+						isSearchTerminated: func(deep int) bool {
 							if deep != 5 {
 								test.Fail()
 							}
 
 							return false
 						},
-						searchProgress: func(
-							deep int,
-						) float64 {
+						searchProgress: func(deep int) float64 {
 							if deep != 5 {
 								test.Fail()
 							}
@@ -240,22 +205,18 @@ func TestGroupTerminatorSearchProgress(
 			args: args{5},
 			want: 0.75,
 		},
-		data{
+		{
 			fields: fields{
 				terminators: []SearchTerminator{
 					MockSearchTerminator{
-						isSearchTerminated: func(
-							deep int,
-						) bool {
+						isSearchTerminated: func(deep int) bool {
 							if deep != 5 {
 								test.Fail()
 							}
 
 							return true
 						},
-						searchProgress: func(
-							deep int,
-						) float64 {
+						searchProgress: func(deep int) float64 {
 							if deep != 5 {
 								test.Fail()
 							}
@@ -264,9 +225,7 @@ func TestGroupTerminatorSearchProgress(
 						},
 					},
 					MockSearchTerminator{
-						searchProgress: func(
-							deep int,
-						) float64 {
+						searchProgress: func(deep int) float64 {
 							if deep != 5 {
 								test.Fail()
 							}
@@ -275,9 +234,7 @@ func TestGroupTerminatorSearchProgress(
 						},
 					},
 					MockSearchTerminator{
-						searchProgress: func(
-							deep int,
-						) float64 {
+						searchProgress: func(deep int) float64 {
 							if deep != 5 {
 								test.Fail()
 							}
@@ -294,9 +251,7 @@ func TestGroupTerminatorSearchProgress(
 		group := GroupTerminator{
 			terminators: data.fields.terminators,
 		}
-		got := group.SearchProgress(
-			data.args.deep,
-		)
+		got := group.SearchProgress(data.args.deep)
 
 		if got != data.want {
 			test.Fail()

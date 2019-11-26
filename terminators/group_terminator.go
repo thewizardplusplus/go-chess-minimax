@@ -6,18 +6,13 @@ type GroupTerminator struct {
 }
 
 // NewGroupTerminator ...
-func NewGroupTerminator(
-	terminators ...SearchTerminator,
-) GroupTerminator {
+func NewGroupTerminator(terminators ...SearchTerminator) GroupTerminator {
 	return GroupTerminator{terminators}
 }
 
 // IsSearchTerminated ...
-func (
-	group GroupTerminator,
-) IsSearchTerminated(deep int) bool {
-	terminators := group.terminators
-	for _, terminator := range terminators {
+func (group GroupTerminator) IsSearchTerminated(deep int) bool {
+	for _, terminator := range group.terminators {
 		if terminator.IsSearchTerminated(deep) {
 			return true
 		}
@@ -27,18 +22,14 @@ func (
 }
 
 // SearchProgress ...
-func (
-	group GroupTerminator,
-) SearchProgress(deep int) float64 {
+func (group GroupTerminator) SearchProgress(deep int) float64 {
 	if group.IsSearchTerminated(deep) {
 		return 1
 	}
 
 	var maximalProgress float64
-	terminators := group.terminators
-	for _, terminator := range terminators {
-		progress :=
-			terminator.SearchProgress(deep)
+	for _, terminator := range group.terminators {
+		progress := terminator.SearchProgress(deep)
 		if progress > maximalProgress {
 			maximalProgress = progress
 		}
