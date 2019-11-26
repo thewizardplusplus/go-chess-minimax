@@ -8,9 +8,7 @@ import (
 type MaterialEvaluator struct{}
 
 // EvaluateBoard ...
-func (
-	evaluator MaterialEvaluator,
-) EvaluateBoard(
+func (evaluator MaterialEvaluator) EvaluateBoard(
 	storage models.PieceStorage,
 	color models.Color,
 ) float64 {
@@ -24,11 +22,8 @@ func (
 	return score
 }
 
-// are based on an evaluation function
-// of Claude Shannon
-func pieceWeight(
-	piece models.Piece,
-) float64 {
+// it's based on an evaluation function of Claude Shannon
+func pieceWeight(piece models.Piece) float64 {
 	var pieceWeight float64
 	switch piece.Kind() {
 	case models.King:
@@ -48,10 +43,7 @@ func pieceWeight(
 	return pieceWeight
 }
 
-func colorSign(
-	piece models.Piece,
-	color models.Color,
-) float64 {
+func colorSign(piece models.Piece, color models.Color) float64 {
 	if piece.Color() != color {
 		return -1
 	}

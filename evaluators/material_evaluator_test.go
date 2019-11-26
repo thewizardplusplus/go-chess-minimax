@@ -10,23 +10,17 @@ type MockPieceStorage struct {
 	pieces []models.Piece
 }
 
-func (
-	storage MockPieceStorage,
-) Size() models.Size {
+func (storage MockPieceStorage) Size() models.Size {
 	panic("not implemented")
 }
 
-func (
-	storage MockPieceStorage,
-) Piece(
+func (storage MockPieceStorage) Piece(
 	position models.Position,
 ) (piece models.Piece, ok bool) {
 	panic("not implemented")
 }
 
-func (
-	storage MockPieceStorage,
-) Pieces() []models.Piece {
+func (storage MockPieceStorage) Pieces() []models.Piece {
 	return storage.pieces
 }
 
@@ -36,9 +30,7 @@ func (storage MockPieceStorage) ApplyMove(
 	panic("not implemented")
 }
 
-func (storage MockPieceStorage) CheckMove(
-	move models.Move,
-) error {
+func (storage MockPieceStorage) CheckMove(move models.Move) error {
 	panic("not implemented")
 }
 
@@ -51,21 +43,15 @@ func (piece MockPiece) Kind() models.Kind {
 	return piece.kind
 }
 
-func (
-	piece MockPiece,
-) Color() models.Color {
+func (piece MockPiece) Color() models.Color {
 	return piece.color
 }
 
-func (
-	piece MockPiece,
-) Position() models.Position {
+func (piece MockPiece) Position() models.Position {
 	panic("not implemented")
 }
 
-func (piece MockPiece) ApplyPosition(
-	position models.Position,
-) models.Piece {
+func (piece MockPiece) ApplyPosition(position models.Position) models.Piece {
 	panic("not implemented")
 }
 
@@ -76,9 +62,7 @@ func (piece MockPiece) CheckMove(
 	panic("not implemented")
 }
 
-func TestMaterialEvaluatorEvaluateBoard(
-	test *testing.T,
-) {
+func TestMaterialEvaluatorEvaluateBoard(test *testing.T) {
 	type args struct {
 		storage models.PieceStorage
 		color   models.Color
@@ -89,7 +73,7 @@ func TestMaterialEvaluatorEvaluateBoard(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			args: args{
 				storage: MockPieceStorage{
 					pieces: []models.Piece{
@@ -107,7 +91,7 @@ func TestMaterialEvaluatorEvaluateBoard(
 			},
 			want: 14,
 		},
-		data{
+		{
 			args: args{
 				storage: MockPieceStorage{
 					pieces: []models.Piece{
@@ -125,7 +109,7 @@ func TestMaterialEvaluatorEvaluateBoard(
 			},
 			want: 4,
 		},
-		data{
+		{
 			args: args{
 				storage: MockPieceStorage{
 					pieces: []models.Piece{
@@ -143,7 +127,7 @@ func TestMaterialEvaluatorEvaluateBoard(
 			},
 			want: -14,
 		},
-		data{
+		{
 			args: args{
 				storage: MockPieceStorage{
 					pieces: []models.Piece{
@@ -161,7 +145,7 @@ func TestMaterialEvaluatorEvaluateBoard(
 			},
 			want: -14,
 		},
-		data{
+		{
 			args: args{
 				storage: MockPieceStorage{
 					pieces: []models.Piece{
@@ -179,7 +163,7 @@ func TestMaterialEvaluatorEvaluateBoard(
 			},
 			want: -4,
 		},
-		data{
+		{
 			args: args{
 				storage: MockPieceStorage{
 					pieces: []models.Piece{
@@ -199,10 +183,7 @@ func TestMaterialEvaluatorEvaluateBoard(
 		},
 	} {
 		var evaluator MaterialEvaluator
-		got := evaluator.EvaluateBoard(
-			data.args.storage,
-			data.args.color,
-		)
+		got := evaluator.EvaluateBoard(data.args.storage, data.args.color)
 
 		if got != data.want {
 			test.Fail()
@@ -220,7 +201,7 @@ func TestPieceWeight(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			args: args{
 				piece: MockPiece{
 					kind: models.Queen,
@@ -228,7 +209,7 @@ func TestPieceWeight(test *testing.T) {
 			},
 			want: 9,
 		},
-		data{
+		{
 			args: args{
 				piece: MockPiece{
 					kind: models.Rook,
@@ -256,7 +237,7 @@ func TestColorSign(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			args: args{
 				piece: MockPiece{
 					color: models.Black,
@@ -265,7 +246,7 @@ func TestColorSign(test *testing.T) {
 			},
 			want: -1,
 		},
-		data{
+		{
 			args: args{
 				piece: MockPiece{
 					color: models.White,
@@ -275,10 +256,7 @@ func TestColorSign(test *testing.T) {
 			want: 1,
 		},
 	} {
-		got := colorSign(
-			data.args.piece,
-			data.args.color,
-		)
+		got := colorSign(data.args.piece, data.args.color)
 
 		if got != data.want {
 			test.Fail()

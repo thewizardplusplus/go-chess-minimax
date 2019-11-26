@@ -6,11 +6,7 @@ import (
 
 // BoardEvaluator ...
 //
-// It should be a symmetric evaluation
-// in relation to a side to move.
+// It should be a symmetric evaluation in relation to a side to move.
 type BoardEvaluator interface {
-	EvaluateBoard(
-		storage models.PieceStorage,
-		color models.Color,
-	) float64
+	EvaluateBoard(storage models.PieceStorage, color models.Color) float64
 }
