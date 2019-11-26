@@ -13,9 +13,7 @@ import (
 
 type MockPieceStorage struct{}
 
-func (
-	storage MockPieceStorage,
-) Size() models.Size {
+func (storage MockPieceStorage) Size() models.Size {
 	panic("not implemented")
 }
 
@@ -25,9 +23,7 @@ func (storage MockPieceStorage) Piece(
 	panic("not implemented")
 }
 
-func (
-	storage MockPieceStorage,
-) Pieces() []models.Piece {
+func (storage MockPieceStorage) Pieces() []models.Piece {
 	panic("not implemented")
 }
 
@@ -37,47 +33,32 @@ func (storage MockPieceStorage) ApplyMove(
 	panic("not implemented")
 }
 
-func (storage MockPieceStorage) CheckMove(
-	move models.Move,
-) error {
+func (storage MockPieceStorage) CheckMove(move models.Move) error {
 	panic("not implemented")
 }
 
-func TestNewStringHashingCache(
-	test *testing.T,
-) {
+func TestNewStringHashingCache(test *testing.T) {
 	maximalSize := int(1e6)
-	cache := NewStringHashingCache(
-		maximalSize,
-		uci.EncodePieceStorage,
-	)
+	cache := NewStringHashingCache(maximalSize, uci.EncodePieceStorage)
 
 	if cache.buckets == nil {
 		test.Fail()
 	}
-
 	if cache.queue == nil {
 		test.Fail()
 	}
-
 	if cache.maximalSize != maximalSize {
 		test.Fail()
 	}
 
-	gotStringer := reflect.
-		ValueOf(cache.stringer).
-		Pointer()
-	wantStringer := reflect.
-		ValueOf(uci.EncodePieceStorage).
-		Pointer()
+	gotStringer := reflect.ValueOf(cache.stringer).Pointer()
+	wantStringer := reflect.ValueOf(uci.EncodePieceStorage).Pointer()
 	if gotStringer != wantStringer {
 		test.Fail()
 	}
 }
 
-func TestStringHashingCacheGet(
-	test *testing.T,
-) {
+func TestStringHashingCacheGet(test *testing.T) {
 	type fields struct {
 		buckets  bucketGroup
 		queue    *list.List
@@ -96,12 +77,10 @@ func TestStringHashingCacheGet(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: func() fields {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
+				keyOne := key{"key #1", models.White}
+				keyTwo := key{"key #2", models.Black}
 
 				moveOne := moves.FailedMove{
 					Move: moves.ScoredMove{
@@ -138,22 +117,14 @@ func TestStringHashingCacheGet(
 
 				buckets := make(bucketGroup)
 				queue := list.New()
-				buckets[keyOne] = queue.PushBack(
-					bucket{keyOne, moveOne},
-				)
-				buckets[keyTwo] = queue.PushBack(
-					bucket{keyTwo, moveTwo},
-				)
+				buckets[keyOne] = queue.PushBack(bucket{keyOne, moveOne})
+				buckets[keyTwo] = queue.PushBack(bucket{keyTwo, moveTwo})
 
 				return fields{
 					buckets: buckets,
 					queue:   queue,
-					stringer: func(
-						storage models.PieceStorage,
-					) string {
-						_, ok :=
-							storage.(MockPieceStorage)
-						if !ok {
+					stringer: func(storage models.PieceStorage) string {
+						if _, ok := storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 
@@ -166,10 +137,8 @@ func TestStringHashingCacheGet(
 				color:   models.Black,
 			},
 			wantQueue: func() *list.List {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
+				keyOne := key{"key #1", models.White}
+				keyTwo := key{"key #2", models.Black}
 
 				moveOne := moves.FailedMove{
 					Move: moves.ScoredMove{
@@ -205,12 +174,8 @@ func TestStringHashingCacheGet(
 				}
 
 				queue := list.New()
-				queue.PushBack(
-					bucket{keyTwo, moveTwo},
-				)
-				queue.PushBack(
-					bucket{keyOne, moveOne},
-				)
+				queue.PushBack(bucket{keyTwo, moveTwo})
+				queue.PushBack(bucket{keyOne, moveOne})
 
 				return queue
 			}(),
@@ -232,12 +197,10 @@ func TestStringHashingCacheGet(
 			},
 			wantOk: true,
 		},
-		data{
+		{
 			fields: func() fields {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
+				keyOne := key{"key #1", models.White}
+				keyTwo := key{"key #2", models.Black}
 
 				moveOne := moves.FailedMove{
 					Move: moves.ScoredMove{
@@ -274,22 +237,14 @@ func TestStringHashingCacheGet(
 
 				buckets := make(bucketGroup)
 				queue := list.New()
-				buckets[keyOne] = queue.PushBack(
-					bucket{keyOne, moveOne},
-				)
-				buckets[keyTwo] = queue.PushBack(
-					bucket{keyTwo, moveTwo},
-				)
+				buckets[keyOne] = queue.PushBack(bucket{keyOne, moveOne})
+				buckets[keyTwo] = queue.PushBack(bucket{keyTwo, moveTwo})
 
 				return fields{
 					buckets: buckets,
 					queue:   queue,
-					stringer: func(
-						storage models.PieceStorage,
-					) string {
-						_, ok :=
-							storage.(MockPieceStorage)
-						if !ok {
+					stringer: func(storage models.PieceStorage) string {
+						if _, ok := storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 
@@ -302,10 +257,8 @@ func TestStringHashingCacheGet(
 				color:   models.White,
 			},
 			wantQueue: func() *list.List {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
+				keyOne := key{"key #1", models.White}
+				keyTwo := key{"key #2", models.Black}
 
 				moveOne := moves.FailedMove{
 					Move: moves.ScoredMove{
@@ -341,12 +294,8 @@ func TestStringHashingCacheGet(
 				}
 
 				queue := list.New()
-				queue.PushBack(
-					bucket{keyOne, moveOne},
-				)
-				queue.PushBack(
-					bucket{keyTwo, moveTwo},
-				)
+				queue.PushBack(bucket{keyOne, moveOne})
+				queue.PushBack(bucket{keyTwo, moveTwo})
 
 				return queue
 			}(),
@@ -359,34 +308,21 @@ func TestStringHashingCacheGet(
 			queue:    data.fields.queue,
 			stringer: data.fields.stringer,
 		}
-		gotMove, gotOk := cache.Get(
-			data.args.storage,
-			data.args.color,
-		)
+		gotMove, gotOk := cache.Get(data.args.storage, data.args.color)
 
-		if !reflect.DeepEqual(
-			data.fields.queue,
-			data.wantQueue,
-		) {
+		if !reflect.DeepEqual(data.fields.queue, data.wantQueue) {
 			test.Fail()
 		}
-
-		if !reflect.DeepEqual(
-			gotMove,
-			data.wantMove,
-		) {
+		if !reflect.DeepEqual(gotMove, data.wantMove) {
 			test.Fail()
 		}
-
 		if gotOk != data.wantOk {
 			test.Fail()
 		}
 	}
 }
 
-func TestStringHashingCacheSet(
-	test *testing.T,
-) {
+func TestStringHashingCacheSet(test *testing.T) {
 	type fields struct {
 		buckets     bucketGroup
 		queue       *list.List
@@ -405,12 +341,10 @@ func TestStringHashingCacheSet(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: func() fields {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
+				keyOne := key{"key #1", models.White}
+				keyTwo := key{"key #2", models.Black}
 
 				moveOne := moves.FailedMove{
 					Move: moves.ScoredMove{
@@ -447,23 +381,15 @@ func TestStringHashingCacheSet(
 
 				buckets := make(bucketGroup)
 				queue := list.New()
-				buckets[keyOne] = queue.PushBack(
-					bucket{keyOne, moveOne},
-				)
-				buckets[keyTwo] = queue.PushBack(
-					bucket{keyTwo, moveTwo},
-				)
+				buckets[keyOne] = queue.PushBack(bucket{keyOne, moveOne})
+				buckets[keyTwo] = queue.PushBack(bucket{keyTwo, moveTwo})
 
 				return fields{
 					buckets:     buckets,
 					queue:       queue,
 					maximalSize: 10,
-					stringer: func(
-						storage models.PieceStorage,
-					) string {
-						_, ok :=
-							storage.(MockPieceStorage)
-						if !ok {
+					stringer: func(storage models.PieceStorage) string {
+						if _, ok := storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 
@@ -492,12 +418,9 @@ func TestStringHashingCacheSet(
 				},
 			},
 			wantFields: func() fields {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
-				keyThree :=
-					key{"key #3", models.White}
+				keyOne := key{"key #1", models.White}
+				keyTwo := key{"key #2", models.Black}
+				keyThree := key{"key #3", models.White}
 
 				moveOne := moves.FailedMove{
 					Move: moves.ScoredMove{
@@ -550,15 +473,9 @@ func TestStringHashingCacheSet(
 
 				buckets := make(bucketGroup)
 				queue := list.New()
-				buckets[keyThree] = queue.PushBack(
-					bucket{keyThree, moveThree},
-				)
-				buckets[keyOne] = queue.PushBack(
-					bucket{keyOne, moveOne},
-				)
-				buckets[keyTwo] = queue.PushBack(
-					bucket{keyTwo, moveTwo},
-				)
+				buckets[keyThree] = queue.PushBack(bucket{keyThree, moveThree})
+				buckets[keyOne] = queue.PushBack(bucket{keyOne, moveOne})
+				buckets[keyTwo] = queue.PushBack(bucket{keyTwo, moveTwo})
 
 				return fields{
 					buckets: buckets,
@@ -566,12 +483,10 @@ func TestStringHashingCacheSet(
 				}
 			}(),
 		},
-		data{
+		{
 			fields: func() fields {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
+				keyOne := key{"key #1", models.White}
+				keyTwo := key{"key #2", models.Black}
 
 				moveOne := moves.FailedMove{
 					Move: moves.ScoredMove{
@@ -608,23 +523,15 @@ func TestStringHashingCacheSet(
 
 				buckets := make(bucketGroup)
 				queue := list.New()
-				buckets[keyOne] = queue.PushBack(
-					bucket{keyOne, moveOne},
-				)
-				buckets[keyTwo] = queue.PushBack(
-					bucket{keyTwo, moveTwo},
-				)
+				buckets[keyOne] = queue.PushBack(bucket{keyOne, moveOne})
+				buckets[keyTwo] = queue.PushBack(bucket{keyTwo, moveTwo})
 
 				return fields{
 					buckets:     buckets,
 					queue:       queue,
 					maximalSize: 2,
-					stringer: func(
-						storage models.PieceStorage,
-					) string {
-						_, ok :=
-							storage.(MockPieceStorage)
-						if !ok {
+					stringer: func(storage models.PieceStorage) string {
+						if _, ok := storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 
@@ -653,10 +560,8 @@ func TestStringHashingCacheSet(
 				},
 			},
 			wantFields: func() fields {
-				keyOne :=
-					key{"key #1", models.White}
-				keyThree :=
-					key{"key #3", models.White}
+				keyOne := key{"key #1", models.White}
+				keyThree := key{"key #3", models.White}
 
 				moveOne := moves.FailedMove{
 					Move: moves.ScoredMove{
@@ -693,12 +598,8 @@ func TestStringHashingCacheSet(
 
 				buckets := make(bucketGroup)
 				queue := list.New()
-				buckets[keyThree] = queue.PushBack(
-					bucket{keyThree, moveThree},
-				)
-				buckets[keyOne] = queue.PushBack(
-					bucket{keyOne, moveOne},
-				)
+				buckets[keyThree] = queue.PushBack(bucket{keyThree, moveThree})
+				buckets[keyOne] = queue.PushBack(bucket{keyOne, moveOne})
 
 				return fields{
 					buckets: buckets,
@@ -706,12 +607,10 @@ func TestStringHashingCacheSet(
 				}
 			}(),
 		},
-		data{
+		{
 			fields: func() fields {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
+				keyOne := key{"key #1", models.White}
+				keyTwo := key{"key #2", models.Black}
 
 				moveOne := moves.FailedMove{
 					Move: moves.ScoredMove{
@@ -748,23 +647,15 @@ func TestStringHashingCacheSet(
 
 				buckets := make(bucketGroup)
 				queue := list.New()
-				buckets[keyOne] = queue.PushBack(
-					bucket{keyOne, moveOne},
-				)
-				buckets[keyTwo] = queue.PushBack(
-					bucket{keyTwo, moveTwo},
-				)
+				buckets[keyOne] = queue.PushBack(bucket{keyOne, moveOne})
+				buckets[keyTwo] = queue.PushBack(bucket{keyTwo, moveTwo})
 
 				return fields{
 					buckets:     buckets,
 					queue:       queue,
 					maximalSize: 10,
-					stringer: func(
-						storage models.PieceStorage,
-					) string {
-						_, ok :=
-							storage.(MockPieceStorage)
-						if !ok {
+					stringer: func(storage models.PieceStorage) string {
+						if _, ok := storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 
@@ -793,10 +684,8 @@ func TestStringHashingCacheSet(
 				},
 			},
 			wantFields: func() fields {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
+				keyOne := key{"key #1", models.White}
+				keyTwo := key{"key #2", models.Black}
 
 				moveOne := moves.FailedMove{
 					Move: moves.ScoredMove{
@@ -833,12 +722,8 @@ func TestStringHashingCacheSet(
 
 				buckets := make(bucketGroup)
 				queue := list.New()
-				buckets[keyTwo] = queue.PushBack(
-					bucket{keyTwo, moveTwo},
-				)
-				buckets[keyOne] = queue.PushBack(
-					bucket{keyOne, moveOne},
-				)
+				buckets[keyTwo] = queue.PushBack(bucket{keyTwo, moveTwo})
+				buckets[keyOne] = queue.PushBack(bucket{keyOne, moveOne})
 
 				return fields{
 					buckets: buckets,
@@ -853,47 +738,28 @@ func TestStringHashingCacheSet(
 			maximalSize: data.fields.maximalSize,
 			stringer:    data.fields.stringer,
 		}
-		cache.Set(
-			data.args.storage,
-			data.args.color,
-			data.args.move,
-		)
+		cache.Set(data.args.storage, data.args.color, data.args.move)
 
-		if !reflect.DeepEqual(
-			data.fields.buckets,
-			data.wantFields.buckets,
-		) {
+		if !reflect.DeepEqual(data.fields.buckets, data.wantFields.buckets) {
 			test.Fail()
 		}
-
-		if !reflect.DeepEqual(
-			data.fields.queue,
-			data.wantFields.queue,
-		) {
+		if !reflect.DeepEqual(data.fields.queue, data.wantFields.queue) {
 			test.Fail()
 		}
 	}
 }
 
-func TestStringHashingCacheMakeKey(
-	test *testing.T,
-) {
+func TestStringHashingCacheMakeKey(test *testing.T) {
 	cache := StringHashingCache{
-		stringer: func(
-			storage models.PieceStorage,
-		) string {
-			_, ok := storage.(MockPieceStorage)
-			if !ok {
+		stringer: func(storage models.PieceStorage) string {
+			if _, ok := storage.(MockPieceStorage); !ok {
 				test.Fail()
 			}
 
 			return "key"
 		},
 	}
-	got := cache.makeKey(
-		MockPieceStorage{},
-		models.White,
-	)
+	got := cache.makeKey(MockPieceStorage{}, models.White)
 
 	want := key{"key", models.White}
 	if !reflect.DeepEqual(got, want) {
@@ -901,9 +767,7 @@ func TestStringHashingCacheMakeKey(
 	}
 }
 
-func TestStringHashingCacheGetElement(
-	test *testing.T,
-) {
+func TestStringHashingCacheGetElement(test *testing.T) {
 	type fields struct {
 		buckets     bucketGroup
 		queue       *list.List
@@ -920,12 +784,10 @@ func TestStringHashingCacheGetElement(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: func() fields {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
+				keyOne := key{"key #1", models.White}
+				keyTwo := key{"key #2", models.Black}
 
 				buckets := make(bucketGroup)
 				queue := list.New()
@@ -950,12 +812,10 @@ func TestStringHashingCacheGetElement(
 			}(),
 			wantOk: true,
 		},
-		data{
+		{
 			fields: func() fields {
-				keyOne :=
-					key{"key #1", models.White}
-				keyTwo :=
-					key{"key #2", models.Black}
+				keyOne := key{"key #1", models.White}
+				keyTwo := key{"key #2", models.Black}
 
 				buckets := make(bucketGroup)
 				queue := list.New()
@@ -985,23 +845,14 @@ func TestStringHashingCacheGetElement(
 			buckets: data.fields.buckets,
 			queue:   data.fields.queue,
 		}
-		gotElement, gotOk :=
-			cache.getElement(data.args.key)
+		gotElement, gotOk := cache.getElement(data.args.key)
 
-		if !reflect.DeepEqual(
-			data.fields.queue,
-			data.wantQueue,
-		) {
+		if !reflect.DeepEqual(data.fields.queue, data.wantQueue) {
 			test.Fail()
 		}
-
-		if !reflect.DeepEqual(
-			gotElement,
-			data.fields.wantElement,
-		) {
+		if !reflect.DeepEqual(gotElement, data.fields.wantElement) {
 			test.Fail()
 		}
-
 		if gotOk != data.wantOk {
 			test.Fail()
 		}

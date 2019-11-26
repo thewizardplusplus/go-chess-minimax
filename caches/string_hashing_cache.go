@@ -8,9 +8,7 @@ import (
 )
 
 // Stringer ...
-type Stringer func(
-	storage models.PieceStorage,
-) string
+type Stringer func(storage models.PieceStorage) string
 
 type key struct {
 	storage string
@@ -52,8 +50,8 @@ func (cache StringHashingCache) Get(
 	storage models.PieceStorage,
 	color models.Color,
 ) (move moves.FailedMove, ok bool) {
-	key := cache.makeKey(storage, color)
-	element, ok := cache.getElement(key)
+	newKey := cache.makeKey(storage, color)
+	element, ok := cache.getElement(newKey)
 	if !ok {
 		return moves.FailedMove{}, false
 	}
@@ -67,24 +65,22 @@ func (cache StringHashingCache) Set(
 	color models.Color,
 	move moves.FailedMove,
 ) {
-	key := cache.makeKey(storage, color)
-	newBucket := bucket{key, move}
-	element, ok := cache.getElement(key)
+	newKey := cache.makeKey(storage, color)
+	newBucket := bucket{newKey, move}
+	element, ok := cache.getElement(newKey)
 	if ok {
 		element.Value = newBucket
 		return
 	}
 
 	element = cache.queue.PushFront(newBucket)
-	cache.buckets[key] = element
-	if cache.queue.Len() <=
-		cache.maximalSize {
+	cache.buckets[newKey] = element
+	if cache.queue.Len() <= cache.maximalSize {
 		return
 	}
 
 	element = cache.queue.Back()
-	oldBucket := cache.queue.
-		Remove(element).(bucket)
+	oldBucket := cache.queue.Remove(element).(bucket)
 	delete(cache.buckets, oldBucket.key)
 }
 

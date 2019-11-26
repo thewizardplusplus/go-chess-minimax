@@ -48,10 +48,7 @@ func TestNewParallelCache(test *testing.T) {
 	var innerCache MockCache
 	cache := NewParallelCache(innerCache)
 
-	if !reflect.DeepEqual(
-		cache.innerCache,
-		innerCache,
-	) {
+	if !reflect.DeepEqual(cache.innerCache, innerCache) {
 		test.Fail()
 	}
 }
@@ -72,19 +69,14 @@ func TestParallelCacheGet(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				innerCache: MockCache{
 					get: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) (
-						move moves.FailedMove,
-						ok bool,
-					) {
-						_, ok =
-							storage.(MockPieceStorage)
-						if !ok {
+					) (move moves.FailedMove, ok bool) {
+						if _, ok = storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 						if color != models.White {
@@ -137,18 +129,11 @@ func TestParallelCacheGet(test *testing.T) {
 		cache := ParallelCache{
 			innerCache: data.fields.innerCache,
 		}
-		gotMove, gotOk := cache.Get(
-			data.args.storage,
-			data.args.color,
-		)
+		gotMove, gotOk := cache.Get(data.args.storage, data.args.color)
 
-		if !reflect.DeepEqual(
-			gotMove,
-			data.wantMove,
-		) {
+		if !reflect.DeepEqual(gotMove, data.wantMove) {
 			test.Fail()
 		}
-
 		if gotOk != data.wantOk {
 			test.Fail()
 		}
@@ -170,7 +155,7 @@ func TestParallelCacheSet(test *testing.T) {
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				innerCache: MockCache{
 					set: func(
@@ -178,36 +163,30 @@ func TestParallelCacheSet(test *testing.T) {
 						color models.Color,
 						move moves.FailedMove,
 					) {
-						_, ok :=
-							storage.(MockPieceStorage)
-						if !ok {
+						if _, ok := storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 						if color != models.White {
 							test.Fail()
 						}
 
-						expectedMove :=
-							moves.FailedMove{
-								Move: moves.ScoredMove{
-									Move: models.Move{
-										Start: models.Position{
-											File: 1,
-											Rank: 2,
-										},
-										Finish: models.Position{
-											File: 3,
-											Rank: 4,
-										},
+						expectedMove := moves.FailedMove{
+							Move: moves.ScoredMove{
+								Move: models.Move{
+									Start: models.Position{
+										File: 1,
+										Rank: 2,
 									},
-									Score: 2.3,
+									Finish: models.Position{
+										File: 3,
+										Rank: 4,
+									},
 								},
-								Error: errors.New("dummy"),
-							}
-						if !reflect.DeepEqual(
-							move,
-							expectedMove,
-						) {
+								Score: 2.3,
+							},
+							Error: errors.New("dummy"),
+						}
+						if !reflect.DeepEqual(move, expectedMove) {
 							test.Fail()
 						}
 					},
@@ -238,10 +217,6 @@ func TestParallelCacheSet(test *testing.T) {
 		cache := ParallelCache{
 			innerCache: data.fields.innerCache,
 		}
-		cache.Set(
-			data.args.storage,
-			data.args.color,
-			data.args.move,
-		)
+		cache.Set(data.args.storage, data.args.color, data.args.move)
 	}
 }

@@ -14,9 +14,7 @@ type ParallelCache struct {
 }
 
 // NewParallelCache ...
-func NewParallelCache(
-	innerCache Cache,
-) *ParallelCache {
+func NewParallelCache(innerCache Cache) *ParallelCache {
 	return &ParallelCache{
 		innerCache: innerCache,
 	}
@@ -30,10 +28,7 @@ func (cache *ParallelCache) Get(
 	cache.locker.Lock()
 	defer cache.locker.Unlock()
 
-	return cache.innerCache.Get(
-		storage,
-		color,
-	)
+	return cache.innerCache.Get(storage, color)
 }
 
 // Set ...
@@ -45,9 +40,5 @@ func (cache *ParallelCache) Set(
 	cache.locker.Lock()
 	defer cache.locker.Unlock()
 
-	cache.innerCache.Set(
-		storage,
-		color,
-		move,
-	)
+	cache.innerCache.Set(storage, color, move)
 }
