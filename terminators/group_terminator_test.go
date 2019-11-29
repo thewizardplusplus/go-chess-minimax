@@ -153,13 +153,6 @@ func TestGroupTerminatorSearchProgress(test *testing.T) {
 			fields: fields{
 				terminators: []SearchTerminator{
 					MockSearchTerminator{
-						isSearchTerminated: func(deep int) bool {
-							if deep != 5 {
-								test.Fail()
-							}
-
-							return false
-						},
 						searchProgress: func(deep int) float64 {
 							if deep != 5 {
 								test.Fail()
@@ -169,13 +162,6 @@ func TestGroupTerminatorSearchProgress(test *testing.T) {
 						},
 					},
 					MockSearchTerminator{
-						isSearchTerminated: func(deep int) bool {
-							if deep != 5 {
-								test.Fail()
-							}
-
-							return false
-						},
 						searchProgress: func(deep int) float64 {
 							if deep != 5 {
 								test.Fail()
@@ -185,13 +171,6 @@ func TestGroupTerminatorSearchProgress(test *testing.T) {
 						},
 					},
 					MockSearchTerminator{
-						isSearchTerminated: func(deep int) bool {
-							if deep != 5 {
-								test.Fail()
-							}
-
-							return false
-						},
 						searchProgress: func(deep int) float64 {
 							if deep != 5 {
 								test.Fail()
@@ -204,48 +183,6 @@ func TestGroupTerminatorSearchProgress(test *testing.T) {
 			},
 			args: args{5},
 			want: 0.75,
-		},
-		{
-			fields: fields{
-				terminators: []SearchTerminator{
-					MockSearchTerminator{
-						isSearchTerminated: func(deep int) bool {
-							if deep != 5 {
-								test.Fail()
-							}
-
-							return true
-						},
-						searchProgress: func(deep int) float64 {
-							if deep != 5 {
-								test.Fail()
-							}
-
-							return 0.25
-						},
-					},
-					MockSearchTerminator{
-						searchProgress: func(deep int) float64 {
-							if deep != 5 {
-								test.Fail()
-							}
-
-							return 0.75
-						},
-					},
-					MockSearchTerminator{
-						searchProgress: func(deep int) float64 {
-							if deep != 5 {
-								test.Fail()
-							}
-
-							return 0.5
-						},
-					},
-				},
-			},
-			args: args{5},
-			want: 1,
 		},
 	} {
 		group := GroupTerminator{

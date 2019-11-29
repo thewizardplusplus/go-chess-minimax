@@ -23,10 +23,6 @@ func (group GroupTerminator) IsSearchTerminated(deep int) bool {
 
 // SearchProgress ...
 func (group GroupTerminator) SearchProgress(deep int) float64 {
-	if group.IsSearchTerminated(deep) {
-		return 1
-	}
-
 	var maximalProgress float64
 	for _, terminator := range group.terminators {
 		progress := terminator.SearchProgress(deep)
