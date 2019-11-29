@@ -7,11 +7,13 @@ import (
 )
 
 func TestNewTimeTerminator(test *testing.T) {
+	var wrappedClockCallCount int
+	wrappedClock := func() time.Time { wrappedClockCallCount++; return clock() }
 	maximalDuration := 5 * time.Second
-	terminator := NewTimeTerminator(clock, maximalDuration)
+	terminator := NewTimeTerminator(wrappedClock, maximalDuration)
 
 	gotClock := reflect.ValueOf(terminator.clock).Pointer()
-	wantClock := reflect.ValueOf(clock).Pointer()
+	wantClock := reflect.ValueOf(wrappedClock).Pointer()
 	if gotClock != wantClock {
 		test.Fail()
 	}
@@ -22,6 +24,10 @@ func TestNewTimeTerminator(test *testing.T) {
 
 	startTime := clock()
 	if !terminator.startTime.Equal(startTime) {
+		test.Fail()
+	}
+
+	if wrappedClockCallCount != 1 {
 		test.Fail()
 	}
 }
@@ -41,10 +47,11 @@ func TestTimeTerminatorIsSearchTerminated(test *testing.T) {
 		want   bool
 	}
 
+	var clockCallCount int
 	for _, data := range []data{
 		{
 			fields: fields{
-				clock:           clock,
+				clock:           func() time.Time { clockCallCount++; return clock() },
 				maximalDuration: 5 * time.Second,
 				startTime:       clock().Add(-4 * time.Second),
 			},
@@ -53,7 +60,7 @@ func TestTimeTerminatorIsSearchTerminated(test *testing.T) {
 		},
 		{
 			fields: fields{
-				clock:           clock,
+				clock:           func() time.Time { clockCallCount++; return clock() },
 				maximalDuration: 5 * time.Second,
 				startTime:       clock().Add(-5 * time.Second),
 			},
@@ -62,7 +69,7 @@ func TestTimeTerminatorIsSearchTerminated(test *testing.T) {
 		},
 		{
 			fields: fields{
-				clock:           clock,
+				clock:           func() time.Time { clockCallCount++; return clock() },
 				maximalDuration: 5 * time.Second,
 				startTime:       clock().Add(-6 * time.Second),
 			},
@@ -70,6 +77,8 @@ func TestTimeTerminatorIsSearchTerminated(test *testing.T) {
 			want: true,
 		},
 	} {
+		clockCallCount = 0
+
 		terminator := TimeTerminator{
 			clock:           data.fields.clock,
 			maximalDuration: data.fields.maximalDuration,
@@ -78,6 +87,9 @@ func TestTimeTerminatorIsSearchTerminated(test *testing.T) {
 		got := terminator.IsSearchTerminated(data.args.deep)
 
 		if got != data.want {
+			test.Fail()
+		}
+		if clockCallCount != 1 {
 			test.Fail()
 		}
 	}
@@ -98,10 +110,11 @@ func TestTimeTerminatorSearchProgress(test *testing.T) {
 		want   float64
 	}
 
+	var clockCallCount int
 	for _, data := range []data{
 		{
 			fields: fields{
-				clock:           clock,
+				clock:           func() time.Time { clockCallCount++; return clock() },
 				maximalDuration: 100 * time.Second,
 				startTime:       clock(),
 			},
@@ -110,7 +123,7 @@ func TestTimeTerminatorSearchProgress(test *testing.T) {
 		},
 		{
 			fields: fields{
-				clock:           clock,
+				clock:           func() time.Time { clockCallCount++; return clock() },
 				maximalDuration: 100 * time.Second,
 				startTime:       clock().Add(-75 * time.Second),
 			},
@@ -119,7 +132,7 @@ func TestTimeTerminatorSearchProgress(test *testing.T) {
 		},
 		{
 			fields: fields{
-				clock:           clock,
+				clock:           func() time.Time { clockCallCount++; return clock() },
 				maximalDuration: 100 * time.Second,
 				startTime:       clock().Add(-100 * time.Second),
 			},
@@ -128,7 +141,7 @@ func TestTimeTerminatorSearchProgress(test *testing.T) {
 		},
 		{
 			fields: fields{
-				clock:           clock,
+				clock:           func() time.Time { clockCallCount++; return clock() },
 				maximalDuration: 100 * time.Second,
 				startTime:       clock().Add(-110 * time.Second),
 			},
@@ -136,6 +149,8 @@ func TestTimeTerminatorSearchProgress(test *testing.T) {
 			want: 1,
 		},
 	} {
+		clockCallCount = 0
+
 		terminator := TimeTerminator{
 			clock:           data.fields.clock,
 			maximalDuration: data.fields.maximalDuration,
@@ -144,6 +159,9 @@ func TestTimeTerminatorSearchProgress(test *testing.T) {
 		got := terminator.SearchProgress(data.args.deep)
 
 		if got != data.want {
+			test.Fail()
+		}
+		if clockCallCount != 1 {
 			test.Fail()
 		}
 	}
