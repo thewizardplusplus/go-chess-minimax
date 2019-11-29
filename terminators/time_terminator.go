@@ -19,28 +19,33 @@ func NewTimeTerminator(
 	clock Clock,
 	maximalDuration time.Duration,
 ) TimeTerminator {
+	startTime := clock()
 	return TimeTerminator{
 		clock:           clock,
 		maximalDuration: maximalDuration,
-		startTime:       clock(),
+		startTime:       startTime,
 	}
 }
 
 // IsSearchTerminated ...
 func (terminator TimeTerminator) IsSearchTerminated(deep int) bool {
-	return terminator.elapsedTime() >= terminator.maximalDuration
+	_, ok := terminator.duration()
+	return !ok
 }
 
 // SearchProgress ...
 func (terminator TimeTerminator) SearchProgress(deep int) float64 {
-	if terminator.IsSearchTerminated(deep) {
+	duration, ok := terminator.duration()
+	if !ok {
 		return 1
 	}
 
-	return float64(terminator.elapsedTime()) / float64(terminator.maximalDuration)
+	return float64(duration) / float64(terminator.maximalDuration)
 }
 
-func (terminator TimeTerminator) elapsedTime() time.Duration {
+func (terminator TimeTerminator) duration() (duration time.Duration, ok bool) {
 	currentTime := terminator.clock()
-	return currentTime.Sub(terminator.startTime)
+	duration = currentTime.Sub(terminator.startTime)
+	ok = duration < terminator.maximalDuration
+	return duration, ok
 }
