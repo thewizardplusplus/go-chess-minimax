@@ -17,7 +17,7 @@ func BenchmarkParallelSearcher_1Ply(benchmark *testing.B) {
 	cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
 	parallelCache := caches.NewParallelCache(cache)
 	for i := 0; i < benchmark.N; i++ {
-		parallelSearch(parallelCache, initial, models.White, 1)
+		parallelSearch(parallelCache, initial, models.White, 1) // nolint: errcheck
 	}
 }
 
@@ -25,7 +25,7 @@ func BenchmarkParallelSearcher_2Ply(benchmark *testing.B) {
 	cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
 	parallelCache := caches.NewParallelCache(cache)
 	for i := 0; i < benchmark.N; i++ {
-		parallelSearch(parallelCache, initial, models.White, 2)
+		parallelSearch(parallelCache, initial, models.White, 2) // nolint: errcheck
 	}
 }
 
@@ -33,7 +33,7 @@ func BenchmarkParallelSearcher_3Ply(benchmark *testing.B) {
 	cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
 	parallelCache := caches.NewParallelCache(cache)
 	for i := 0; i < benchmark.N; i++ {
-		parallelSearch(parallelCache, initial, models.White, 3)
+		parallelSearch(parallelCache, initial, models.White, 3) // nolint: errcheck
 	}
 }
 

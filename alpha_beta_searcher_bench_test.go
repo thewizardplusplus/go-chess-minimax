@@ -17,19 +17,19 @@ var (
 
 func BenchmarkAlphaBetaSearcher_1Ply(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
-		alphaBetaSearch(initial, models.White, 1)
+		alphaBetaSearch(initial, models.White, 1) // nolint: errcheck
 	}
 }
 
 func BenchmarkAlphaBetaSearcher_2Ply(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
-		alphaBetaSearch(initial, models.White, 2)
+		alphaBetaSearch(initial, models.White, 2) // nolint: errcheck
 	}
 }
 
 func BenchmarkAlphaBetaSearcher_3Ply(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
-		alphaBetaSearch(initial, models.White, 3)
+		alphaBetaSearch(initial, models.White, 3) // nolint: errcheck
 	}
 }
 

@@ -15,21 +15,21 @@ import (
 func BenchmarkIterativeSearcher_1Ply(benchmark *testing.B) {
 	cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
 	for i := 0; i < benchmark.N; i++ {
-		iterativeSearch(cache, initial, models.White, 1)
+		iterativeSearch(cache, initial, models.White, 1) // nolint: errcheck
 	}
 }
 
 func BenchmarkIterativeSearcher_2Ply(benchmark *testing.B) {
 	cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
 	for i := 0; i < benchmark.N; i++ {
-		iterativeSearch(cache, initial, models.White, 2)
+		iterativeSearch(cache, initial, models.White, 2) // nolint: errcheck
 	}
 }
 
 func BenchmarkIterativeSearcher_3Ply(benchmark *testing.B) {
 	cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
 	for i := 0; i < benchmark.N; i++ {
-		iterativeSearch(cache, initial, models.White, 3)
+		iterativeSearch(cache, initial, models.White, 3) // nolint: errcheck
 	}
 }
 

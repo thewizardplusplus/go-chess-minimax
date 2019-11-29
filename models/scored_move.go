@@ -13,6 +13,7 @@ type ScoredMove struct {
 	Quality float64
 }
 
+// nolint: gochecknoglobals
 var (
 	initialScore = math.Inf(-1)
 )
