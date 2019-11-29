@@ -9,9 +9,7 @@ import (
 // MoveSearcher ...
 type MoveSearcher interface {
 	SetSearcher(searcher MoveSearcher)
-	SetTerminator(
-		terminator terminators.SearchTerminator,
-	)
+	SetTerminator(terminator terminators.SearchTerminator)
 
 	SearchProgress(deep int) float64
 
@@ -33,9 +31,7 @@ type SearcherSetter struct {
 }
 
 // SetSearcher ...
-func (setter *SearcherSetter) SetSearcher(
-	searcher MoveSearcher,
-) {
+func (setter *SearcherSetter) SetSearcher(searcher MoveSearcher) {
 	setter.searcher = searcher
 }
 
@@ -45,18 +41,13 @@ type TerminatorSetter struct {
 }
 
 // SetTerminator ...
-func (
-	setter *TerminatorSetter,
-) SetTerminator(
+func (setter *TerminatorSetter) SetTerminator(
 	terminator terminators.SearchTerminator,
 ) {
 	setter.terminator = terminator
 }
 
 // SearchProgress ...
-func (
-	setter *TerminatorSetter,
-) SearchProgress(deep int) float64 {
-	return setter.terminator.
-		SearchProgress(deep)
+func (setter *TerminatorSetter) SearchProgress(deep int) float64 {
+	return setter.terminator.SearchProgress(deep)
 }

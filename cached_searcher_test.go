@@ -46,55 +46,33 @@ func (cache MockCache) Set(
 	cache.set(storage, color, move)
 }
 
-func TestNewCachedSearcher(
-	test *testing.T,
-) {
+func TestNewCachedSearcher(test *testing.T) {
 	innerSearcher := MockMoveSearcher{
-		setSearcher: func(
-			innerSearcher MoveSearcher,
-		) {
-			_, ok :=
-				innerSearcher.(CachedSearcher)
-			if !ok {
+		setSearcher: func(innerSearcher MoveSearcher) {
+			if _, ok := innerSearcher.(CachedSearcher); !ok {
 				test.Fail()
 			}
 		},
 	}
 
 	var cache MockCache
-	searcher := NewCachedSearcher(
-		innerSearcher,
-		cache,
-	)
+	searcher := NewCachedSearcher(innerSearcher, cache)
 
-	_, ok :=
-		searcher.searcher.(MockMoveSearcher)
-	if !ok {
+	if _, ok := searcher.searcher.(MockMoveSearcher); !ok {
 		test.Fail()
 	}
-
-	if !reflect.DeepEqual(
-		searcher.cache,
-		cache,
-	) {
+	if !reflect.DeepEqual(searcher.cache, cache) {
 		test.Fail()
 	}
 }
 
-func TestCachedSearcherSetTerminator(
-	test *testing.T,
-) {
+func TestCachedSearcherSetTerminator(test *testing.T) {
 	var terminator MockSearchTerminator
 	searcher := CachedSearcher{
 		SearcherSetter: &SearcherSetter{
 			searcher: MockMoveSearcher{
-				setTerminator: func(
-					innerTerminator terminators.SearchTerminator,
-				) {
-					if !reflect.DeepEqual(
-						innerTerminator,
-						terminator,
-					) {
+				setTerminator: func(innerTerminator terminators.SearchTerminator) {
+					if !reflect.DeepEqual(innerTerminator, terminator) {
 						test.Fail()
 					}
 				},
@@ -104,15 +82,11 @@ func TestCachedSearcherSetTerminator(
 	searcher.SetTerminator(terminator)
 }
 
-func TestCachedSearcherSearchProgress(
-	test *testing.T,
-) {
+func TestCachedSearcherSearchProgress(test *testing.T) {
 	searcher := CachedSearcher{
 		SearcherSetter: &SearcherSetter{
 			searcher: MockMoveSearcher{
-				searchProgress: func(
-					deep int,
-				) float64 {
+				searchProgress: func(deep int) float64 {
 					if deep != 2 {
 						test.Fail()
 					}
@@ -129,9 +103,7 @@ func TestCachedSearcherSearchProgress(
 	}
 }
 
-func TestCachedSearcherSearchMove(
-	test *testing.T,
-) {
+func TestCachedSearcherSearchMove(test *testing.T) {
 	type fields struct {
 		searcher MoveSearcher
 		cache    caches.Cache
@@ -150,12 +122,10 @@ func TestCachedSearcherSearchMove(
 	}
 
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				searcher: MockMoveSearcher{
-					searchProgress: func(
-						deep int,
-					) float64 {
+					searchProgress: func(deep int) float64 {
 						if deep != 2 {
 							test.Fail()
 						}
@@ -167,13 +137,8 @@ func TestCachedSearcherSearchMove(
 					get: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) (
-						data moves.FailedMove,
-						ok bool,
-					) {
-						_, ok =
-							storage.(MockPieceStorage)
-						if !ok {
+					) (data moves.FailedMove, ok bool) {
+						if _, ok = storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 						if color != models.White {
@@ -205,7 +170,7 @@ func TestCachedSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
-				bounds:  moves.Bounds{-2e6, 3e6},
+				bounds:  moves.Bounds{Alpha: -2e6, Beta: 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -223,12 +188,10 @@ func TestCachedSearcherSearchMove(
 			},
 			wantErr: true,
 		},
-		data{
+		{
 			fields: fields{
 				searcher: MockMoveSearcher{
-					searchProgress: func(
-						deep int,
-					) float64 {
+					searchProgress: func(deep int) float64 {
 						if deep != 2 {
 							test.Fail()
 						}
@@ -240,13 +203,8 @@ func TestCachedSearcherSearchMove(
 					get: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) (
-						data moves.FailedMove,
-						ok bool,
-					) {
-						_, ok =
-							storage.(MockPieceStorage)
-						if !ok {
+					) (data moves.FailedMove, ok bool) {
+						if _, ok = storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 						if color != models.White {
@@ -278,7 +236,7 @@ func TestCachedSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
-				bounds:  moves.Bounds{-2e6, 3e6},
+				bounds:  moves.Bounds{Alpha: -2e6, Beta: 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -296,12 +254,10 @@ func TestCachedSearcherSearchMove(
 			},
 			wantErr: true,
 		},
-		data{
+		{
 			fields: fields{
 				searcher: MockMoveSearcher{
-					searchProgress: func(
-						deep int,
-					) float64 {
+					searchProgress: func(deep int) float64 {
 						if deep != 2 {
 							test.Fail()
 						}
@@ -314,9 +270,7 @@ func TestCachedSearcherSearchMove(
 						deep int,
 						bounds moves.Bounds,
 					) (moves.ScoredMove, error) {
-						_, ok :=
-							storage.(MockPieceStorage)
-						if !ok {
+						if _, ok := storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 						if color != models.White {
@@ -325,10 +279,7 @@ func TestCachedSearcherSearchMove(
 						if deep != 2 {
 							test.Fail()
 						}
-						if !reflect.DeepEqual(
-							bounds,
-							moves.Bounds{-2e6, 3e6},
-						) {
+						if !reflect.DeepEqual(bounds, moves.Bounds{Alpha: -2e6, Beta: 3e6}) {
 							test.Fail()
 						}
 
@@ -352,13 +303,8 @@ func TestCachedSearcherSearchMove(
 					get: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) (
-						data moves.FailedMove,
-						ok bool,
-					) {
-						_, ok =
-							storage.(MockPieceStorage)
-						if !ok {
+					) (data moves.FailedMove, ok bool) {
+						if _, ok = storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 						if color != models.White {
@@ -389,36 +335,30 @@ func TestCachedSearcherSearchMove(
 						color models.Color,
 						data moves.FailedMove,
 					) {
-						_, ok :=
-							storage.(MockPieceStorage)
-						if !ok {
+						if _, ok := storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 						if color != models.White {
 							test.Fail()
 						}
 
-						expectedData :=
-							moves.FailedMove{
-								Move: moves.ScoredMove{
-									Move: models.Move{
-										Start: models.Position{
-											File: 5,
-											Rank: 6,
-										},
-										Finish: models.Position{
-											File: 7,
-											Rank: 8,
-										},
+						expectedData := moves.FailedMove{
+							Move: moves.ScoredMove{
+								Move: models.Move{
+									Start: models.Position{
+										File: 5,
+										Rank: 6,
 									},
-									Score: 4.2,
+									Finish: models.Position{
+										File: 7,
+										Rank: 8,
+									},
 								},
-								Error: errors.New("dummy"),
-							}
-						if !reflect.DeepEqual(
-							data,
-							expectedData,
-						) {
+								Score: 4.2,
+							},
+							Error: errors.New("dummy"),
+						}
+						if !reflect.DeepEqual(data, expectedData) {
 							test.Fail()
 						}
 					},
@@ -428,7 +368,7 @@ func TestCachedSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
-				bounds:  moves.Bounds{-2e6, 3e6},
+				bounds:  moves.Bounds{Alpha: -2e6, Beta: 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -445,12 +385,10 @@ func TestCachedSearcherSearchMove(
 			},
 			wantErr: true,
 		},
-		data{
+		{
 			fields: fields{
 				searcher: MockMoveSearcher{
-					searchProgress: func(
-						deep int,
-					) float64 {
+					searchProgress: func(deep int) float64 {
 						if deep != 2 {
 							test.Fail()
 						}
@@ -463,9 +401,7 @@ func TestCachedSearcherSearchMove(
 						deep int,
 						bounds moves.Bounds,
 					) (moves.ScoredMove, error) {
-						_, ok :=
-							storage.(MockPieceStorage)
-						if !ok {
+						if _, ok := storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 						if color != models.White {
@@ -474,10 +410,7 @@ func TestCachedSearcherSearchMove(
 						if deep != 2 {
 							test.Fail()
 						}
-						if !reflect.DeepEqual(
-							bounds,
-							moves.Bounds{-2e6, 3e6},
-						) {
+						if !reflect.DeepEqual(bounds, moves.Bounds{Alpha: -2e6, Beta: 3e6}) {
 							test.Fail()
 						}
 
@@ -501,13 +434,8 @@ func TestCachedSearcherSearchMove(
 					get: func(
 						storage models.PieceStorage,
 						color models.Color,
-					) (
-						data moves.FailedMove,
-						ok bool,
-					) {
-						_, ok =
-							storage.(MockPieceStorage)
-						if !ok {
+					) (data moves.FailedMove, ok bool) {
+						if _, ok = storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 						if color != models.White {
@@ -521,36 +449,30 @@ func TestCachedSearcherSearchMove(
 						color models.Color,
 						data moves.FailedMove,
 					) {
-						_, ok :=
-							storage.(MockPieceStorage)
-						if !ok {
+						if _, ok := storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 						if color != models.White {
 							test.Fail()
 						}
 
-						expectedData :=
-							moves.FailedMove{
-								Move: moves.ScoredMove{
-									Move: models.Move{
-										Start: models.Position{
-											File: 5,
-											Rank: 6,
-										},
-										Finish: models.Position{
-											File: 7,
-											Rank: 8,
-										},
+						expectedData := moves.FailedMove{
+							Move: moves.ScoredMove{
+								Move: models.Move{
+									Start: models.Position{
+										File: 5,
+										Rank: 6,
 									},
-									Score: 4.2,
+									Finish: models.Position{
+										File: 7,
+										Rank: 8,
+									},
 								},
-								Error: errors.New("dummy"),
-							}
-						if !reflect.DeepEqual(
-							data,
-							expectedData,
-						) {
+								Score: 4.2,
+							},
+							Error: errors.New("dummy"),
+						}
+						if !reflect.DeepEqual(data, expectedData) {
 							test.Fail()
 						}
 					},
@@ -560,7 +482,7 @@ func TestCachedSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
-				bounds:  moves.Bounds{-2e6, 3e6},
+				bounds:  moves.Bounds{Alpha: -2e6, Beta: 3e6},
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
@@ -593,15 +515,10 @@ func TestCachedSearcherSearchMove(
 			data.args.bounds,
 		)
 
-		if !reflect.DeepEqual(
-			gotMove,
-			data.wantMove,
-		) {
+		if !reflect.DeepEqual(gotMove, data.wantMove) {
 			test.Fail()
 		}
-
-		hasErr := gotErr != nil
-		if hasErr != data.wantErr {
+		if hasErr := gotErr != nil; hasErr != data.wantErr {
 			test.Fail()
 		}
 	}

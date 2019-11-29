@@ -12,37 +12,25 @@ import (
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
-func TestNewParallelSearcher(
-	test *testing.T,
-) {
+func TestNewParallelSearcher(test *testing.T) {
 	var terminator MockSearchTerminator
 	factory := func() MoveSearcher {
 		panic("not implemented")
 	}
-	searcher := NewParallelSearcher(
-		terminator,
-		10,
-		factory,
-	)
+	searcher := NewParallelSearcher(terminator, 10, factory)
 
 	if searcher.concurrency != 10 {
 		test.Fail()
 	}
 
-	gotFactory := reflect.
-		ValueOf(searcher.factory).
-		Pointer()
-	wantFactory := reflect.
-		ValueOf(factory).
-		Pointer()
+	gotFactory := reflect.ValueOf(searcher.factory).Pointer()
+	wantFactory := reflect.ValueOf(factory).Pointer()
 	if gotFactory != wantFactory {
 		test.Fail()
 	}
 }
 
-func TestParallelSearcherSetSearcher(
-	test *testing.T,
-) {
+func TestParallelSearcherSetSearcher(test *testing.T) {
 	var err interface{}
 	func() {
 		defer func() { err = recover() }()
@@ -57,9 +45,7 @@ func TestParallelSearcherSetSearcher(
 	}
 }
 
-func TestParallelSearcherSearchMove(
-	test *testing.T,
-) {
+func TestParallelSearcherSearchMove(test *testing.T) {
 	type fields struct {
 		terminator  terminators.SearchTerminator
 		concurrency int
@@ -83,7 +69,7 @@ func TestParallelSearcherSearchMove(
 	var expectedErr error
 	var once sync.Once
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				terminator:  MockSearchTerminator{},
 				concurrency: 10,
@@ -91,11 +77,8 @@ func TestParallelSearcherSearchMove(
 					atomic.AddUint64(&factoryCount, 1)
 
 					return MockMoveSearcher{
-						setTerminator: func(
-							terminator terminators.SearchTerminator,
-						) {
-							_, ok := terminator.(terminators.GroupTerminator)
-							if !ok {
+						setTerminator: func(terminator terminators.SearchTerminator) {
+							if _, ok := terminator.(terminators.GroupTerminator); !ok {
 								test.Fail()
 							}
 						},
@@ -107,14 +90,9 @@ func TestParallelSearcherSearchMove(
 						) (moves.ScoredMove, error) {
 							defer factoryWaiter.Done()
 
-							index := atomic.AddUint64(
-								&searcherCount,
-								1,
-							)
+							index := atomic.AddUint64(&searcherCount, 1)
 
-							_, ok :=
-								storage.(MockPieceStorage)
-							if !ok {
+							if _, ok := storage.(MockPieceStorage); !ok {
 								test.Fail()
 							}
 							if color != models.White {
@@ -123,10 +101,7 @@ func TestParallelSearcherSearchMove(
 							if deep != 2 {
 								test.Fail()
 							}
-							if !reflect.DeepEqual(
-								bounds,
-								moves.Bounds{-2e6, 3e6},
-							) {
+							if !reflect.DeepEqual(bounds, moves.Bounds{Alpha: -2e6, Beta: 3e6}) {
 								test.Fail()
 							}
 
@@ -158,13 +133,12 @@ func TestParallelSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
-				bounds:  moves.Bounds{-2e6, 3e6},
+				bounds:  moves.Bounds{Alpha: -2e6, Beta: 3e6},
 			},
 		},
 	} {
 		factoryWaiter = new(sync.WaitGroup)
-		factoryWaiter.
-			Add(data.fields.concurrency)
+		factoryWaiter.Add(data.fields.concurrency)
 
 		atomic.StoreUint64(&factoryCount, 0)
 		atomic.StoreUint64(&searcherCount, 0)
@@ -186,29 +160,19 @@ func TestParallelSearcherSearchMove(
 		)
 		factoryWaiter.Wait()
 
-		gotFactoryCount :=
-			atomic.LoadUint64(&factoryCount)
-		gotSearcherCount :=
-			atomic.LoadUint64(&searcherCount)
+		gotFactoryCount := atomic.LoadUint64(&factoryCount)
+		gotSearcherCount := atomic.LoadUint64(&searcherCount)
 
-		if !reflect.DeepEqual(
-			gotMove,
-			expectedMove,
-		) {
+		if !reflect.DeepEqual(gotMove, expectedMove) {
 			test.Fail()
 		}
-
 		if gotErr != expectedErr {
 			test.Fail()
 		}
-
-		if gotFactoryCount !=
-			uint64(data.fields.concurrency) {
+		if gotFactoryCount != uint64(data.fields.concurrency) {
 			test.Fail()
 		}
-
-		if gotSearcherCount !=
-			uint64(data.fields.concurrency) {
+		if gotSearcherCount != uint64(data.fields.concurrency) {
 			test.Fail()
 		}
 	}

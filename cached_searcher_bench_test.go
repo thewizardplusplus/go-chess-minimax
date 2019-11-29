@@ -12,54 +12,24 @@ import (
 	"github.com/thewizardplusplus/go-chess-models/pieces"
 )
 
-func BenchmarkCachedSearcher_1Ply(
-	benchmark *testing.B,
-) {
-	cache := caches.NewStringHashingCache(
-		1e6,
-		uci.EncodePieceStorage,
-	)
+func BenchmarkCachedSearcher_1Ply(benchmark *testing.B) {
+	cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
 	for i := 0; i < benchmark.N; i++ {
-		cachedSearch(
-			cache,
-			initial,
-			models.White,
-			1,
-		)
+		cachedSearch(cache, initial, models.White, 1)
 	}
 }
 
-func BenchmarkCachedSearcher_2Ply(
-	benchmark *testing.B,
-) {
-	cache := caches.NewStringHashingCache(
-		1e6,
-		uci.EncodePieceStorage,
-	)
+func BenchmarkCachedSearcher_2Ply(benchmark *testing.B) {
+	cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
 	for i := 0; i < benchmark.N; i++ {
-		cachedSearch(
-			cache,
-			initial,
-			models.White,
-			2,
-		)
+		cachedSearch(cache, initial, models.White, 2)
 	}
 }
 
-func BenchmarkCachedSearcher_3Ply(
-	benchmark *testing.B,
-) {
-	cache := caches.NewStringHashingCache(
-		1e6,
-		uci.EncodePieceStorage,
-	)
+func BenchmarkCachedSearcher_3Ply(benchmark *testing.B) {
+	cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
 	for i := 0; i < benchmark.N; i++ {
-		cachedSearch(
-			cache,
-			initial,
-			models.White,
-			3,
-		)
+		cachedSearch(cache, initial, models.White, 3)
 	}
 }
 
@@ -69,32 +39,18 @@ func cachedSearch(
 	color models.Color,
 	maximalDeep int,
 ) (moves.ScoredMove, error) {
-	storage, err := uci.DecodePieceStorage(
-		boardInFEN,
-		pieces.NewPiece,
-		models.NewBoard,
-	)
+	storage, err :=
+		uci.DecodePieceStorage(boardInFEN, pieces.NewPiece, models.NewBoard)
 	if err != nil {
 		return moves.ScoredMove{}, err
 	}
 
-	generator := models.MoveGenerator{}
-	terminator :=
-		terminators.NewDeepTerminator(
-			maximalDeep,
-		)
-	evaluator :=
-		evaluators.MaterialEvaluator{}
-	innerSearcher := NewAlphaBetaSearcher(
-		generator,
-		terminator,
-		evaluator,
-	)
+	var generator models.MoveGenerator
+	var evaluator evaluators.MaterialEvaluator
+	terminator := terminators.NewDeepTerminator(maximalDeep)
+	innerSearcher := NewAlphaBetaSearcher(generator, terminator, evaluator)
 
-	searcher := NewCachedSearcher(
-		innerSearcher,
-		cache,
-	)
+	searcher := NewCachedSearcher(innerSearcher, cache)
 
 	return searcher.SearchMove(
 		storage,

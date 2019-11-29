@@ -37,14 +37,11 @@ func NewParallelSearcher(
 
 // SetSearcher ...
 //
-// It does nothing and is required
-// only for correspondence
+// It does nothing and is required only for correspondence
 // to the MoveSearcher interface.
 //
 // It always panics.
-func (ParallelSearcher) SetSearcher(
-	innerSearcher MoveSearcher,
-) {
+func (ParallelSearcher) SetSearcher(innerSearcher MoveSearcher) {
 	panic("not supported")
 }
 
@@ -55,30 +52,17 @@ func (searcher ParallelSearcher) SearchMove(
 	deep int,
 	bounds moves.Bounds,
 ) (moves.ScoredMove, error) {
-	manualTerminator :=
-		new(terminators.ManualTerminator)
+	manualTerminator := new(terminators.ManualTerminator)
 	terminator :=
-		terminators.NewGroupTerminator(
-			searcher.terminator,
-			manualTerminator,
-		)
-	buffer := make(
-		chan moves.FailedMove,
-		searcher.concurrency,
-	)
+		terminators.NewGroupTerminator(searcher.terminator, manualTerminator)
+	buffer := make(chan moves.FailedMove, searcher.concurrency)
 	for i := 0; i < searcher.concurrency; i++ {
 		go func() {
 			searcher := searcher.factory()
 			searcher.SetTerminator(terminator)
 
-			move, err := searcher.SearchMove(
-				storage,
-				color,
-				deep,
-				bounds,
-			)
-
-			buffer <- moves.FailedMove{move, err}
+			move, err := searcher.SearchMove(storage, color, deep, bounds)
+			buffer <- moves.FailedMove{Move: move, Error: err}
 		}()
 	}
 

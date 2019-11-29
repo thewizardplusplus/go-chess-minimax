@@ -12,29 +12,22 @@ import (
 )
 
 var (
-	initial = "rnbqkbnr/pppppppp/8/8" +
-		"/8/8/PPPPPPPP/RNBQKBNR"
+	initial = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 )
 
-func BenchmarkAlphaBetaSearcher_1Ply(
-	benchmark *testing.B,
-) {
+func BenchmarkAlphaBetaSearcher_1Ply(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		alphaBetaSearch(initial, models.White, 1)
 	}
 }
 
-func BenchmarkAlphaBetaSearcher_2Ply(
-	benchmark *testing.B,
-) {
+func BenchmarkAlphaBetaSearcher_2Ply(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		alphaBetaSearch(initial, models.White, 2)
 	}
 }
 
-func BenchmarkAlphaBetaSearcher_3Ply(
-	benchmark *testing.B,
-) {
+func BenchmarkAlphaBetaSearcher_3Ply(benchmark *testing.B) {
 	for i := 0; i < benchmark.N; i++ {
 		alphaBetaSearch(initial, models.White, 3)
 	}
@@ -45,27 +38,16 @@ func alphaBetaSearch(
 	color models.Color,
 	maximalDeep int,
 ) (moves.ScoredMove, error) {
-	storage, err := uci.DecodePieceStorage(
-		boardInFEN,
-		pieces.NewPiece,
-		models.NewBoard,
-	)
+	storage, err :=
+		uci.DecodePieceStorage(boardInFEN, pieces.NewPiece, models.NewBoard)
 	if err != nil {
 		return moves.ScoredMove{}, err
 	}
 
-	generator := models.MoveGenerator{}
-	terminator :=
-		terminators.NewDeepTerminator(
-			maximalDeep,
-		)
-	evaluator :=
-		evaluators.MaterialEvaluator{}
-	searcher := NewAlphaBetaSearcher(
-		generator,
-		terminator,
-		evaluator,
-	)
+	var generator models.MoveGenerator
+	var evaluator evaluators.MaterialEvaluator
+	terminator := terminators.NewDeepTerminator(maximalDeep)
+	searcher := NewAlphaBetaSearcher(generator, terminator, evaluator)
 
 	return searcher.SearchMove(
 		storage,

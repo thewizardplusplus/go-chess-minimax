@@ -10,34 +10,20 @@ import (
 	models "github.com/thewizardplusplus/go-chess-models"
 )
 
-func TestNewIterativeSearcher(
-	test *testing.T,
-) {
+func TestNewIterativeSearcher(test *testing.T) {
 	var innerSearcher MockMoveSearcher
 	var terminator MockSearchTerminator
-	searcher := NewIterativeSearcher(
-		innerSearcher,
-		terminator,
-	)
+	searcher := NewIterativeSearcher(innerSearcher, terminator)
 
-	if !reflect.DeepEqual(
-		searcher.searcher,
-		innerSearcher,
-	) {
+	if !reflect.DeepEqual(searcher.searcher, innerSearcher) {
 		test.Fail()
 	}
-
-	if !reflect.DeepEqual(
-		searcher.terminator,
-		terminator,
-	) {
+	if !reflect.DeepEqual(searcher.terminator, terminator) {
 		test.Fail()
 	}
 }
 
-func TestIterativeSearcherSearchMove(
-	test *testing.T,
-) {
+func TestIterativeSearcherSearchMove(test *testing.T) {
 	type fields struct {
 		searcher   MoveSearcher
 		terminator terminators.SearchTerminator
@@ -58,14 +44,11 @@ func TestIterativeSearcherSearchMove(
 
 	var testDeep int
 	for _, data := range []data{
-		data{
+		{
 			fields: fields{
 				searcher: MockMoveSearcher{
-					setTerminator: func(
-						terminator terminators.SearchTerminator,
-					) {
-						_, ok := terminator.(terminators.GroupTerminator)
-						if !ok {
+					setTerminator: func(terminator terminators.SearchTerminator) {
+						if _, ok := terminator.(terminators.GroupTerminator); !ok {
 							test.Fail()
 						}
 					},
@@ -77,9 +60,7 @@ func TestIterativeSearcherSearchMove(
 					) (moves.ScoredMove, error) {
 						defer func() { testDeep++ }()
 
-						_, ok :=
-							storage.(MockPieceStorage)
-						if !ok {
+						if _, ok := storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 						if color != models.White {
@@ -88,10 +69,7 @@ func TestIterativeSearcherSearchMove(
 						if deep != 0 {
 							test.Fail()
 						}
-						if !reflect.DeepEqual(
-							bounds,
-							moves.Bounds{-2e6, 3e6},
-						) {
+						if !reflect.DeepEqual(bounds, moves.Bounds{Alpha: -2e6, Beta: 3e6}) {
 							test.Fail()
 						}
 
@@ -112,9 +90,7 @@ func TestIterativeSearcherSearchMove(
 					},
 				},
 				terminator: MockSearchTerminator{
-					isSearchTerminated: func(
-						deep int,
-					) bool {
+					isSearchTerminated: func(deep int) bool {
 						return deep == 1
 					},
 				},
@@ -123,7 +99,7 @@ func TestIterativeSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
-				bounds:  moves.Bounds{-2e6, 3e6},
+				bounds:  moves.Bounds{Alpha: -2e6, Beta: 3e6},
 			},
 			wantDeep: 2,
 			wantMove: moves.ScoredMove{
@@ -141,14 +117,11 @@ func TestIterativeSearcherSearchMove(
 			},
 			wantErr: true,
 		},
-		data{
+		{
 			fields: fields{
 				searcher: MockMoveSearcher{
-					setTerminator: func(
-						terminator terminators.SearchTerminator,
-					) {
-						_, ok := terminator.(terminators.GroupTerminator)
-						if !ok {
+					setTerminator: func(terminator terminators.SearchTerminator) {
+						if _, ok := terminator.(terminators.GroupTerminator); !ok {
 							test.Fail()
 						}
 					},
@@ -160,9 +133,7 @@ func TestIterativeSearcherSearchMove(
 					) (moves.ScoredMove, error) {
 						defer func() { testDeep++ }()
 
-						_, ok :=
-							storage.(MockPieceStorage)
-						if !ok {
+						if _, ok := storage.(MockPieceStorage); !ok {
 							test.Fail()
 						}
 						if color != models.White {
@@ -171,10 +142,7 @@ func TestIterativeSearcherSearchMove(
 						if deep != 0 {
 							test.Fail()
 						}
-						if !reflect.DeepEqual(
-							bounds,
-							moves.Bounds{-2e6, 3e6},
-						) {
+						if !reflect.DeepEqual(bounds, moves.Bounds{Alpha: -2e6, Beta: 3e6}) {
 							test.Fail()
 						}
 
@@ -195,9 +163,7 @@ func TestIterativeSearcherSearchMove(
 					},
 				},
 				terminator: MockSearchTerminator{
-					isSearchTerminated: func(
-						deep int,
-					) bool {
+					isSearchTerminated: func(deep int) bool {
 						return deep == 5
 					},
 				},
@@ -206,7 +172,7 @@ func TestIterativeSearcherSearchMove(
 				storage: MockPieceStorage{},
 				color:   models.White,
 				deep:    2,
-				bounds:  moves.Bounds{-2e6, 3e6},
+				bounds:  moves.Bounds{Alpha: -2e6, Beta: 3e6},
 			},
 			wantDeep: 6,
 			wantMove: moves.ScoredMove{
@@ -246,16 +212,10 @@ func TestIterativeSearcherSearchMove(
 		if testDeep != data.wantDeep {
 			test.Fail()
 		}
-
-		if !reflect.DeepEqual(
-			gotMove,
-			data.wantMove,
-		) {
+		if !reflect.DeepEqual(gotMove, data.wantMove) {
 			test.Fail()
 		}
-
-		hasErr := gotErr != nil
-		if hasErr != data.wantErr {
+		if hasErr := gotErr != nil; hasErr != data.wantErr {
 			test.Fail()
 		}
 	}

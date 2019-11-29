@@ -27,9 +27,7 @@ func NewCachedSearcher(
 		cache: cache,
 	}
 
-	// set itself as an inner searcher
-	// for passed one
-	// in order to recursive calls
+	// set itself as an inner searcher for passed one in order to recursive calls
 	// will be cached too
 	innerSearcher.SetSearcher(searcher)
 	searcher.SetSearcher(innerSearcher)
@@ -45,11 +43,8 @@ func (searcher CachedSearcher) SetTerminator(
 }
 
 // SearchProgress ...
-func (
-	searcher CachedSearcher,
-) SearchProgress(deep int) float64 {
-	return searcher.searcher.
-		SearchProgress(deep)
+func (searcher CachedSearcher) SearchProgress(deep int) float64 {
+	return searcher.searcher.SearchProgress(deep)
 }
 
 // SearchMove ...
@@ -59,18 +54,15 @@ func (searcher CachedSearcher) SearchMove(
 	deep int,
 	bounds moves.Bounds,
 ) (moves.ScoredMove, error) {
-	data, ok := searcher.cache.
-		Get(storage, color)
-	moveQuality :=
-		evaluateQuality(searcher, deep)
+	data, ok := searcher.cache.Get(storage, color)
+	moveQuality := evaluateQuality(searcher, deep)
 	if ok && data.Move.Quality >= moveQuality {
 		return data.Move, data.Error
 	}
 
-	move, err := searcher.searcher.
-		SearchMove(storage, color, deep, bounds)
+	move, err := searcher.searcher.SearchMove(storage, color, deep, bounds)
 	if !move.Move.IsZero() {
-		data := moves.FailedMove{move, err}
+		data := moves.FailedMove{Move: move, Error: err}
 		searcher.cache.Set(storage, color, data)
 	}
 

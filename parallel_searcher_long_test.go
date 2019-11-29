@@ -26,7 +26,7 @@ func TestParallelSearcher(test *testing.T) {
 
 	for _, data := range []data{
 		// king capture
-		data{
+		{
 			args: args{
 				boardInFEN:  "7K/8/8/8/8/8/8/k6R",
 				color:       models.White,
@@ -36,7 +36,7 @@ func TestParallelSearcher(test *testing.T) {
 			wantErr:  models.ErrKingCapture,
 		},
 		// termination
-		data{
+		{
 			args: args{
 				boardInFEN:  "7K/8/8/8/8/8/8/k6R",
 				color:       models.Black,
@@ -46,7 +46,7 @@ func TestParallelSearcher(test *testing.T) {
 			wantErr:  nil,
 		},
 		// draw without checks
-		data{
+		{
 			args: args{
 				boardInFEN:  "7K/8/8/8/8/8/pp6/kp6",
 				color:       models.Black,
@@ -56,10 +56,9 @@ func TestParallelSearcher(test *testing.T) {
 			wantErr:  ErrDraw,
 		},
 		// draw with checks on a first ply
-		data{
+		{
 			args: args{
-				boardInFEN: "7K/8/8/8" +
-					"/8/pp6/kp5R/7R",
+				boardInFEN:  "7K/8/8/8/8/pp6/kp5R/7R",
 				color:       models.Black,
 				maximalDeep: 1,
 			},
@@ -67,17 +66,16 @@ func TestParallelSearcher(test *testing.T) {
 			wantErr:  ErrDraw,
 		},
 		// draw with checks on a third ply
-		data{
+		{
 			args: args{
-				boardInFEN: "7K/6P1/8/2q5" +
-					"/8/8/b7/kb2B3",
+				boardInFEN:  "7K/6P1/8/2q5/8/8/b7/kb2B3",
 				color:       models.White,
 				maximalDeep: 3,
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
-					Start:  models.Position{4, 0},
-					Finish: models.Position{2, 2},
+					Start:  models.Position{File: 4, Rank: 0},
+					Finish: models.Position{File: 2, Rank: 2},
 				},
 				Score:   0,
 				Quality: 1,
@@ -85,10 +83,9 @@ func TestParallelSearcher(test *testing.T) {
 			wantErr: nil,
 		},
 		// checkmate on a first ply
-		data{
+		{
 			args: args{
-				boardInFEN: "6BK/8/8/8" +
-					"/8/pp6/k6R/7R",
+				boardInFEN:  "6BK/8/8/8/8/pp6/k6R/7R",
 				color:       models.Black,
 				maximalDeep: 1,
 			},
@@ -98,17 +95,16 @@ func TestParallelSearcher(test *testing.T) {
 			wantErr: ErrCheckmate,
 		},
 		// checkmate on a second ply
-		data{
+		{
 			args: args{
-				boardInFEN: "6K1/8/7q/6p1" +
-					"/8/2B5/pp4PQ/k7",
+				boardInFEN:  "6K1/8/7q/6p1/8/2B5/pp4PQ/k7",
 				color:       models.White,
 				maximalDeep: 2,
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
-					Start:  models.Position{7, 1},
-					Finish: models.Position{6, 0},
+					Start:  models.Position{File: 7, Rank: 1},
+					Finish: models.Position{File: 6, Rank: 0},
 				},
 				Score:   -evaluateCheckmate(1),
 				Quality: 1,
@@ -116,7 +112,7 @@ func TestParallelSearcher(test *testing.T) {
 			wantErr: nil,
 		},
 		// single legal move
-		data{
+		{
 			args: args{
 				boardInFEN:  "7K/8/7q/8/8/8/8/k7",
 				color:       models.White,
@@ -124,8 +120,8 @@ func TestParallelSearcher(test *testing.T) {
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
-					Start:  models.Position{7, 7},
-					Finish: models.Position{6, 7},
+					Start:  models.Position{File: 7, Rank: 7},
+					Finish: models.Position{File: 6, Rank: 7},
 				},
 				Score:   -9,
 				Quality: 1,
@@ -133,7 +129,7 @@ func TestParallelSearcher(test *testing.T) {
 			wantErr: nil,
 		},
 		// single profitable move on a first ply
-		data{
+		{
 			args: args{
 				boardInFEN:  "7K/8/7q/8/8/8/7Q/k7",
 				color:       models.White,
@@ -141,8 +137,8 @@ func TestParallelSearcher(test *testing.T) {
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
-					Start:  models.Position{7, 1},
-					Finish: models.Position{7, 5},
+					Start:  models.Position{File: 7, Rank: 1},
+					Finish: models.Position{File: 7, Rank: 5},
 				},
 				Score:   9,
 				Quality: 1,
@@ -150,17 +146,16 @@ func TestParallelSearcher(test *testing.T) {
 			wantErr: nil,
 		},
 		// single profitable move on a third ply
-		data{
+		{
 			args: args{
-				boardInFEN: "kn6/n6q/PP6/8" +
-					"/8/8/7P/7K",
+				boardInFEN:  "kn6/n6q/PP6/8/8/8/7P/7K",
 				color:       models.White,
 				maximalDeep: 3,
 			},
 			wantMove: moves.ScoredMove{
 				Move: models.Move{
-					Start:  models.Position{1, 5},
-					Finish: models.Position{1, 6},
+					Start:  models.Position{File: 1, Rank: 5},
+					Finish: models.Position{File: 1, Rank: 6},
 				},
 				Score:   -4,
 				Quality: 1,
@@ -168,18 +163,11 @@ func TestParallelSearcher(test *testing.T) {
 			wantErr: nil,
 		},
 	} {
-		cache := caches.NewStringHashingCache(
-			1e6,
-			uci.EncodePieceStorage,
-		)
-		parallelCache :=
-			caches.NewParallelCache(cache)
+		cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
+		parallelCache := caches.NewParallelCache(cache)
 
-		// increase the limit,
-		// because the iterative searcher
-		// discards a result
-		// of the last iteration,
-		// if it's not the only one
+		// increase the limit, because the iterative searcher discards a result
+		// of the last iteration, if it's not the only one
 		if data.args.maximalDeep > 1 {
 			data.args.maximalDeep++
 		}
@@ -191,16 +179,10 @@ func TestParallelSearcher(test *testing.T) {
 			data.args.maximalDeep,
 		)
 
-		if !reflect.DeepEqual(
-			gotMove,
-			data.wantMove,
-		) {
+		if !reflect.DeepEqual(gotMove, data.wantMove) {
 			test.Fail()
 		}
-		if !reflect.DeepEqual(
-			gotErr,
-			data.wantErr,
-		) {
+		if !reflect.DeepEqual(gotErr, data.wantErr) {
 			test.Fail()
 		}
 	}

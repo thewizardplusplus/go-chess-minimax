@@ -41,31 +41,17 @@ func (searcher IterativeSearcher) SearchMove(
 ) (moves.ScoredMove, error) {
 	var lastMove moves.FailedMove
 	for deep := initialDeep; ; deep++ {
-		searcher.searcher.SetTerminator(
-			terminators.NewGroupTerminator(
-				searcher.terminator,
-				terminators.NewDeepTerminator(deep),
-			),
-		)
+		searcher.searcher.SetTerminator(terminators.NewGroupTerminator(
+			searcher.terminator,
+			terminators.NewDeepTerminator(deep),
+		))
 
-		move, err :=
-			searcher.searcher.SearchMove(
-				storage,
-				color,
-				0,
-				bounds,
-			)
-		isTerminated := searcher.terminator.
-			IsSearchTerminated(deep)
+		move, err := searcher.searcher.SearchMove(storage, color, 0, bounds)
+		isTerminated := searcher.terminator.IsSearchTerminated(deep)
 		if deep == initialDeep || !isTerminated {
-			lastMove = moves.FailedMove{
-				Move:  move,
-				Error: err,
-			}
+			lastMove = moves.FailedMove{Move: move, Error: err}
 		}
-		// check at the loop end,
-		// because there should be
-		// at least one iteration
+		// check at the loop end, because there should be at least one iteration
 		if isTerminated {
 			break
 		}

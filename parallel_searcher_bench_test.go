@@ -13,60 +13,27 @@ import (
 	"github.com/thewizardplusplus/go-chess-models/pieces"
 )
 
-func BenchmarkParallelSearcher_1Ply(
-	benchmark *testing.B,
-) {
-	cache := caches.NewStringHashingCache(
-		1e6,
-		uci.EncodePieceStorage,
-	)
-	parallelCache :=
-		caches.NewParallelCache(cache)
+func BenchmarkParallelSearcher_1Ply(benchmark *testing.B) {
+	cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
+	parallelCache := caches.NewParallelCache(cache)
 	for i := 0; i < benchmark.N; i++ {
-		parallelSearch(
-			parallelCache,
-			initial,
-			models.White,
-			1,
-		)
+		parallelSearch(parallelCache, initial, models.White, 1)
 	}
 }
 
-func BenchmarkParallelSearcher_2Ply(
-	benchmark *testing.B,
-) {
-	cache := caches.NewStringHashingCache(
-		1e6,
-		uci.EncodePieceStorage,
-	)
-	parallelCache :=
-		caches.NewParallelCache(cache)
+func BenchmarkParallelSearcher_2Ply(benchmark *testing.B) {
+	cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
+	parallelCache := caches.NewParallelCache(cache)
 	for i := 0; i < benchmark.N; i++ {
-		parallelSearch(
-			parallelCache,
-			initial,
-			models.White,
-			2,
-		)
+		parallelSearch(parallelCache, initial, models.White, 2)
 	}
 }
 
-func BenchmarkParallelSearcher_3Ply(
-	benchmark *testing.B,
-) {
-	cache := caches.NewStringHashingCache(
-		1e6,
-		uci.EncodePieceStorage,
-	)
-	parallelCache :=
-		caches.NewParallelCache(cache)
+func BenchmarkParallelSearcher_3Ply(benchmark *testing.B) {
+	cache := caches.NewStringHashingCache(1e6, uci.EncodePieceStorage)
+	parallelCache := caches.NewParallelCache(cache)
 	for i := 0; i < benchmark.N; i++ {
-		parallelSearch(
-			parallelCache,
-			initial,
-			models.White,
-			3,
-		)
+		parallelSearch(parallelCache, initial, models.White, 3)
 	}
 }
 
@@ -76,52 +43,31 @@ func parallelSearch(
 	color models.Color,
 	maximalDeep int,
 ) (moves.ScoredMove, error) {
-	storage, err := uci.DecodePieceStorage(
-		boardInFEN,
-		pieces.NewPiece,
-		models.NewBoard,
-	)
+	storage, err :=
+		uci.DecodePieceStorage(boardInFEN, pieces.NewPiece, models.NewBoard)
 	if err != nil {
 		return moves.ScoredMove{}, err
 	}
 
-	generator := models.MoveGenerator{}
-	terminator :=
-		terminators.NewDeepTerminator(
-			maximalDeep,
-		)
-	evaluator :=
-		evaluators.MaterialEvaluator{}
-
-	searcher := NewParallelSearcher(
-		terminator,
-		runtime.NumCPU(),
-		func() MoveSearcher {
+	terminator := terminators.NewDeepTerminator(maximalDeep)
+	searcher :=
+		NewParallelSearcher(terminator, runtime.NumCPU(), func() MoveSearcher {
+			var generator models.MoveGenerator
+			var evaluator evaluators.MaterialEvaluator
 			innerSearcher := NewAlphaBetaSearcher(
 				generator,
-				// terminator will be set
-				// automatically
-				// by the iterative searcher
-				nil,
+				nil, // terminator will be set automatically by the iterative searcher
 				evaluator,
 			)
 
-			// make and bind a cached searcher
-			// to inner one
-			NewCachedSearcher(
-				innerSearcher,
-				cache,
-			)
+			// make and bind a cached searcher to inner one
+			NewCachedSearcher(innerSearcher, cache)
 
 			return NewIterativeSearcher(
 				innerSearcher,
-				// terminator will be set
-				// automatically
-				// by the parallel searcher
-				nil,
+				nil, // terminator will be set automatically by the parallel searcher
 			)
-		},
-	)
+		})
 
 	return searcher.SearchMove(
 		storage,
